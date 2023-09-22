@@ -9,7 +9,7 @@ function Type() {
 					"Full Stack Developer",
 					"Tutor in Bootcamp CoderHouse",
 					"Javascript content creator in spanish at Coursera",
-					"Play game and watch movies",
+					"My hoobies is play game and watch movies",
 					"And I love football ⚽ ⚽ ⚽",
 				],
 				autoStart: true,

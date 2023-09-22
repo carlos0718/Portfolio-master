@@ -15,7 +15,9 @@ function Home2() {
 							LET ME <span className='purple'> INTRODUCE </span> MYSELF
 						</h1>
 						<p className='home-about-body'>
-							I fell in love with programming and I have at least learnt something, I think… 🤷‍♂️
+							I fell in love with programming, <b className='purple'>in 2019 in the faculty of Computer Engineering</b>. In the
+							year <b className='purple'>2021 I had my first job as a full stack developer</b> and since then I have not stopped
+							and at least I have learned something, I think...😅
 							<br />
 							<br />I am proficient in classic technologies like
 							<i>
