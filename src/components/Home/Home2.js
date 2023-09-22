@@ -21,15 +21,16 @@ function Home2() {
 							<i>
 								<b className='purple'>
 									{" "}
-									C#, .Net Core, Javascript, HTML 5, CSS 3, MSSQL SERVER, React, Api Context,Redux, Axios, Express, GIT HUB, GIT LAB.{" "}
+									C#, ASP.NET, .Net Core, Javascript, React Js, HTML 5, CSS 3, Api Context, Redux, NodeJs, Axios, Express, MSSQL
+									SERVER, PostgreSQL, GIT HUB, GIT LAB, SourceTree{" "}
 								</b>
 							</i>
 							<br />
 							<br />
 							My field of Interest's are building new &nbsp;
 							<i>
-								<b className='purple'>Data analysis with Python and Excel </b> and also in areas related
-								to <b className='purple'>backend development with Node js and frameworks.</b>
+								<b className='purple'>Data analysis with Python and Excel </b> and also in areas related to{" "}
+								<b className='purple'>backend development with Node js and frameworks.</b>
 							</i>
 							<br />
 							<br />
