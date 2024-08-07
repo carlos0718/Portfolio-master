@@ -5,7 +5,8 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import {Link} from "react-router-dom";
 import {CgGitFork} from "react-icons/cg";
-import {AiFillStar, AiOutlineHome, AiOutlineFundProjectionScreen, AiOutlineUser} from "react-icons/ai";
+import pdf from "../Assets/../Assets/Carlos-Jesus-CV.pdf";
+import {AiFillStar, AiOutlineHome, AiOutlineFundProjectionScreen, AiOutlineUser, AiOutlineDownload} from "react-icons/ai";
 
 import {CgFileDocument} from "react-icons/cg";
 
@@ -50,19 +51,24 @@ function NavBar() {
 							</Nav.Link>
 						</Nav.Item>
 
-						{/* 						<Nav.Item>
+						{/* 	<Nav.Item>
 							<Nav.Link as={Link} to='/project' onClick={() => updateExpanded(false)}>
-								<AiOutlineFundProjectionScreen style={{ marginBottom: "2px" }} /> Projects
+								<AiOutlineFundProjectionScreen style={{marginBottom: "2px"}} /> Projects
 							</Nav.Link>
 						</Nav.Item> */}
 
-						{/* <Nav.Item>
-							<Nav.Link as={Link} to='/resume' onClick={() => updateExpanded(false)}>
-								<CgFileDocument style={{ marginBottom: "2px" }} /> Resume
-							</Nav.Link>
-						</Nav.Item> */}
+						<Nav.Item>
+							<Button variant='primary' href={pdf} target='_blank' style={{maxWidth: "250px"}}>
+								<AiOutlineDownload />
+								&nbsp;Download CV
+							</Button>
+						</Nav.Item>
 						<Nav.Item className='fork-btn'>
-							<Button href='https://github.com/carlos0718/Portfolio' target='_blank' className='fork-btn-inner'>
+							<Button
+								href='https://github.com/carlos0718?tab=repositories&q=&type=&language=javascript'
+								target='_blank'
+								className='fork-btn-inner'
+							>
 								<CgGitFork style={{fontSize: "1.2em"}} /> <AiFillStar style={{fontSize: "1.1em"}} />
 							</Button>
 						</Nav.Item>
