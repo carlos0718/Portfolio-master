@@ -6,9 +6,7 @@ import Button from "react-bootstrap/Button";
 import {Link} from "react-router-dom";
 import {CgGitFork} from "react-icons/cg";
 import pdf from "../Assets/../Assets/Carlos-Jesus-CV.pdf";
-import {AiFillStar, AiOutlineHome, AiOutlineFundProjectionScreen, AiOutlineUser, AiOutlineDownload} from "react-icons/ai";
-
-import {CgFileDocument} from "react-icons/cg";
+import {AiFillStar, AiOutlineHome, AiOutlineUser, AiOutlineDownload} from "react-icons/ai";
 
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
@@ -57,10 +55,10 @@ function NavBar() {
 							</Nav.Link>
 						</Nav.Item> */}
 
-						<Nav.Item>
-							<Button variant='primary' href={pdf} target='_blank' style={{maxWidth: "250px"}}>
+						<Nav.Item className='fork-btn'>
+							<Button variant='primary' href={pdf} target='_blank' className='fork-btn-inner'>
 								<AiOutlineDownload />
-								&nbsp;Download CV
+								Resume
 							</Button>
 						</Nav.Item>
 						<Nav.Item className='fork-btn'>
