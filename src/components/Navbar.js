@@ -5,12 +5,27 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import {Link} from "react-router-dom";
 import {CgGitFork} from "react-icons/cg";
-import pdf from "../Assets/../Assets/Carlos-Jesus-CV.pdf";
-import {AiFillStar, AiOutlineHome, AiOutlineUser, AiOutlineDownload} from "react-icons/ai";
+import {AiFillStar, AiOutlineHome, AiOutlineUser, AiOutlineDownload, AiOutlineFundProjectionScreen} from "react-icons/ai";
+import {downloadFile, listFile} from "../aws-s3/awsS3";
 
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
 	const [navColour, updateNavbar] = useState(false);
+	const [file, setFile] = useState([]);
+
+	React.useEffect(() => {
+		loadFile();
+	}, []);
+
+	const loadFile = async () => {
+		try {
+			const file = await listFile();
+			setFile(file);
+		} catch (error) {
+			console.error("Error al descargar archivo", error);
+			throw error;
+		}
+	};
 
 	function scrollHandler() {
 		if (window.scrollY >= 20) {
@@ -21,6 +36,22 @@ function NavBar() {
 	}
 
 	window.addEventListener("scroll", scrollHandler);
+
+	const handleClickDownload = async () => {
+		try {
+			const blobUrl = await downloadFile(file[0].Key);
+			const link = document.createElement("a");
+			link.href = blobUrl;
+			link.setAttribute("target", "_blank"); // en lugar de setAttribute("blank")
+			link.setAttribute("rel", "noopener noreferrer");
+			link.download = "Carlos-Jesus-CV.pdf";
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		} catch (error) {
+			console.error("Error descargando archivo:", error);
+		}
+	};
 
 	return (
 		<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? "sticky" : "navbar"}>
@@ -49,14 +80,14 @@ function NavBar() {
 							</Nav.Link>
 						</Nav.Item>
 
-						{/* 	<Nav.Item>
+						<Nav.Item>
 							<Nav.Link as={Link} to='/project' onClick={() => updateExpanded(false)}>
 								<AiOutlineFundProjectionScreen style={{marginBottom: "2px"}} /> Projects
 							</Nav.Link>
-						</Nav.Item> */}
+						</Nav.Item>
 
 						<Nav.Item className='fork-btn'>
-							<Button variant='primary' href={pdf} target='_blank' className='fork-btn-inner'>
+							<Button variant='primary' onClick={handleClickDownload} className='fork-btn-inner'>
 								<AiOutlineDownload />
 								Resume
 							</Button>
