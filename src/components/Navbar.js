@@ -4,9 +4,9 @@ import Nav from "react-bootstrap/Nav";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import {Link} from "react-router-dom";
-import {CgGitFork} from "react-icons/cg";
 import {AiFillStar, AiOutlineHome, AiOutlineUser, AiOutlineDownload, AiOutlineFundProjectionScreen} from "react-icons/ai";
 import {downloadFile, listFile} from "../aws-s3/awsS3";
+import {FaGithub} from "react-icons/fa";
 
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
@@ -80,11 +80,11 @@ function NavBar() {
 							</Nav.Link>
 						</Nav.Item>
 
-						<Nav.Item>
+						{/* <Nav.Item>
 							<Nav.Link as={Link} to='/project' onClick={() => updateExpanded(false)}>
 								<AiOutlineFundProjectionScreen style={{marginBottom: "2px"}} /> Projects
 							</Nav.Link>
-						</Nav.Item>
+						</Nav.Item> */}
 
 						<Nav.Item className='fork-btn'>
 							<Button variant='primary' onClick={handleClickDownload} className='fork-btn-inner'>
@@ -98,7 +98,7 @@ function NavBar() {
 								target='_blank'
 								className='fork-btn-inner'
 							>
-								<CgGitFork style={{fontSize: "1.2em"}} /> <AiFillStar style={{fontSize: "1.1em"}} />
+								<FaGithub style={{fontSize: "1.2em"}} />
 							</Button>
 						</Nav.Item>
 					</Nav>

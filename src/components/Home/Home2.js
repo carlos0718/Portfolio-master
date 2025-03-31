@@ -1,7 +1,7 @@
 import React from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import {AiFillGithub} from "react-icons/ai";
-import {FaLinkedinIn} from "react-icons/fa";
+import {FaLinkedinIn, FaWhatsapp} from "react-icons/fa";
 import Tilt from "react-parallax-tilt";
 import myImg from "../../Assets/avatar.svg";
 
@@ -70,6 +70,11 @@ function Home2() {
 									className='icon-colour  home-social-icons'
 								>
 									<FaLinkedinIn />
+								</a>
+							</li>
+							<li className='social-icons'>
+								<a href='https://wa.link/cl2vzy' target='_blank' rel='noreferrer' className='icon-colour  home-social-icons'>
+									<FaWhatsapp />
 								</a>
 							</li>
 						</ul>
