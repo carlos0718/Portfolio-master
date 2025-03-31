@@ -17,16 +17,16 @@ function Home2() {
 						<p className='home-about-body'>
 							I fell in love with programming,{" "}
 							<b className='purple'>in 2018 in the faculty of Computer Engineering at the University Buenos Aires </b>. Then{" "}
-							<b className='purple'>in 2019 I continued my studies at UTN</b> . In the year{" "}
-							<b className='purple'>2021 I had my first job as a full stack developer</b> and since then I have not stopped and at least
-							I have learned something, I think...😅
+							<b className='purple'>in 2019 I continued my studies at UTN</b> . At the end of 2020{" "}
+							<b className='purple'>I had my first job as a full stack developer</b> and since then I have not stopped and at least I
+							have learned something, I think...😅
 							<br />
 							<br />I am proficient in classic technologies like
 							<i>
 								<b className='purple'>
 									{" "}
-									C#, ASP.NET, .Net Core, Javascript, React Js, NextJs HTML 5, CSS 3, Api Context, Redux, NodeJs, Axios, Express,
-									MSSQL SERVER, PostgreSQL, GIT HUB, GIT LAB, SourceTree{" "}
+									C#, ASP.NET, .Net Core, Javascript, React Js, NextJs, HTML 5, CSS 3, Api Context, Redux, Zustand, Redis, NodeJs,
+									Axios, Express, MSSQL SERVER, PostgreSQL, GIT HUB, GIT LAB, Docker, AWS, SourceTree, Agile Methodology{" "}
 								</b>
 							</i>
 							{/*<br />
