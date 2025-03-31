@@ -1,12 +1,12 @@
 import React from "react";
-import { Col, Row } from "react-bootstrap";
-import { GoMarkGithub, GoDatabase } from "react-icons/go";
-import { RiGitlabFill } from "react-icons/ri";
-import { SiVisualstudio, SiVisualstudiocode, SiPostman, SiHeroku, SiVercel } from "react-icons/si";
+import {Col, Row} from "react-bootstrap";
+import {GoMarkGithub} from "react-icons/go";
+import {RiGitlabFill} from "react-icons/ri";
+import {SiJira, SiVisualstudio, SiVisualstudiocode, SiPostman, SiHeroku, SiVercel} from "react-icons/si";
 
 function Toolstack() {
-  return (
-		<Row style={{ justifyContent: "center", paddingBottom: "50px" }}>
+	return (
+		<Row style={{justifyContent: "center", paddingBottom: "50px"}}>
 			<Col xs={4} md={2} className='tech-icons'>
 				<SiVisualstudio />
 			</Col>
@@ -29,10 +29,10 @@ function Toolstack() {
 				<RiGitlabFill />
 			</Col>
 			<Col xs={4} md={2} className='tech-icons'>
-				<GoDatabase />
+				<SiJira />
 			</Col>
 		</Row>
-  );
+	);
 }
 
 export default Toolstack;
