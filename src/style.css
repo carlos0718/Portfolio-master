@@ -585,6 +585,22 @@ button:focus {
   transition: all 0.4s ease 0s !important;
 }
 
+/* --------- */
+/* Upload */
+/* --------- */
+
+.upload-section {
+  position: relative !important;
+  padding-top: 150px !important;
+  padding-bottom: 30px !important;
+  background-image: var(--section-background-color) !important;
+  color: white !important;
+  min-height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 767px) {
   .tech-icons {
     margin: 10px !important;

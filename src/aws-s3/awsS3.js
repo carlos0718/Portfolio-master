@@ -61,19 +61,21 @@ export async function downloadFile(filename) {
 /**
  * Descarga (lee) un archivo de S3 y retorna un Blob URL para mostrarlo.
  * @param {File} file archivo a subir
- * @param {*} filename nombre con el que se guardará el archivo
+ * @param {string} filename nombre con el que se guardará el archivo
  * @return {Promise} Respuesta de la subida
  */
 export async function uploadFile(file, filename) {
 	try {
+		const arrayBuffer = await file.arrayBuffer();
+		const buffer = new Uint8Array(arrayBuffer);
 		const params = {
 			Bucket: BUCKET_NAME,
 			Key: filename,
-			Body: file,
+			Body: buffer,
 		};
-
 		const command = new PutObjectCommand(params);
 		const response = await s3Client.send(command);
+		console.log("Archivo subido", response);
 		return response;
 	} catch (error) {
 		console.error("Error al subir archivo", error);

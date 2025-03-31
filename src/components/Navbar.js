@@ -42,7 +42,7 @@ function NavBar() {
 			const blobUrl = await downloadFile(file[0].Key);
 			const link = document.createElement("a");
 			link.href = blobUrl;
-			link.setAttribute("target", "_blank"); // en lugar de setAttribute("blank")
+			link.setAttribute("target", "_blank");
 			link.setAttribute("rel", "noopener noreferrer");
 			link.download = "Carlos-Jesus-CV.pdf";
 			document.body.appendChild(link);
