@@ -1,12 +1,13 @@
-import React, {useState} from "react";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
-import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
-import {Link} from "react-router-dom";
-import {AiFillStar, AiOutlineHome, AiOutlineUser, AiOutlineDownload, AiOutlineFundProjectionScreen} from "react-icons/ai";
-import {downloadFile, listFile} from "../aws-s3/awsS3";
-import {FaGithub} from "react-icons/fa";
+import React, {useState} from 'react';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import {AiFillStar, AiOutlineDownload, AiOutlineFundProjectionScreen, AiOutlineHome, AiOutlineUser} from 'react-icons/ai';
+import {FaGithub} from 'react-icons/fa';
+import {Link} from 'react-router-dom';
+
+import {downloadFile, listFile} from '../aws-s3/awsS3';
 
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
@@ -22,7 +23,7 @@ function NavBar() {
 			const file = await listFile();
 			setFile(file);
 		} catch (error) {
-			console.error("Error al descargar archivo", error);
+			console.error('Error al descargar archivo', error);
 			throw error;
 		}
 	};
@@ -35,31 +36,31 @@ function NavBar() {
 		}
 	}
 
-	window.addEventListener("scroll", scrollHandler);
+	window.addEventListener('scroll', scrollHandler);
 
 	const handleClickDownload = async () => {
 		try {
 			const blobUrl = await downloadFile(file[0].Key);
-			const link = document.createElement("a");
+			const link = document.createElement('a');
 			link.href = blobUrl;
-			link.setAttribute("target", "_blank");
-			link.setAttribute("rel", "noopener noreferrer");
-			link.download = "Carlos-Jesus-CV.pdf";
+			link.setAttribute('target', '_blank');
+			link.setAttribute('rel', 'noopener noreferrer');
+			link.download = 'Carlos-Jesus-CV.pdf';
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
 		} catch (error) {
-			console.error("Error descargando archivo:", error);
+			console.error('Error descargando archivo:', error);
 		}
 	};
 
 	return (
-		<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? "sticky" : "navbar"}>
+		<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? 'sticky' : 'navbar'}>
 			<Container>
 				<Navbar.Toggle
 					aria-controls='responsive-navbar-nav'
 					onClick={() => {
-						updateExpanded(expand ? false : "expanded");
+						updateExpanded(expand ? false : 'expanded');
 					}}
 				>
 					<span></span>
@@ -70,21 +71,21 @@ function NavBar() {
 					<Nav className='ms-auto' defaultActiveKey='#home'>
 						<Nav.Item>
 							<Nav.Link as={Link} to='/' onClick={() => updateExpanded(false)}>
-								<AiOutlineHome style={{marginBottom: "2px"}} /> Home
+								<AiOutlineHome style={{marginBottom: '2px'}} /> Home
 							</Nav.Link>
 						</Nav.Item>
 
 						<Nav.Item>
 							<Nav.Link as={Link} to='/about' onClick={() => updateExpanded(false)}>
-								<AiOutlineUser style={{marginBottom: "2px"}} /> About
+								<AiOutlineUser style={{marginBottom: '2px'}} /> About
 							</Nav.Link>
 						</Nav.Item>
 
-						{/* <Nav.Item>
+						<Nav.Item>
 							<Nav.Link as={Link} to='/project' onClick={() => updateExpanded(false)}>
-								<AiOutlineFundProjectionScreen style={{marginBottom: "2px"}} /> Projects
+								<AiOutlineFundProjectionScreen style={{marginBottom: '2px'}} /> Projects
 							</Nav.Link>
-						</Nav.Item> */}
+						</Nav.Item>
 
 						<Nav.Item className='fork-btn'>
 							<Button variant='primary' onClick={handleClickDownload} className='fork-btn-inner'>
@@ -98,7 +99,7 @@ function NavBar() {
 								target='_blank'
 								className='fork-btn-inner'
 							>
-								<FaGithub style={{fontSize: "1.2em"}} />
+								<FaGithub style={{fontSize: '1.2em'}} />
 							</Button>
 						</Nav.Item>
 					</Nav>

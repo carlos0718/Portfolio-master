@@ -492,6 +492,24 @@ button:focus {
   box-shadow: 0 4px 4px 5px rgba(129, 72, 144, 0.561) !important;
 }
 
+.languages-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 20px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.languages-container span {
+  background-color: #c770f0;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+}
+
 .blog-card {
   padding-top: 50px !important;
   padding-bottom: 50px !important;
@@ -789,4 +807,33 @@ button:focus {
 
 .fork-btn-inner::after {
   display: none !important;
+}
+
+/* Estilos para la paginación */
+.pagination {
+  margin: 20px 0;
+}
+
+.pagination .page-item .page-link {
+  background-color: #1d1d1d;
+  border-color: #6c757d;
+  color: white;
+  margin: 0 2px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #623686;
+  border-color: #623686;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: #6d20c5d7;
+  border-color: #6d20c5d7;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: #1d1d1d;
+  border-color: #6c757d;
+  color: #6c757d;
 }
