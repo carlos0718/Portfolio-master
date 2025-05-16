@@ -1,9 +1,7 @@
-import React from "react";
-import {Col, Container, Row} from "react-bootstrap";
-import {AiFillGithub} from "react-icons/ai";
-import {FaLinkedinIn, FaWhatsapp} from "react-icons/fa";
-import Tilt from "react-parallax-tilt";
-import myImg from "../../Assets/avatar.svg";
+import React from 'react';
+import {Col, Container, Row} from 'react-bootstrap';
+import {AiFillGithub} from 'react-icons/ai';
+import {FaLinkedinIn, FaWhatsapp} from 'react-icons/fa';
 
 function Home2() {
 	return (
@@ -11,7 +9,7 @@ function Home2() {
 			<Container>
 				<Row>
 					<Col md={8} className='home-about-description'>
-						<h1 style={{fontSize: "2.6em"}}>
+						{/* <h1 style={{fontSize: "2.6em"}}>
 							LET ME <span className='purple'> INTRODUCE </span> MYSELF
 						</h1>
 						<p className='home-about-body'>
@@ -28,27 +26,27 @@ function Home2() {
 									C#, ASP.NET, .Net Core, Javascript, React Js, NextJs, HTML 5, CSS 3, Api Context, Redux, Zustand, Redis, NodeJs,
 									Axios, Express, MSSQL SERVER, PostgreSQL, GIT HUB, GIT LAB, Docker, AWS, SourceTree, Agile Methodology{" "}
 								</b>
-							</i>
-							{/*<br />
+							</i> */}
+						{/*<br />
 							<br />
 							 My field of Interest's are building new &nbsp;
 							<i>
 								<b className='purple'>Data analysis with Python and Excel </b> and also in areas related to{" "}
 								<b className='purple'>backend development with Node js and frameworks.</b>
 							</i> */}
-							<br />
+						{/* <br />
 							<br />
 							Whenever possible, I also apply my passion for developing products with <b className='purple'>React js y .NET Core</b> and
 							<i>
 								<b className='purple'> Modern libraries and frameworks with Javascript and C# </b>
 							</i>
-						</p>
+						</p> */}
 					</Col>
-					<Col md={4} className='myAvtar'>
+					{/* <Col md={4} className='myAvtar'>
 						<Tilt>
 							<img src={myImg} className='img-fluid' alt='avatar' />
 						</Tilt>
-					</Col>
+					</Col> */}
 				</Row>
 				<Row>
 					<Col md={12} className='home-about-social'>
