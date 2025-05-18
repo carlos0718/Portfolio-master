@@ -24,6 +24,7 @@ function ProjectCard(props) {
 			</div>
 			<Card.Body>
 				<Card.Title>{props.title}</Card.Title>
+				<small style={{color: '#6c757d', display: 'block', marginBottom: '10px'}}>Creado el {props.createdAt}</small>
 				<Card.Text style={{textAlign: 'justify'}}>{props.description}</Card.Text>
 				{'\n'}
 				{'\n'}

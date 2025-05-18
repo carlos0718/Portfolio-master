@@ -2,10 +2,31 @@
 export const GITHUB_USERNAME = process.env.REACT_APP_GITHUB_USERNAME; // Reemplaza con tu nombre de usuario de GitHub
 export const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN; // Reemplaza con tu token personal de GitHub
 
+// Función para obtener la imagen de perfil de GitHub
+export const fetchGitHubProfile = async () => {
+	try {
+		const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, {
+			headers: {
+				Authorization: `token ${GITHUB_TOKEN}`
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error('Error al obtener el perfil de GitHub');
+		}
+
+		const profile = await response.json();
+		return profile.avatar_url;
+	} catch (error) {
+		console.error('Error:', error);
+		return null;
+	}
+};
+
 // Función para obtener los repositorios de GitHub
 export const fetchGitHubRepos = async () => {
 	try {
-		const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`, {
+		const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=created&direction=desc&per_page=100`, {
 			headers: {
 				Authorization: `token ${GITHUB_TOKEN}`
 			}
@@ -34,8 +55,9 @@ export const fetchGitHubRepos = async () => {
 				return {...repo, languages};
 			})
 		);
-		console.log(reposWithLanguages);
-		return reposWithLanguages;
+
+		// Ordenar por fecha de creación (más reciente primero)
+		return reposWithLanguages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 	} catch (error) {
 		console.error('Error:', error);
 		return [];
