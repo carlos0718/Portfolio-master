@@ -29,7 +29,12 @@ function Projects() {
 						description: repo.description || 'Sin descripción disponible',
 						ghLink: repo.html_url,
 						demoLink: repo.homepage || repo.html_url,
-						languages: repo.languages || {} // Asegurarnos de que languages existe
+						languages: repo.languages || {},
+						createdAt: new Date(repo.created_at).toLocaleDateString('es-ES', {
+							year: 'numeric',
+							month: 'long',
+							day: 'numeric'
+						})
 					}));
 
 				console.log('Proyectos con lenguajes:', filteredProjects); // Para debugging
@@ -74,7 +79,8 @@ function Projects() {
 										description={project.description}
 										ghLink={project.ghLink}
 										demoLink={project.demoLink}
-										languages={project.languages} // Asegurarnos de pasar los lenguajes
+										languages={project.languages}
+										createdAt={project.createdAt}
 									/>
 								</Col>
 							))}
