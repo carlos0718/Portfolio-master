@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Col, Container, Row, Spinner} from 'react-bootstrap';
 
-import defaultImage from '../../Assets/Projects/chatify.png';
 import {fetchGitHubRepos} from '../../config/github';
+import {getProjectImage, isFrontendProject} from '../../utils/projectImages';
 import PaginationComponent from '../Pagination';
 import Particle from '../Particle';
 import ProjectCard from './ProjectCards';
-
-// Imágenes por defecto para proyectos
 
 function Projects() {
 	const [projects, setProjects] = useState([]);
@@ -22,9 +20,10 @@ function Projects() {
 				// Filtrar y transformar los repositorios que quieres mostrar
 				const filteredProjects = repos
 					.filter((repo) => !repo.fork) // Excluir forks
+					.filter((repo) => isFrontendProject(repo.languages)) // Filtrar solo proyectos frontend
 					.map((repo) => ({
 						id: repo.id,
-						image: defaultImage,
+						image: getProjectImage(repo.name, repo.languages), // Asignar imagen según el proyecto
 						title: repo.name,
 						description: repo.description || 'Sin descripción disponible',
 						ghLink: repo.html_url,
@@ -34,10 +33,14 @@ function Projects() {
 							year: 'numeric',
 							month: 'long',
 							day: 'numeric'
-						})
-					}));
+						}),
+						// Calcular porcentaje de JavaScript para ordenamiento
+						jsPercentage: calculateJavaScriptPercentage(repo.languages)
+					}))
+					// Ordenar por porcentaje de JavaScript (mayor a menor)
+					.sort((a, b) => b.jsPercentage - a.jsPercentage);
 
-				console.log('Proyectos con lenguajes:', filteredProjects); // Para debugging
+				console.log('Proyectos frontend filtrados:', filteredProjects); // Para debugging
 				setProjects(filteredProjects);
 			} catch (error) {
 				console.error('Error al cargar proyectos:', error);
@@ -48,6 +51,16 @@ function Projects() {
 
 		loadProjects();
 	}, []);
+
+	// Función auxiliar para calcular el porcentaje de JavaScript
+	const calculateJavaScriptPercentage = (languages) => {
+		if (!languages || Object.keys(languages).length === 0) return 0;
+
+		const jsBytes = languages['JavaScript'] || 0;
+		const totalBytes = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
+
+		return totalBytes > 0 ? (jsBytes / totalBytes) * 100 : 0;
+	};
 
 	// Calcular los índices para la paginación
 	const indexOfLastProject = currentPage * projectsPerPage;
