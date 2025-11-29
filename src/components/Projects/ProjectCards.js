@@ -1,11 +1,25 @@
 import React from 'react';
-import {Button, Card} from 'react-bootstrap';
+import {Badge, Button, Card} from 'react-bootstrap';
 import {BsGithub} from 'react-icons/bs';
 import {CgWebsite} from 'react-icons/cg';
 
 function ProjectCard(props) {
 	// Determinar si mostrar imagen o iframe
 	const hasValidDemo = props.demoLink && props.demoLink !== props.ghLink && !props.demoLink.includes('github.com');
+
+	// Función para obtener el color del badge según el tipo de proyecto
+	const getBadgeVariant = (type) => {
+		switch (type) {
+			case 'frontend':
+				return 'info';
+			case 'backend':
+				return 'success';
+			case 'fullstack':
+				return 'warning';
+			default:
+				return 'secondary';
+		}
+	};
 
 	return (
 		<Card className='project-card-view'>
@@ -30,7 +44,14 @@ function ProjectCard(props) {
 				<Card.Img variant='top' src={props.imgPath} alt={props.title} style={{height: '250px', objectFit: 'cover'}} />
 			)}
 			<Card.Body>
-				<Card.Title>{props.title}</Card.Title>
+				<div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
+					<Card.Title style={{marginBottom: 0}}>{props.title}</Card.Title>
+					{props.projectType && (
+						<Badge bg={getBadgeVariant(props.projectType)} style={{textTransform: 'capitalize'}}>
+							{props.projectType}
+						</Badge>
+					)}
+				</div>
 				<small style={{color: '#6c757d', display: 'block', marginBottom: '10px'}}>Creado el {props.createdAt}</small>
 				<Card.Text style={{textAlign: 'justify'}}>{props.description}</Card.Text>
 				{'\n'}

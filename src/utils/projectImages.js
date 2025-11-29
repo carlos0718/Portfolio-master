@@ -1,6 +1,7 @@
 // Importar todas las imágenes disponibles
-import chatify from '../Assets/Projects/chatify.png';
+
 import blog from '../Assets/Projects/blog.png';
+import chatify from '../Assets/Projects/chatify.png';
 import codeEditor from '../Assets/Projects/codeEditor.png';
 import emotion from '../Assets/Projects/emotion.png';
 import leaf from '../Assets/Projects/leaf.png';
@@ -89,29 +90,118 @@ export const getProjectImage = (projectName, languages = {}) => {
 };
 
 /**
+ * Clasificación de lenguajes por tipo
+ */
+const FRONTEND_LANGUAGES = ['JavaScript', 'TypeScript', 'HTML', 'CSS', 'SCSS', 'SASS', 'Less', 'Vue', 'Svelte'];
+const BACKEND_LANGUAGES = ['Python', 'Java', 'C#', 'Ruby', 'PHP', 'Go', 'Rust', 'Kotlin', 'Swift', 'C++', 'C', 'Dart'];
+
+/**
+ * Calcula los porcentajes de frontend y backend de un proyecto
+ * @param {object} languages - Objeto con los lenguajes del proyecto
+ * @returns {object} - {frontendPercentage, backendPercentage, totalBytes}
+ */
+const calculateLanguagePercentages = (languages = {}) => {
+	const totalBytes = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
+
+	if (totalBytes === 0) return {frontendPercentage: 0, backendPercentage: 0, totalBytes: 0};
+
+	const frontendBytes = Object.entries(languages)
+		.filter(([lang]) => FRONTEND_LANGUAGES.includes(lang))
+		.reduce((sum, [, bytes]) => sum + bytes, 0);
+
+	const backendBytes = Object.entries(languages)
+		.filter(([lang]) => BACKEND_LANGUAGES.includes(lang))
+		.reduce((sum, [, bytes]) => sum + bytes, 0);
+
+	return {
+		frontendPercentage: (frontendBytes / totalBytes) * 100,
+		backendPercentage: (backendBytes / totalBytes) * 100,
+		totalBytes
+	};
+};
+
+/**
  * Determina si un proyecto es frontend basándose en sus lenguajes
  * @param {object} languages - Objeto con los lenguajes del proyecto
  * @returns {boolean} - true si es un proyecto frontend
  */
 export const isFrontendProject = (languages = {}) => {
-	const frontendLanguages = ['JavaScript', 'TypeScript', 'HTML', 'CSS', 'SCSS', 'Vue', 'React'];
+	const {backendPercentage} = calculateLanguagePercentages(languages);
 	const languagesList = Object.keys(languages);
 
 	// Verificar si tiene lenguajes frontend
-	const hasFrontendLanguages = languagesList.some((lang) => frontendLanguages.includes(lang));
+	const hasFrontendLanguages = languagesList.some((lang) => FRONTEND_LANGUAGES.includes(lang));
 
-	// Verificar que no sea principalmente backend
-	const backendLanguages = ['Python', 'Java', 'C#', 'Ruby', 'PHP', 'Go', 'Rust'];
-	const totalBytes = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
-	const backendBytes = Object.entries(languages)
-		.filter(([lang]) => backendLanguages.includes(lang))
-		.reduce((sum, [, bytes]) => sum + bytes, 0);
-
-	const backendPercentage = totalBytes > 0 ? (backendBytes / totalBytes) * 100 : 0;
-
-	// Es frontend si tiene lenguajes frontend y el backend no es más del 50%
-	return hasFrontendLanguages && backendPercentage < 50;
+	// Es frontend si tiene lenguajes frontend y el backend no supera el 30%
+	return hasFrontendLanguages && backendPercentage < 30;
 };
 
-const projectUtils = {getProjectImage, isFrontendProject};
+/**
+ * Determina si un proyecto es backend basándose en sus lenguajes
+ * @param {object} languages - Objeto con los lenguajes del proyecto
+ * @returns {boolean} - true si es un proyecto backend
+ */
+export const isBackendProject = (languages = {}) => {
+	const {backendPercentage} = calculateLanguagePercentages(languages);
+	const languagesList = Object.keys(languages);
+
+	// Verificar si tiene lenguajes backend
+	const hasBackendLanguages = languagesList.some((lang) => BACKEND_LANGUAGES.includes(lang));
+
+	// Es backend si tiene lenguajes backend predominantes
+	return hasBackendLanguages && backendPercentage > 50;
+};
+
+/**
+ * Determina si un proyecto es fullstack basándose en sus lenguajes
+ * @param {object} languages - Objeto con los lenguajes del proyecto
+ * @returns {boolean} - true si es un proyecto fullstack
+ */
+export const isFullstackProject = (languages = {}) => {
+	const {frontendPercentage, backendPercentage} = calculateLanguagePercentages(languages);
+	const languagesList = Object.keys(languages);
+
+	// Verificar si tiene tanto frontend como backend
+	const hasFrontendLanguages = languagesList.some((lang) => FRONTEND_LANGUAGES.includes(lang));
+	const hasBackendLanguages = languagesList.some((lang) => BACKEND_LANGUAGES.includes(lang));
+
+	// Es fullstack si tiene ambos tipos de lenguajes y ambos superan el 20%
+	return hasFrontendLanguages && hasBackendLanguages && frontendPercentage >= 20 && backendPercentage >= 20;
+};
+
+/**
+ * Obtiene el tipo de proyecto (frontend, backend, fullstack)
+ * @param {object} languages - Objeto con los lenguajes del proyecto
+ * @returns {string} - 'fullstack', 'frontend', 'backend', o 'other'
+ */
+export const getProjectType = (languages = {}) => {
+	if (isFullstackProject(languages)) return 'fullstack';
+	if (isFrontendProject(languages)) return 'frontend';
+	if (isBackendProject(languages)) return 'backend';
+	return 'other';
+};
+
+/**
+ * Filtra proyectos por tipo
+ * @param {Array} projects - Array de proyectos
+ * @param {string} type - 'frontend', 'backend', 'fullstack', o 'all'
+ * @returns {Array} - Proyectos filtrados
+ */
+export const filterProjectsByType = (projects, type = 'all') => {
+	if (type === 'all') return projects;
+
+	return projects.filter((project) => {
+		const projectType = getProjectType(project.languages);
+		return projectType === type;
+	});
+};
+
+const projectUtils = {
+	getProjectImage,
+	isFrontendProject,
+	isBackendProject,
+	isFullstackProject,
+	getProjectType,
+	filterProjectsByType
+};
 export default projectUtils;
