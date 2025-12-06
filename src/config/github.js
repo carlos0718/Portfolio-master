@@ -23,6 +23,28 @@ export const fetchGitHubProfile = async () => {
 	}
 };
 
+// Función para obtener la cantidad total de repositorios (públicos + privados)
+export const fetchGitHubRepoCount = async () => {
+	try {
+		const response = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, {
+			headers: {
+				Authorization: `token ${GITHUB_TOKEN}`
+			}
+		});
+
+		if (!response.ok) {
+			throw new Error('Error al obtener el perfil de GitHub');
+		}
+
+		const profile = await response.json();
+		// public_repos + total_private_repos = total de repositorios
+		return profile.public_repos + (profile.total_private_repos || 0);
+	} catch (error) {
+		console.error('Error:', error);
+		return 20; // Valor por defecto
+	}
+};
+
 // Función para obtener los repositorios de GitHub
 export const fetchGitHubRepos = async () => {
 	try {

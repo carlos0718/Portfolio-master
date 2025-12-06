@@ -1,23 +1,22 @@
-import React from "react";
-import Typewriter from "typewriter-effect";
+import React from 'react';
+import Typewriter from 'typewriter-effect';
 
 function Type() {
-	let date = new Date();
-	let year = date.getFullYear() - 2021;
+	const date = new Date().getFullYear();
+	const yearsOfExperience = date - 2020;
 	return (
 		<Typewriter
 			options={{
 				strings: [
-					`Full Stack Developer with +${year} years of experience`,
-					"Tutor in Bootcamp CoderHouse",
-					"Mentor Web Developer in ISTEA Institute",
-					"Javascript content creator in spanish at Coursera",
-					"My hoobies is play game and watch movies",
-					"And I love football ⚽ ⚽ ⚽",
+					`I have more than +${yearsOfExperience} years of experience creating digital solutions and building scalable applications.`,
+					'I work with React, Next.js, Node.js, and .NET to develop fast and modern web apps.',
+					'I also use AI tools to automate tasks and improve development speed.',
+					'I enjoy turning ideas into real products, focusing on clean code, good architecture, and simple user interfaces.',
+					'I also teach and mentor students at ISTEA, sharing my knowledge and promoting constant learning.'
 				],
 				autoStart: true,
 				loop: true,
-				deleteSpeed: 50,
+				deleteSpeed: 60
 			}}
 		/>
 	);

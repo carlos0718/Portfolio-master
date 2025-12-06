@@ -1,30 +1,71 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import {AiFillStar, AiOutlineDownload, AiOutlineFundProjectionScreen, AiOutlineHome, AiOutlineUser} from 'react-icons/ai';
-import {FaGithub} from 'react-icons/fa';
+import {AiOutlineDownload} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
+import {motion, AnimatePresence} from 'framer-motion';
 
 import {downloadFile, listFile} from '../aws-s3/awsS3';
 
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
 	const [navColour, updateNavbar] = useState(false);
-	const [file, setFile] = useState([]);
+	const [cvFiles, setCvFiles] = useState([]);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const dropdownRef = useRef(null);
 
 	React.useEffect(() => {
-		loadFile();
+		// Cargar archivos PDF desde S3
+		if (process.env.REACT_APP_AWS_REGION) {
+			loadCVFiles();
+		}
 	}, []);
 
-	const loadFile = async () => {
+	// Cerrar dropdown al hacer click fuera
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+				setIsDropdownOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => document.removeEventListener('mousedown', handleClickOutside);
+	}, []);
+
+	const loadCVFiles = async () => {
 		try {
-			const file = await listFile();
-			setFile(file);
+			const files = await listFile();
+			// Filtrar solo archivos PDF
+			const pdfFiles = files.filter((file) => file.Key.toLowerCase().endsWith('.pdf'));
+
+			// Convertir a formato para el dropdown
+			const cvOptions = pdfFiles.map((file) => {
+				const fileName = file.Key;
+				// Extraer nombre legible del archivo
+				const label = fileName
+					.replace('.pdf', '')
+					.replace(/-/g, ' ')
+					.replace(/_/g, ' ')
+					.split('/')
+					.pop(); // Por si hay carpetas
+
+				return {
+					label: label,
+					fileName: fileName,
+					key: file.Key
+				};
+			});
+
+			setCvFiles(cvOptions);
 		} catch (error) {
-			console.error('Error al descargar archivo', error);
-			throw error;
+			console.error('Error al cargar archivos desde S3', error);
+			// Si falla, usar archivos locales por defecto
+			setCvFiles([
+				{label: 'CV Español', fileName: 'Carlos-Jesus-CV.pdf', key: 'Carlos-Jesus-CV.pdf'}
+			]);
 		}
 	};
 
@@ -38,25 +79,94 @@ function NavBar() {
 
 	window.addEventListener('scroll', scrollHandler);
 
-	const handleClickDownload = async () => {
+	// Variantes de animación para el dropdown
+	const dropdownVariants = {
+		hidden: {
+			opacity: 0,
+			scale: 0.95,
+			y: -10,
+			transition: {
+				duration: 0.2
+			}
+		},
+		visible: {
+			opacity: 1,
+			scale: 1,
+			y: 0,
+			transition: {
+				duration: 0.3,
+				staggerChildren: 0.1,
+				delayChildren: 0.1
+			}
+		},
+		exit: {
+			opacity: 0,
+			scale: 0.95,
+			y: -10,
+			transition: {
+				duration: 0.2
+			}
+		}
+	};
+
+	const itemVariants = {
+		hidden: {
+			opacity: 0,
+			x: -20
+		},
+		visible: {
+			opacity: 1,
+			x: 0,
+			transition: {
+				type: 'spring',
+				stiffness: 300,
+				damping: 24
+			}
+		}
+	};
+
+	const handleClickDownload = async (cvFile) => {
 		try {
-			const blobUrl = await downloadFile(file[0].Key);
-			const link = document.createElement('a');
-			link.href = blobUrl;
-			link.setAttribute('target', '_blank');
-			link.setAttribute('rel', 'noopener noreferrer');
-			link.download = 'Carlos-Jesus-CV.pdf';
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
+			setIsDropdownOpen(false);
+			// Si AWS está configurado, descargar desde S3
+			if (process.env.REACT_APP_AWS_REGION && cvFile.key) {
+				const blobUrl = await downloadFile(cvFile.key);
+				const link = document.createElement('a');
+				link.href = blobUrl;
+				link.setAttribute('target', '_blank');
+				link.setAttribute('rel', 'noopener noreferrer');
+				link.download = cvFile.fileName;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				URL.revokeObjectURL(blobUrl); // Limpiar URL
+			} else {
+				// Fallback: usar archivo local
+				const link = document.createElement('a');
+				link.href = `/${cvFile.fileName}`;
+				link.setAttribute('target', '_blank');
+				link.setAttribute('rel', 'noopener noreferrer');
+				link.download = cvFile.fileName;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
 		} catch (error) {
 			console.error('Error descargando archivo:', error);
+			// Fallback: intentar abrir el CV local
+			window.open(`/${cvFile.fileName}`, '_blank');
 		}
 	};
 
 	return (
 		<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? 'sticky' : 'navbar'}>
-			<Container>
+			<Container fluid className='navbar-container'>
+				<Navbar.Brand as={Link} to='/' className='navbar-brand-custom'>
+					<div className='brand-logo'>
+						<div className='brand-icon'>CJ</div>
+						<span className='brand-text'>carlos.dev</span>
+					</div>
+				</Navbar.Brand>
 				<Navbar.Toggle
 					aria-controls='responsive-navbar-nav'
 					onClick={() => {
@@ -68,41 +178,118 @@ function NavBar() {
 					<span></span>
 				</Navbar.Toggle>
 				<Navbar.Collapse id='responsive-navbar-nav'>
-					<Nav className='ms-auto' defaultActiveKey='#home'>
+					<Nav className='mx-auto navbar-nav-center' defaultActiveKey='#home'>
 						<Nav.Item>
 							<Nav.Link as={Link} to='/' onClick={() => updateExpanded(false)}>
-								<AiOutlineHome style={{marginBottom: '2px'}} /> Home
-							</Nav.Link>
-						</Nav.Item>
-
-						<Nav.Item>
-							<Nav.Link as={Link} to='/about' onClick={() => updateExpanded(false)}>
-								<AiOutlineUser style={{marginBottom: '2px'}} /> About
+								Home
 							</Nav.Link>
 						</Nav.Item>
 
 						<Nav.Item>
 							<Nav.Link as={Link} to='/project' onClick={() => updateExpanded(false)}>
-								<AiOutlineFundProjectionScreen style={{marginBottom: '2px'}} /> Projects
+								Projects
 							</Nav.Link>
 						</Nav.Item>
 
-						<Nav.Item className='fork-btn'>
-							<Button variant='primary' onClick={handleClickDownload} className='fork-btn-inner'>
-								<AiOutlineDownload />
-								Resume
-							</Button>
+						{/* <Nav.Item>
+							<Nav.Link as={Link} to='/about' onClick={() => updateExpanded(false)}>
+								Sobre mí
+							</Nav.Link>
 						</Nav.Item>
-						<Nav.Item className='fork-btn'>
-							<Button
-								href='https://github.com/carlos0718?tab=repositories&q=&type=&language=javascript'
-								target='_blank'
-								className='fork-btn-inner'
-							>
-								<FaGithub style={{fontSize: '1.2em'}} />
-							</Button>
-						</Nav.Item>
+ */}
+						{/* <Nav.Item>
+							<Nav.Link href='#contact' onClick={() => updateExpanded(false)}>
+								Contacto
+							</Nav.Link>
+						</Nav.Item> */}
 					</Nav>
+					<div className='navbar-buttons'>
+						<div className='cv-dropdown-container' ref={dropdownRef} style={{position: 'relative'}}>
+							<motion.div
+								whileHover={{
+									y: [0, -8, 0],
+									transition: {
+										duration: 0.6,
+										repeat: Infinity,
+										repeatType: 'loop',
+										ease: 'easeInOut'
+									}
+								}}
+								whileTap={{scale: 0.95}}
+							>
+								<Button
+									variant='outline-light'
+									onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+									className='btn-download-cv'
+									style={{position: 'relative'}}
+								>
+									<AiOutlineDownload style={{marginRight: '8px'}} />
+									Descargar CV
+								</Button>
+							</motion.div>
+
+							<AnimatePresence>
+								{isDropdownOpen && (
+									<motion.div
+										className='cv-dropdown-menu'
+										variants={dropdownVariants}
+										initial='hidden'
+										animate='visible'
+										exit='exit'
+										style={{
+											position: 'absolute',
+											top: 'calc(100% + 8px)',
+											left: 0,
+											background: 'rgba(20, 20, 30, 0.95)',
+											backdropFilter: 'blur(10px)',
+											border: '1px solid rgba(168, 85, 247, 0.3)',
+											borderRadius: '12px',
+											padding: '8px',
+											minWidth: '200px',
+											zIndex: 1000,
+											boxShadow: '0 8px 32px rgba(168, 85, 247, 0.2)'
+										}}
+									>
+										{cvFiles.map((cvFile, index) => (
+											<motion.button
+												key={index}
+												variants={itemVariants}
+												onClick={() => handleClickDownload(cvFile)}
+												className='cv-dropdown-item'
+												whileHover={{
+													x: 4,
+													backgroundColor: 'rgba(168, 85, 247, 0.1)',
+													transition: {duration: 0.2}
+												}}
+												style={{
+													width: '100%',
+													padding: '12px 16px',
+													background: 'transparent',
+													border: 'none',
+													color: '#fff',
+													textAlign: 'left',
+													cursor: 'pointer',
+													borderRadius: '8px',
+													fontSize: '14px',
+													fontWeight: '500',
+													display: 'flex',
+													alignItems: 'center',
+													gap: '8px',
+													transition: 'all 0.2s ease'
+												}}
+											>
+												<AiOutlineDownload size={16} style={{color: '#a855f7'}} />
+												{cvFile.label}
+											</motion.button>
+										))}
+									</motion.div>
+								)}
+							</AnimatePresence>
+						</div>
+						<Button href='https://wa.me/+5491167896758' target='_blank' className='btn-contact-me'>
+							Contáctame
+						</Button>
+					</div>
 				</Navbar.Collapse>
 			</Container>
 		</Navbar>
