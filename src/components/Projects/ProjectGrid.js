@@ -1,13 +1,15 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import {motion} from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import ProjectModal from './ProjectModal';
+import ProjectFilters from './ProjectFilters';
+import SkeletonCard from './SkeletonCard';
 
 const GRID_CONTAINER_STYLE = {
 	display: 'grid',
 	gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
 	gap: '35px',
-	padding: '60px 0 20px 0',
+	padding: '20px 0',
 	maxWidth: '1200px',
 	margin: '0 auto',
 	perspective: '1000px'
@@ -40,11 +42,27 @@ const SECTION_SUBTITLE_STYLE = {
 	color: 'rgba(255, 255, 255, 0.7)',
 	fontSize: '1.1rem',
 	textAlign: 'center',
-	marginBottom: '40px'
+	marginBottom: '30px'
 };
 
-const INITIAL_LOAD = 6;
-const LOAD_MORE_COUNT = 3;
+const COUNTER_STYLE = {
+	color: '#a855f7',
+	fontSize: '1rem',
+	textAlign: 'center',
+	marginBottom: '30px',
+	fontWeight: '600'
+};
+
+const NO_RESULTS_STYLE = {
+	color: 'rgba(255, 255, 255, 0.7)',
+	fontSize: '1.2rem',
+	textAlign: 'center',
+	padding: '80px 20px',
+	marginTop: '40px'
+};
+
+const INITIAL_LOAD = 12;
+const LOAD_MORE_COUNT = 8;
 
 function ProjectGrid({projects}) {
 	const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD);
@@ -54,8 +72,103 @@ function ProjectGrid({projects}) {
 	const loadMoreRef = useRef(null);
 	const observerRef = useRef(null);
 
-	const visibleProjects = projects.slice(0, visibleCount);
-	const hasMore = visibleCount < projects.length;
+	// Estados de filtros
+	const [searchTerm, setSearchTerm] = useState('');
+	const [selectedTechs, setSelectedTechs] = useState([]);
+	const [selectedType, setSelectedType] = useState('');
+	const [selectedYear, setSelectedYear] = useState('');
+	const [sortBy, setSortBy] = useState('recent');
+
+	// Extraer opciones únicas de los proyectos
+	const {availableTechs, availableTypes, availableYears} = useMemo(() => {
+		const techsSet = new Set();
+		const typesSet = new Set();
+		const yearsSet = new Set();
+
+		projects.forEach((project) => {
+			// Tecnologías desde languages
+			if (project.languages) {
+				Object.keys(project.languages).forEach((lang) => techsSet.add(lang));
+			}
+			// Tipos desde topics
+			if (project.topics && project.topics.length > 0) {
+				project.topics.forEach((topic) => typesSet.add(topic));
+			}
+			// Años desde createdAt
+			if (project.createdAt) {
+				const year = new Date(project.createdAt).getFullYear();
+				if (!isNaN(year)) {
+					yearsSet.add(year.toString());
+				}
+			}
+		});
+
+		return {
+			availableTechs: Array.from(techsSet).sort(),
+			availableTypes: Array.from(typesSet).sort(),
+			availableYears: Array.from(yearsSet).sort().reverse()
+		};
+	}, [projects]);
+
+	// Filtrar y ordenar proyectos
+	const filteredAndSortedProjects = useMemo(() => {
+		let filtered = [...projects];
+
+		// Filtro de búsqueda
+		if (searchTerm) {
+			const search = searchTerm.toLowerCase();
+			filtered = filtered.filter(
+				(project) =>
+					project.title.toLowerCase().includes(search) ||
+					(project.description && project.description.toLowerCase().includes(search))
+			);
+		}
+
+		// Filtro de tecnologías
+		if (selectedTechs.length > 0) {
+			filtered = filtered.filter((project) => {
+				if (!project.languages) return false;
+				const projectLangs = Object.keys(project.languages);
+				return selectedTechs.some((tech) => projectLangs.includes(tech));
+			});
+		}
+
+		// Filtro de tipo
+		if (selectedType) {
+			filtered = filtered.filter((project) => project.topics && project.topics.includes(selectedType));
+		}
+
+		// Filtro de año
+		if (selectedYear) {
+			filtered = filtered.filter((project) => {
+				const year = new Date(project.createdAt).getFullYear().toString();
+				return year === selectedYear;
+			});
+		}
+
+		// Ordenamiento
+		if (sortBy === 'alphabetical') {
+			filtered.sort((a, b) => a.title.localeCompare(b.title));
+		} else if (sortBy === 'alphabetical-desc') {
+			filtered.sort((a, b) => b.title.localeCompare(a.title));
+		} else if (sortBy === 'recent') {
+			filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+		}
+
+		return filtered;
+	}, [projects, searchTerm, selectedTechs, selectedType, selectedYear, sortBy]);
+
+	// Resetear visibleCount cuando cambian los filtros
+	useEffect(() => {
+		setVisibleCount(INITIAL_LOAD);
+	}, [searchTerm, selectedTechs, selectedType, selectedYear, sortBy]);
+
+	const visibleProjects = filteredAndSortedProjects.slice(0, visibleCount);
+	const hasMore = visibleCount < filteredAndSortedProjects.length;
+
+	const handleTechToggle = (tech) => {
+		setSelectedTechs((prev) => (prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]));
+	};
 
 	// Función loadMore memoizada para evitar recreaciones
 	const loadMore = useCallback(() => {
@@ -65,10 +178,10 @@ function ProjectGrid({projects}) {
 
 		// Delay mínimo para mostrar el loading y permitir que las cards se rendericen
 		setTimeout(() => {
-			setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, projects.length));
+			setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, filteredAndSortedProjects.length));
 			setIsLoading(false);
 		}, 300);
-	}, [isLoading, projects.length]);
+	}, [isLoading, filteredAndSortedProjects.length]);
 
 	// Intersection Observer for automatic lazy loading mejorado
 	useEffect(() => {
@@ -118,95 +231,101 @@ function ProjectGrid({projects}) {
 
 	return (
 		<div style={{padding: '0 20px', marginTop: '80px'}}>
-			{/* Section Header con animación 3D */}
+			{/* Section Header */}
 			<motion.h2
-				style={{
-					...SECTION_TITLE_STYLE,
-					transformStyle: 'preserve-3d'
-				}}
-				initial={{opacity: 0, y: -30, rotateX: -20}}
-				whileInView={{opacity: 1, y: 0, rotateX: 0}}
-				viewport={{once: true}}
-				transition={{duration: 0.8, ease: [0.22, 1, 0.36, 1]}}
+				style={SECTION_TITLE_STYLE}
+				initial={{opacity: 0, y: -20}}
+				animate={{opacity: 1, y: 0}}
+				transition={{duration: 0.6}}
 			>
 				Todos los Proyectos
 			</motion.h2>
 
 			<motion.p
-				style={{
-					...SECTION_SUBTITLE_STYLE,
-					transformStyle: 'preserve-3d'
-				}}
-				initial={{opacity: 0, y: -20, rotateX: -10}}
-				whileInView={{opacity: 1, y: 0, rotateX: 0}}
-				viewport={{once: true}}
-				transition={{duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1]}}
+				style={SECTION_SUBTITLE_STYLE}
+				initial={{opacity: 0, y: -10}}
+				animate={{opacity: 1, y: 0}}
+				transition={{duration: 0.6, delay: 0.1}}
 			>
 				Explora mi portafolio completo de proyectos
 			</motion.p>
 
-			{/* Grid con animaciones mejoradas */}
-			<div style={GRID_CONTAINER_STYLE}>
-				{visibleProjects.map((project, index) => (
-					<motion.div
-						key={project.id}
-						initial={{opacity: 0, y: 80, rotateX: -15, scale: 0.9}}
-						whileInView={{opacity: 1, y: 0, rotateX: 0, scale: 1}}
-						viewport={{once: true, margin: '0px 0px -150px 0px'}}
-						transition={{
-							duration: 0.6,
-							delay: index * 0.08,
-							ease: [0.22, 1, 0.36, 1]
-						}}
-					>
-						<ProjectCard project={project} onClick={() => handleCardClick(project)} />
-					</motion.div>
-				))}
+			{/* Filtros de Proyectos */}
+			<ProjectFilters
+				searchTerm={searchTerm}
+				onSearchChange={setSearchTerm}
+				selectedTechs={selectedTechs}
+				onTechToggle={handleTechToggle}
+				selectedType={selectedType}
+				onTypeChange={setSelectedType}
+				selectedYear={selectedYear}
+				onYearChange={setSelectedYear}
+				sortBy={sortBy}
+				onSortChange={setSortBy}
+				availableTechs={availableTechs}
+				availableTypes={availableTypes}
+				availableYears={availableYears}
+			/>
 
-				{/* Loading Indicator - Dentro del grid, donde aparecerán las nuevas cards */}
-				{(isLoading || isPreparing) && (
-					<motion.div
-						style={{
-							gridColumn: '1 / -1',
-							textAlign: 'center',
-							padding: '40px 20px',
-							marginTop: '20px'
-						}}
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
-						exit={{opacity: 0, y: -20}}
-						transition={{duration: 0.3}}
-					>
+			{/* Contador de Proyectos */}
+			<motion.p
+				className="project-counter"
+				style={COUNTER_STYLE}
+				initial={{opacity: 0}}
+				animate={{opacity: 1}}
+				transition={{duration: 0.5}}
+			>
+				Mostrando {visibleProjects.length} de {filteredAndSortedProjects.length} proyectos
+				{filteredAndSortedProjects.length !== projects.length && ` (${projects.length} total)`}
+			</motion.p>
+
+			{/* Grid con animaciones mejoradas */}
+			{filteredAndSortedProjects.length === 0 ? (
+				<motion.div
+					style={NO_RESULTS_STYLE}
+					initial={{opacity: 0, y: 20}}
+					animate={{opacity: 1, y: 0}}
+					transition={{duration: 0.5}}
+				>
+					<p style={{fontSize: '3rem', marginBottom: '20px'}}>🔍</p>
+					<p style={{marginBottom: '10px', fontSize: '1.4rem', fontWeight: '600'}}>No se encontraron proyectos</p>
+					<p style={{fontSize: '1rem', color: 'rgba(255, 255, 255, 0.5)'}}>
+						Intenta ajustar los filtros o la búsqueda
+					</p>
+				</motion.div>
+			) : (
+				<div className="project-grid" style={GRID_CONTAINER_STYLE}>
+					{visibleProjects.map((project, index) => (
 						<motion.div
-							animate={{rotate: 360}}
-							transition={{duration: 1, repeat: Infinity, ease: 'linear'}}
-							style={{
-								width: '50px',
-								height: '50px',
-								border: '4px solid rgba(168, 85, 247, 0.2)',
-								borderTop: '4px solid #a855f7',
-								borderRight: '4px solid #ec4899',
-								borderRadius: '50%',
-								margin: '0 auto 16px',
-								boxShadow: '0 0 20px rgba(168, 85, 247, 0.3)'
+							key={project.id}
+							initial={{opacity: 0, y: 40}}
+							animate={{opacity: 1, y: 0}}
+							transition={{
+								duration: 0.5,
+								delay: Math.min(index * 0.05, 0.3),
+								ease: 'easeOut'
 							}}
-						/>
-						<motion.p
-							style={{
-								color: '#a855f7',
-								fontSize: '1.1rem',
-								fontWeight: '500',
-								margin: 0
-							}}
-							initial={{opacity: 0}}
-							animate={{opacity: [0.5, 1, 0.5]}}
-							transition={{duration: 1.5, repeat: Infinity}}
 						>
-							Cargando más proyectos...
-						</motion.p>
-					</motion.div>
-				)}
-			</div>
+							<ProjectCard project={project} onClick={() => handleCardClick(project)} />
+						</motion.div>
+					))}
+
+					{/* Skeleton loaders mientras se cargan más proyectos */}
+					{(isLoading || isPreparing) &&
+						Array.from({length: Math.min(LOAD_MORE_COUNT, filteredAndSortedProjects.length - visibleCount)}).map(
+							(_, index) => (
+								<motion.div
+									key={`skeleton-${index}`}
+									initial={{opacity: 0, y: 20}}
+									animate={{opacity: 1, y: 0}}
+									transition={{duration: 0.3, delay: index * 0.05}}
+								>
+									<SkeletonCard />
+								</motion.div>
+							)
+						)}
+				</div>
+			)}
 
 			{/* Load More Trigger (invisible) - Posicionado justo después del grid */}
 			{hasMore && !isLoading && !isPreparing && <div ref={loadMoreRef} style={{height: '50px', marginTop: '0px'}} />}

@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Container} from 'react-bootstrap';
 import Particle from '../Particle';
-import ProjectCarousel from './ProjectCarousel';
+import HorizontalCarousel from './HorizontalCarousel';
 import ProjectGrid from './ProjectGrid';
+import ScrollToTopButton from './ScrollToTopButton';
 import {useProjects} from '../../hooks/useProjects';
+import './Projects.css';
 
 const SECTION_TITLE_STYLE = {
 	textAlign: 'center',
@@ -15,7 +17,6 @@ const SECTION_TITLE_STYLE = {
 
 function Projects() {
 	const {pinnedProjects, allProjects, loading} = useProjects();
-	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const renderContent = () => {
 		if (loading) {
@@ -38,11 +39,11 @@ function Projects() {
 
 		return (
 			<>
-				{/* Carrusel solo con proyectos pineados */}
+				{/* Carrusel horizontal con proyectos pineados */}
 				{hasPinnedProjects && (
 					<>
 						<h2 style={SECTION_TITLE_STYLE}>Featured Projects</h2>
-						<ProjectCarousel projects={pinnedProjects} currentIndex={currentIndex} onNavigate={setCurrentIndex} />
+						<HorizontalCarousel projects={pinnedProjects} />
 					</>
 				)}
 				{/* Grid con todos los proyectos debajo del carrusel */}
@@ -63,6 +64,7 @@ function Projects() {
 				</p>
 				{renderContent()}
 			</Container>
+			<ScrollToTopButton />
 		</Container>
 	);
 }
