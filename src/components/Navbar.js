@@ -12,7 +12,11 @@ import {downloadFile, listFile} from '../aws-s3/awsS3';
 function NavBar() {
 	const [expand, updateExpanded] = useState(false);
 	const [navColour, updateNavbar] = useState(false);
-	const [cvFiles, setCvFiles] = useState([]);
+	const [cvFiles, setCvFiles] = useState([
+		{label: 'Full Stack Developer Resume', fileName: 'carlos_jesus_resume_fs.pdf', key: 'carlos_jesus_resume_fs.pdf'},
+		{label: 'Software Engineer Resume', fileName: 'Carlos_Jesus_Software_Engineer.pdf', key: 'Carlos_Jesus_Software_Engineer.pdf'},
+		{label: 'Frontend Developer Resume', fileName: 'Carlos-Jesus-resume-frontend.pdf', key: 'Carlos-Jesus-resume-frontend.pdf'}
+	]);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const dropdownRef = useRef(null);
 
@@ -64,7 +68,9 @@ function NavBar() {
 			console.error('Error al cargar archivos desde S3', error);
 			// Si falla, usar archivos locales por defecto
 			setCvFiles([
-				{label: 'CV Español', fileName: 'Carlos-Jesus-CV.pdf', key: 'Carlos-Jesus-CV.pdf'}
+				{label: 'Full Stack Developer Resume', fileName: 'carlos_jesus_resume_fs.pdf', key: 'carlos_jesus_resume_fs.pdf'},
+				{label: 'Software Engineer Resume', fileName: 'Carlos_Jesus_Software_Engineer.pdf', key: 'Carlos_Jesus_Software_Engineer.pdf'},
+				{label: 'Frontend Developer Resume', fileName: 'Carlos-Jesus-resume-frontend.pdf', key: 'Carlos-Jesus-resume-frontend.pdf'}
 			]);
 		}
 	};

@@ -46,23 +46,18 @@ Databases: ${professionalData.technicalSkills.databases.join(', ')}
 Cloud/DevOps: ${professionalData.technicalSkills.cloud.join(', ')}
 Development Tools: ${professionalData.technicalSkills.tools.join(', ')}
 
-SPECIALIZATIONS:
-${professionalData.experience[0].specialties.join(', ')}
-
 WORK EXPERIENCE:
-${professionalData.workHistory
+${professionalData.experience
 	.map(
 		(job) => `
 - ${job.role} at ${job.company} (${job.period})
   Location: ${job.location}
-  Responsibilities: ${job.responsibilities.join('; ')}
-  ${job.achievements ? 'Achievements: ' + job.achievements.join('; ') : ''}
+  Technologies: ${job.technologies.join(', ')}
+  ${job.description}
+  ${job.achievements && job.achievements.length > 0 ? 'Key Achievements: ' + job.achievements.join('; ') : ''}
 `
 	)
 	.join('\n')}
-
-TEACHING & MENTORING:
-${professionalData.experience[1].role} at ${professionalData.experience[1].institution} - ${professionalData.experience[1].description}
 
 GITHUB PROJECTS:
 - Total public repositories: ${githubData.count}
