@@ -96,6 +96,8 @@ export default async function handler(req, res) {
 		});
 	} catch (error) {
 		console.error('Chat API Error:', error);
+		console.error('Error message:', error.message);
+		console.error('Error stack:', error.stack);
 
 		// Handle specific error types
 		if (error.message?.includes('quota')) {
@@ -104,14 +106,16 @@ export default async function handler(req, res) {
 			});
 		}
 
-		if (error.message?.includes('API key')) {
+		if (error.message?.includes('API key') || error.message?.includes('API_KEY_INVALID')) {
 			return res.status(500).json({
-				error: 'Chat service configuration error. Please contact support.'
+				error: 'Chat service configuration error. Please verify GEMINI_API_KEY in environment variables.'
 			});
 		}
 
+		// Return more detailed error in development
 		return res.status(500).json({
-			error: 'An error occurred processing your request. Please try again.'
+			error: 'An error occurred processing your request. Please try again.',
+			details: process.env.NODE_ENV === 'development' ? error.message : undefined
 		});
 	}
 }
