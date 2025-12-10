@@ -45,6 +45,42 @@ export const fetchGitHubRepoCount = async () => {
 	}
 };
 
+// Helper function para delay entre peticiones
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Función para obtener lenguajes con retry y manejo de errores
+const fetchLanguagesWithRetry = async (username, repoName, token, retries = 2) => {
+	for (let i = 0; i <= retries; i++) {
+		try {
+			const response = await fetch(`https://api.github.com/repos/${username}/${repoName}/languages`, {
+				headers: {
+					Authorization: `token ${token}`
+				}
+			});
+
+			if (response.ok) {
+				return await response.json();
+			}
+
+			// Si es rate limit, esperar más tiempo
+			if (response.status === 403 || response.status === 429) {
+				await delay(2000 * (i + 1));
+				continue;
+			}
+
+			// Para otros errores, retornar vacío
+			console.warn(`Error ${response.status} al obtener lenguajes para ${repoName}`);
+			return {};
+		} catch (error) {
+			console.warn(`Intento ${i + 1} falló para ${repoName}:`, error.message);
+			if (i < retries) {
+				await delay(1000 * (i + 1));
+			}
+		}
+	}
+	return {}; // Si todos los intentos fallan, retornar objeto vacío
+};
+
 // Función para obtener los repositorios de GitHub
 export const fetchGitHubRepos = async () => {
 	try {
@@ -61,29 +97,35 @@ export const fetchGitHubRepos = async () => {
 
 		const repos = await response.json();
 
-		// Obtener los lenguajes y topics para cada repositorio
-		const reposWithLanguages = await Promise.all(
-			repos.map(async (repo) => {
-				// Obtener lenguajes
-				const languagesResponse = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/languages`, {
-					headers: {
-						Authorization: `token ${GITHUB_TOKEN}`
-					}
-				});
+		// Procesar repos en lotes para evitar rate limiting
+		const batchSize = 10;
+		const reposWithLanguages = [];
 
-				if (!languagesResponse.ok) {
-					throw new Error(`Error al obtener lenguajes para ${repo.name}`);
-				}
+		for (let i = 0; i < repos.length; i += batchSize) {
+			const batch = repos.slice(i, i + batchSize);
 
-				const languages = await languagesResponse.json();
+			const batchResults = await Promise.all(
+				batch.map(async (repo) => {
+					// Pequeño delay entre peticiones del mismo lote
+					await delay(100);
 
-				// Los topics ya vienen incluidos en la respuesta del repositorio desde la API REST
-				// Si no vienen, usamos un array vacío
-				const topics = repo.topics || [];
+					// Obtener lenguajes con retry
+					const languages = await fetchLanguagesWithRetry(GITHUB_USERNAME, repo.name, GITHUB_TOKEN);
 
-				return {...repo, languages, topics};
-			})
-		);
+					// Los topics ya vienen incluidos en la respuesta del repositorio
+					const topics = repo.topics || [];
+
+					return {...repo, languages, topics};
+				})
+			);
+
+			reposWithLanguages.push(...batchResults);
+
+			// Delay entre lotes
+			if (i + batchSize < repos.length) {
+				await delay(500);
+			}
+		}
 
 		// Ya viene ordenado por fecha de creación descendente desde la API
 		return reposWithLanguages;

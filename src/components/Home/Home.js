@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Container, Button} from 'react-bootstrap';
+import {Link} from 'react-router-dom';
 import {FaGithub, FaLinkedinIn, FaWhatsapp, FaArrowRight} from 'react-icons/fa';
 import {
 	SiReact,
@@ -134,10 +135,10 @@ function Home() {
 
 							<div className='hero-subtitle'>
 								<h2>Full Stack Developer & AI Engineer</h2>
-								<p className='hero-description'>
+								<div className='hero-description'>
 									<br />
 									<Type />
-								</p>
+								</div>
 							</div>
 
 							<div className='hero-buttons'>
@@ -150,10 +151,12 @@ function Home() {
 									whileTap={{scale: 0.98}}
 									transition={{duration: 0.2}}
 								>
-									<Button className='btn-ver-proyectos' href='#projects'>
-										Ver Proyectos
-										<FaArrowRight className='arrow-icon' />
-									</Button>
+									<Link to='/project' style={{textDecoration: 'none'}}>
+										<Button className='btn-ver-proyectos'>
+											View Projects
+											<FaArrowRight className='arrow-icon' />
+										</Button>
+									</Link>
 								</motion.div>
 
 								{/* GitHub Button with Framer Motion */}
@@ -236,13 +239,13 @@ function Home() {
 									<h3>
 										+<AnimatedCounter value={yearsOfExperience} duration={2} pauseDuration={3} />
 									</h3>
-									<p>Años Exp.</p>
+									<p>Years Exp.</p>
 								</div>
 								<div className='stat-card stat-card-projects'>
 									<h3>
 										+<AnimatedCounter value={repoCount} duration={6} pauseDuration={3} />
 									</h3>
-									<p>Proyectos</p>
+									<p>Projects</p>
 								</div>
 							</div>
 						</div>

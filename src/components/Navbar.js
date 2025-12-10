@@ -224,7 +224,7 @@ function NavBar() {
 									style={{position: 'relative'}}
 								>
 									<AiOutlineDownload style={{marginRight: '8px'}} />
-									Descargar CV
+									Download CV
 								</Button>
 							</motion.div>
 
@@ -287,7 +287,7 @@ function NavBar() {
 							</AnimatePresence>
 						</div>
 						<Button href='https://wa.me/+5491167896758' target='_blank' className='btn-contact-me'>
-							Contáctame
+							Contact Me
 						</Button>
 					</div>
 				</Navbar.Collapse>

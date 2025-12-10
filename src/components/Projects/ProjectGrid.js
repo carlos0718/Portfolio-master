@@ -88,7 +88,12 @@ function ProjectGrid({projects}) {
 		projects.forEach((project) => {
 			// Tecnologías desde languages
 			if (project.languages) {
-				Object.keys(project.languages).forEach((lang) => techsSet.add(lang));
+				Object.keys(project.languages).forEach((lang) => {
+					// Filtrar tecnologías no deseadas
+					if (lang !== 'Nix') {
+						techsSet.add(lang);
+					}
+				});
 			}
 			// Tipos desde topics
 			if (project.topics && project.topics.length > 0) {

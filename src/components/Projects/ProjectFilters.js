@@ -159,70 +159,9 @@ function ProjectFilters({
 				)}
 			</div>
 
-			{/* Grid de 3 columnas para los filtros */}
-			<div className="filters-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '25px'}}>
-				{/* Ordenamiento */}
-				<div style={FILTER_SECTION_STYLE}>
-					<label style={FILTER_LABEL_STYLE}>Ordenar por</label>
-					<select
-						value={sortBy}
-						onChange={(e) => onSortChange(e.target.value)}
-						style={DROPDOWN_STYLE}
-						onFocus={(e) => (e.target.style.borderColor = '#a855f7')}
-						onBlur={(e) => (e.target.style.borderColor = 'rgba(168, 85, 247, 0.3)')}
-					>
-						<option value="recent">Más reciente</option>
-						<option value="alphabetical">Alfabético A-Z</option>
-						<option value="alphabetical-desc">Alfabético Z-A</option>
-					</select>
-				</div>
-
-				{/* Filtro por tipo */}
-				{availableTypes.length > 0 && (
-					<div style={FILTER_SECTION_STYLE}>
-						<label style={FILTER_LABEL_STYLE}>Tipo de proyecto</label>
-						<select
-							value={selectedType}
-							onChange={(e) => onTypeChange(e.target.value)}
-							style={DROPDOWN_STYLE}
-							onFocus={(e) => (e.target.style.borderColor = '#a855f7')}
-							onBlur={(e) => (e.target.style.borderColor = 'rgba(168, 85, 247, 0.3)')}
-						>
-							<option value="">Todos los tipos</option>
-							{availableTypes.map((type) => (
-								<option key={type} value={type}>
-									{type}
-								</option>
-							))}
-						</select>
-					</div>
-				)}
-
-				{/* Filtro por año */}
-				{availableYears.length > 0 && (
-					<div style={FILTER_SECTION_STYLE}>
-						<label style={FILTER_LABEL_STYLE}>Año</label>
-						<select
-							value={selectedYear}
-							onChange={(e) => onYearChange(e.target.value)}
-							style={DROPDOWN_STYLE}
-							onFocus={(e) => (e.target.style.borderColor = '#a855f7')}
-							onBlur={(e) => (e.target.style.borderColor = 'rgba(168, 85, 247, 0.3)')}
-						>
-							<option value="">Todos los años</option>
-							{availableYears.map((year) => (
-								<option key={year} value={year}>
-									{year}
-								</option>
-							))}
-						</select>
-					</div>
-				)}
-			</div>
-
 			{/* Filtros por tecnología */}
 			{availableTechs.length > 0 && (
-				<div style={{...FILTER_SECTION_STYLE, marginTop: '25px', marginBottom: '0'}}>
+				<div style={{...FILTER_SECTION_STYLE, marginBottom: '0'}}>
 					<label style={FILTER_LABEL_STYLE}>Tecnologías ({selectedTechs.length} seleccionadas)</label>
 					<div style={FILTER_CHIPS_CONTAINER_STYLE}>
 						{availableTechs.map((tech) => {

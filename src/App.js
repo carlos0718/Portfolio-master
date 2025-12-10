@@ -15,6 +15,11 @@ import Projects from './components/Projects/Projects';
 import ScrollToTop from './components/ScrollToTop';
 import UplodadFile from './components/UploadResume/uplodad';
 
+// Chat components
+import ChatButton from './components/Chat/ChatButton';
+import ChatWindow from './components/Chat/ChatWindow';
+import {ChatProvider} from './context/ChatContext';
+
 function App() {
 	const [load, upadateLoad] = useState(true);
 
@@ -27,21 +32,31 @@ function App() {
 	}, []);
 
 	return (
-		<Router>
-			<Preloader load={load} />
-			<div className='App' id={load ? 'no-scroll' : 'scroll'}>
-				<Navbar />
-				<ScrollToTop />
-				<Routes>
-					<Route path='/' element={<Home />} />
-					<Route path='/project' element={<Projects />} />
-					<Route path='/about' element={<About />} />
-					<Route path='/uploadFile' element={<UplodadFile />} />
-					<Route path='*' element={<Navigate to='/' />} />
-				</Routes>
-				<Footer />
-			</div>
-		</Router>
+		<ChatProvider>
+			<Router>
+				<Preloader load={load} />
+				<div className='App' id={load ? 'no-scroll' : 'scroll'}>
+					<Navbar />
+					<ScrollToTop />
+					<Routes>
+						<Route path='/' element={<Home />} />
+						<Route path='/project' element={<Projects />} />
+						<Route path='/about' element={<About />} />
+						<Route path='/uploadFile' element={<UplodadFile />} />
+						<Route path='*' element={<Navigate to='/' />} />
+					</Routes>
+					<Footer />
+
+					{/* Chat components - only show after preloader */}
+					{!load && (
+						<>
+							<ChatButton />
+							<ChatWindow />
+						</>
+					)}
+				</div>
+			</Router>
+		</ChatProvider>
 	);
 }
 
