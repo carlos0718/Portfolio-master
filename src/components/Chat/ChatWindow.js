@@ -4,6 +4,33 @@ import {BsX, BsRobot, BsTrash, BsSend} from 'react-icons/bs';
 import {useChatContext} from '../../context/ChatContext';
 import './Chat.css';
 
+// Helper function to convert URLs to clickeable links
+function parseMessageContent(text) {
+	const urlRegex = /(https?:\/\/[^\s]+)/g;
+	const parts = text.split(urlRegex);
+
+	return parts.map((part, index) => {
+		if (part.match(urlRegex)) {
+			return (
+				<a
+					key={index}
+					href={part}
+					target="_blank"
+					rel="noopener noreferrer"
+					style={{
+						color: '#a855f7',
+						textDecoration: 'underline',
+						cursor: 'pointer'
+					}}
+				>
+					{part}
+				</a>
+			);
+		}
+		return part;
+	});
+}
+
 function ChatWindow() {
 	const {isOpen, toggleChat, messages, isLoading, sendMessage, clearChat} = useChatContext();
 	const [input, setInput] = useState('');
@@ -101,7 +128,7 @@ function ChatWindow() {
 												</div>
 											)}
 											<div className={`chat-message-bubble ${msg.role === 'error' ? 'chat-message-error' : ''}`}>
-												{msg.content}
+												{parseMessageContent(msg.content)}
 											</div>
 										</motion.div>
 									))}
