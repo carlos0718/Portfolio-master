@@ -46,12 +46,51 @@ const projectImagesMap = {
 };
 
 /**
- * Obtiene la imagen apropiada para un proyecto basándose en su nombre y lenguajes
+ * Valida si una URL es válida para generar preview
+ * @param {string} url - URL a validar
+ * @returns {boolean} - true si la URL es válida para preview
+ */
+const isValidPreviewUrl = (url) => {
+	if (!url || typeof url !== 'string') return false;
+
+	// Excluir URLs de GitHub y URLs inválidas
+	if (url.includes('github.com') || url.includes('github.io')) return false;
+
+	// Validar que sea una URL HTTP/HTTPS válida
+	try {
+		const urlObj = new URL(url);
+		return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+	} catch {
+		return false;
+	}
+};
+
+/**
+ * Genera una URL de preview de una página web usando servicios de screenshot
+ * @param {string} url - URL de la página web
+ * @returns {string|null} - URL de la imagen de preview o null si no es válida
+ */
+const generatePreviewUrl = (url) => {
+	if (!isValidPreviewUrl(url)) return null;
+
+	try {
+		// Usar servicio gratuito de screenshot (image.thum.io)
+		// Formato: https://image.thum.io/get/width/800/crop/600/{url}
+		const encodedUrl = encodeURIComponent(url);
+		return `https://image.thum.io/get/width/800/crop/600/${encodedUrl}`;
+	} catch (error) {
+		console.error('Error al generar URL de preview:', error);
+		return null;
+	}
+};
+
+/**
+ * Obtiene la imagen por defecto sin intentar generar preview
  * @param {string} projectName - Nombre del proyecto
  * @param {object} languages - Objeto con los lenguajes del proyecto
- * @returns {string} - Ruta de la imagen a usar
+ * @returns {string} - Ruta de la imagen por defecto
  */
-export const getProjectImage = (projectName, languages = {}) => {
+export const getDefaultProjectImage = (projectName, languages = {}) => {
 	// Normalizar el nombre del proyecto
 	const normalizedName = projectName.toLowerCase().replace(/[_\s-]/g, '');
 
@@ -86,6 +125,26 @@ export const getProjectImage = (projectName, languages = {}) => {
 
 	// Retornar imagen por defecto
 	return projectImagesMap.default;
+};
+
+/**
+ * Obtiene la imagen apropiada para un proyecto basándose en su nombre, lenguajes y homepage
+ * @param {string} projectName - Nombre del proyecto
+ * @param {object} languages - Objeto con los lenguajes del proyecto
+ * @param {string} homepage - URL del homepage del proyecto (opcional)
+ * @returns {string} - Ruta de la imagen a usar
+ */
+export const getProjectImage = (projectName, languages = {}, homepage = null) => {
+	// Si hay homepage válido, intentar generar preview
+	if (homepage) {
+		const previewUrl = generatePreviewUrl(homepage);
+		if (previewUrl) {
+			return previewUrl;
+		}
+	}
+
+	// Si no hay preview disponible, usar imagen por defecto
+	return getDefaultProjectImage(projectName, languages);
 };
 
 /**

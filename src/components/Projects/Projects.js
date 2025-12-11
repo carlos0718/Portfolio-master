@@ -1,110 +1,70 @@
-import React, {useEffect, useState} from 'react';
-import {Col, Container, Row, Spinner} from 'react-bootstrap';
-
-import {fetchGitHubRepos} from '../../config/github';
-import {getProjectImage, isFrontendProject} from '../../utils/projectImages';
-import PaginationComponent from '../Pagination';
+import React from 'react';
+import {Container} from 'react-bootstrap';
 import Particle from '../Particle';
-import ProjectCard from './ProjectCards';
+import HorizontalCarousel from './HorizontalCarousel';
+import ProjectGrid from './ProjectGrid';
+import ScrollToTopButton from './ScrollToTopButton';
+import {useProjects} from '../../hooks/useProjects';
+import './Projects.css';
+
+const SECTION_TITLE_STYLE = {
+	textAlign: 'center',
+	color: 'white',
+	fontSize: '2rem',
+	marginBottom: '60px',
+	fontWeight: '600'
+};
 
 function Projects() {
-	const [projects, setProjects] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [currentPage, setCurrentPage] = useState(1);
-	const projectsPerPage = 9; // Número de proyectos por página
+	const {pinnedProjects, allProjects, loading} = useProjects();
 
-	useEffect(() => {
-		const loadProjects = async () => {
-			try {
-				const repos = await fetchGitHubRepos();
-				// Filtrar y transformar los repositorios que quieres mostrar
-				const filteredProjects = repos
-					.filter((repo) => !repo.fork) // Excluir forks
-					.filter((repo) => isFrontendProject(repo.languages)) // Filtrar solo proyectos frontend
-					.map((repo) => ({
-						id: repo.id,
-						image: getProjectImage(repo.name, repo.languages), // Asignar imagen según el proyecto
-						title: repo.name,
-						description: repo.description || 'Sin descripción disponible',
-						ghLink: repo.html_url,
-						demoLink: repo.homepage || repo.html_url,
-						languages: repo.languages || {},
-						createdAt: new Date(repo.created_at).toLocaleDateString('es-ES', {
-							year: 'numeric',
-							month: 'long',
-							day: 'numeric'
-						}),
-						// Calcular porcentaje de JavaScript para ordenamiento
-						jsPercentage: calculateJavaScriptPercentage(repo.languages)
-					}))
-					// Ordenar por porcentaje de JavaScript (mayor a menor)
-					.sort((a, b) => b.jsPercentage - a.jsPercentage);
+	const renderContent = () => {
+		if (loading) {
+			return (
+				<div style={{textAlign: 'center', padding: '100px 0', color: 'white'}}>
+					<div className='spinner-border text-primary' role='status'>
+						<span className='visually-hidden'>Loading...</span>
+					</div>
+				</div>
+			);
+		}
 
-				console.log('Proyectos frontend filtrados:', filteredProjects); // Para debugging
-				setProjects(filteredProjects);
-			} catch (error) {
-				console.error('Error al cargar proyectos:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
+		// Mostrar carrusel solo si hay proyectos pineados
+		const hasPinnedProjects = pinnedProjects.length > 0;
+		const hasAllProjects = allProjects.length > 0;
 
-		loadProjects();
-	}, []);
+		if (!hasPinnedProjects && !hasAllProjects) {
+			return <p style={{color: 'white', textAlign: 'center'}}>No hay proyectos disponibles</p>;
+		}
 
-	// Función auxiliar para calcular el porcentaje de JavaScript
-	const calculateJavaScriptPercentage = (languages) => {
-		if (!languages || Object.keys(languages).length === 0) return 0;
-
-		const jsBytes = languages['JavaScript'] || 0;
-		const totalBytes = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
-
-		return totalBytes > 0 ? (jsBytes / totalBytes) * 100 : 0;
+		return (
+			<>
+				{/* Carrusel horizontal con proyectos pineados */}
+				{hasPinnedProjects && (
+					<>
+						<h2 style={SECTION_TITLE_STYLE}>Featured Projects</h2>
+						<HorizontalCarousel projects={pinnedProjects} />
+					</>
+				)}
+				{/* Grid con todos los proyectos debajo del carrusel */}
+				{hasAllProjects && <ProjectGrid projects={allProjects} />}
+			</>
+		);
 	};
-
-	// Calcular los índices para la paginación
-	const indexOfLastProject = currentPage * projectsPerPage;
-	const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-	const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
-	const totalPages = Math.ceil(projects.length / projectsPerPage);
 
 	return (
 		<Container fluid className='project-section'>
 			<Particle />
-			<Container>
-				<h1 className='project-heading'>
-					My <strong className='purple'>Projects </strong>
+			<Container style={{minHeight: 'calc(100vh - 200px)'}}>
+				<h1 className='project-heading' style={{marginBottom: '10px'}}>
+					<strong className='purple'>Projects </strong>
 				</h1>
-				<p style={{color: 'white'}}>Projects realized in my free time and when I was learning new technologies</p>
-				{loading ? (
-					<p style={{color: 'white'}}>
-						<Spinner animation='border' variant='primary' />
-					</p>
-				) : (
-					<>
-						<Row style={{justifyContent: 'center', paddingBottom: '10px'}}>
-							{currentProjects.map((project) => (
-								<Col md={4} className='project-card' key={project.id}>
-									<ProjectCard
-										imgPath={project.image}
-										isBlog={false}
-										title={project.title}
-										description={project.description}
-										ghLink={project.ghLink}
-										demoLink={project.demoLink}
-										languages={project.languages}
-										createdAt={project.createdAt}
-									/>
-								</Col>
-							))}
-						</Row>
-						{/* Paginación */}
-						<div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-							<PaginationComponent numpages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
-						</div>
-					</>
-				)}
+				<p style={{color: 'rgba(255, 255, 255, 0.7)', marginBottom: '60px', fontSize: '18px'}}>
+					Projects realized in my free time and when I was learning new technologies
+				</p>
+				{renderContent()}
 			</Container>
+			<ScrollToTopButton />
 		</Container>
 	);
 }

@@ -1,46 +1,78 @@
-import React from "react";
-import {Container, Row, Col} from "react-bootstrap";
-import {AiFillGithub} from "react-icons/ai";
-import {FaLinkedinIn, FaWhatsappSquare} from "react-icons/fa";
+import React from 'react';
+import {Container} from 'react-bootstrap';
+import {FaGithub, FaLinkedinIn, FaWhatsapp, FaHeart} from 'react-icons/fa';
+import {motion} from 'framer-motion';
 
 function Footer() {
 	let date = new Date();
 	let year = date.getFullYear();
+
 	return (
-		<Container fluid className='footer'>
-			<Row>
-				<Col md='4' className='footer-copywright'>
-					<h3>Carlos Alfredo Jesús Sipirán</h3>
-				</Col>
-				<Col md='4' className='footer-copywright'>
-					<h3>C . J © {year}</h3>
-				</Col>
-				<Col md='4' className='footer-body'>
-					<ul className='footer-icons'>
-						<li className='social-icons'>
-							<a href='https://github.com/carlos0718' style={{color: "white"}} target='_blank' rel='noopener noreferrer'>
-								<AiFillGithub />
-							</a>
-						</li>
-						<li className='social-icons'>
-							<a
-								href='https://www.linkedin.com/in/carlos-jesus-dev/'
-								style={{color: "white"}}
+		<footer className='footer'>
+			<Container>
+				<div className='footer-content'>
+					{/* Left Section - Name */}
+					<div className='footer-brand'>
+						<h3 className='footer-name'>Carlos Jesús</h3>
+						<p className='footer-subtitle'>Full Stack Developer</p>
+					</div>
+
+					{/* Center Section - Copyright */}
+					<div className='footer-copyright'>
+						<p className='footer-year'>© {year} Carlos Jesús. Todos los derechos reservados.</p>
+					</div>
+
+					{/* Right Section - Social Links */}
+					<div className='footer-social'>
+						<p className='footer-social-label'>Conecta conmigo</p>
+						<div className='footer-social-links'>
+							<motion.a
+								href='https://github.com/carlos0718'
 								target='_blank'
 								rel='noopener noreferrer'
+								className='footer-social-link'
+								whileHover={{
+									y: -3,
+									rotate: 5
+								}}
+								transition={{type: 'spring', stiffness: 400}}
+								aria-label='GitHub'
+							>
+								<FaGithub />
+							</motion.a>
+							<motion.a
+								href='https://www.linkedin.com/in/carlos-jesus-dev/'
+								target='_blank'
+								rel='noopener noreferrer'
+								className='footer-social-link'
+								whileHover={{
+									y: -3,
+									rotate: 5
+								}}
+								transition={{type: 'spring', stiffness: 400}}
+								aria-label='LinkedIn'
 							>
 								<FaLinkedinIn />
-							</a>
-						</li>
-						<li className='social-icons'>
-							<a href='https://wa.link/cl2vzy' target='_blank' rel='noreferrer' style={{color: "white"}}>
-								<FaWhatsappSquare />
-							</a>
-						</li>
-					</ul>
-				</Col>
-			</Row>
-		</Container>
+							</motion.a>
+							<motion.a
+								href='https://wa.link/cl2vzy'
+								target='_blank'
+								rel='noopener noreferrer'
+								className='footer-social-link footer-social-link-whatsapp'
+								whileHover={{
+									y: -3,
+									rotate: 5
+								}}
+								transition={{type: 'spring', stiffness: 400}}
+								aria-label='WhatsApp'
+							>
+								<FaWhatsapp />
+							</motion.a>
+						</div>
+					</div>
+				</div>
+			</Container>
+		</footer>
 	);
 }
 
