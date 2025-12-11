@@ -6,7 +6,8 @@
       "mcp__figma-desktop__get_design_context",
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
-      "mcp__figma-desktop__get_metadata"
+      "mcp__figma-desktop__get_metadata",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

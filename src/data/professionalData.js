@@ -102,10 +102,10 @@ export const professionalData = {
 	],
 
 	technicalSkills: {
-		frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Angular', 'Vue', 'Blazor'],
+		frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Blazor'],
 		backend: ['Node.js', '.NET Core', 'C#', 'Express', 'Python'],
 		databases: ['SQL Server', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase'],
-		cloud: ['AWS', 'Azure', 'Google Cloud Platform', 'Docker', 'Vercel', 'Heroku'],
+		cloud: ['AWS', 'Azure Container Apps', 'Google Cloud Platform', 'Docker', 'Vercel', 'Heroku'],
 		aiTools: ['Claude AI', 'ChatGPT', 'GitHub Copilot', 'Cursor', 'Windsurf', 'Kiro AI', 'Gemini API', 'n8n Cloud'],
 		tools: ['Git', 'GitHub', 'GitLab', 'VS Code', 'Visual Studio', 'Cursor', 'Windsurf', 'Jira', 'Postman', 'Figma', 'Storybook', 'ESLint'],
 		stateManagement: ['Redux', 'Zustand', 'Context API'],

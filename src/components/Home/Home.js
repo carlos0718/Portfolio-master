@@ -134,7 +134,7 @@ function Home() {
 							</div>
 
 							<div className='hero-subtitle'>
-								<h2>Full Stack Developer & AI Engineer</h2>
+								<h2>Full Stack Developer || Frontend Developer & AI Engineer</h2>
 								<div className='hero-description'>
 									<br />
 									<Type />
