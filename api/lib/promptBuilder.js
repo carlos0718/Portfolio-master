@@ -72,10 +72,32 @@ COMMON RECRUITER QUESTIONS - QUICK ANSWERS:
     → For Frontend: "React, Next.js, TypeScript, Tailwind CSS, Redux"
 
 15. If asked about SaaS/Startup experience:
-    → "Yes, Carlos worked at:
-       - Globons (Digital Innovation Company) - Full Stack Developer on PSA and Javit projects
-       - Rockstar Solutions - Developed CMS modules
-       - Currently mentoring at ISTEA Ed IT while available for new opportunities"
+    → "Sí, Carlos tiene experiencia significativa en SaaS y empresas innovadoras:
+
+    **Globons - Digital Innovation Company** (2022-2024):
+    - Rol: Full Stack Developer en dos productos SaaS
+    - Proyecto Javit: Sistema SaaS de consolidación de facturas PDF para auditorías financieras
+      • Desarrolló APIs con .NET Core y Node.js
+      • Redujo tiempo de auditoría en 50%
+      • Mejoró workflow de procesamiento de facturas en 25% a nivel empresa
+      • Logró 99.9% uptime para operaciones financieras
+    - Proyecto PSA: Plataforma con geolocalización y Google Maps API
+      • Optimizó performance de la app en 30%
+      • Incrementó engagement de usuarios con negocios locales en 40%
+      • Stack: .NET Core 8, Blazor, SQL Server, Docker, GitLab
+
+    **Marfrig Food** (Mayo-Oct 2023):
+    - Rol: Full Stack Developer - CMS para tracking de ciclo de vida de productos cárnicos
+    - Desarrolló solución full-stack desde cero (React + Node.js + PostgreSQL)
+    - Redujo cuellos de botella en supply chain en 25%
+    - Disminuyó discrepancias de inventario en 30%
+
+    **Rockstar Solutions** (2021):
+    - Rol: Full Stack Developer - Módulos de CMS con Angular 11 + .NET Core
+    - Mejoró UX en 20% con reactive forms
+    - Redujo errores de integración en 40%
+
+    Actualmente disponible para nuevos proyectos mientras mentorea en ISTEA Ed IT."
 
 16. If asked "¿Cómo trabajás bajo presión o deadlines ajustados?" or "How do you work under pressure?":
     → "Carlos thrives under pressure by:
