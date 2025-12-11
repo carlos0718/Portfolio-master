@@ -7,7 +7,7 @@ import './Chat.css';
 function ChatWindow() {
 	const {isOpen, toggleChat, messages, isLoading, sendMessage, clearChat} = useChatContext();
 	const [input, setInput] = useState('');
-	const outputRef = useRef(null);
+	const messagesEndRef = useRef(null);
 	const inputRef = useRef(null);
 
 	const handleSubmit = (e) => {
@@ -19,9 +19,10 @@ function ChatWindow() {
 		}
 	};
 
-	// Get only assistant messages for output display
-	const assistantMessages = messages.filter((msg) => msg.role === 'assistant' || msg.role === 'error');
-	const lastMessage = assistantMessages[assistantMessages.length - 1];
+	// Auto scroll to bottom when new messages arrive
+	React.useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
+	}, [messages, isLoading]);
 
 	return (
 		<AnimatePresence>
@@ -51,7 +52,7 @@ function ChatWindow() {
 									<BsRobot size={24} />
 								</div>
 								<div>
-									<h3>AI Assistant Playground</h3>
+									<h3>AI Assistant</h3>
 									<p>Ask me anything about Carlos's professional profile</p>
 								</div>
 							</div>
@@ -77,71 +78,71 @@ function ChatWindow() {
 							</div>
 						</div>
 
-						{/* Output Section */}
-						<div className='chat-modal-output' ref={outputRef}>
-							<div className='chat-modal-output-label'>Response</div>
-							<div className='chat-modal-output-content'>
-								{isLoading ? (
-									<div className='chat-modal-loading'>
+						{/* Messages Section */}
+						<div className='chat-messages-container'>
+							{messages.length === 0 ? (
+								<div className='chat-empty-state'>
+									<BsRobot size={48} style={{opacity: 0.3, marginBottom: '16px'}} />
+									<p>Ask me anything about Carlos's professional profile!</p>
+								</div>
+							) : (
+								<>
+									{messages.map((msg, index) => (
 										<motion.div
-											className='chat-modal-loading-dots'
-											initial={{opacity: 0}}
-											animate={{opacity: 1}}
+											key={msg.id || index}
+											className={`chat-message ${msg.role === 'user' ? 'chat-message-user' : 'chat-message-assistant'}`}
+											initial={{opacity: 0, y: 10}}
+											animate={{opacity: 1, y: 0}}
+											transition={{duration: 0.3}}
 										>
-											<motion.span
-												animate={{opacity: [0.4, 1, 0.4]}}
-												transition={{duration: 1.5, repeat: Infinity, ease: 'easeInOut'}}
-											>
-												●
-											</motion.span>
-											<motion.span
-												animate={{opacity: [0.4, 1, 0.4]}}
-												transition={{
-													duration: 1.5,
-													repeat: Infinity,
-													ease: 'easeInOut',
-													delay: 0.2
-												}}
-											>
-												●
-											</motion.span>
-											<motion.span
-												animate={{opacity: [0.4, 1, 0.4]}}
-												transition={{
-													duration: 1.5,
-													repeat: Infinity,
-													ease: 'easeInOut',
-													delay: 0.4
-												}}
-											>
-												●
-											</motion.span>
+											{msg.role === 'assistant' && (
+												<div className='chat-message-avatar'>
+													<BsRobot size={18} />
+												</div>
+											)}
+											<div className={`chat-message-bubble ${msg.role === 'error' ? 'chat-message-error' : ''}`}>
+												{msg.content}
+											</div>
 										</motion.div>
-										<span className='chat-modal-loading-text'>Thinking...</span>
-									</div>
-								) : lastMessage ? (
-									<motion.div
-										key={lastMessage.id}
-										initial={{opacity: 0, y: 10}}
-										animate={{opacity: 1, y: 0}}
-										transition={{duration: 0.3}}
-										className={
-											lastMessage.role === 'error' ? 'chat-modal-output-error' : ''
-										}
-									>
-										{lastMessage.content}
-									</motion.div>
-								) : (
-									<div className='chat-modal-output-placeholder'>
-										Ask a question to get started...
-									</div>
-								)}
-							</div>
+									))}
+									{isLoading && (
+										<motion.div
+											className='chat-message chat-message-assistant'
+											initial={{opacity: 0, y: 10}}
+											animate={{opacity: 1, y: 0}}
+										>
+											<div className='chat-message-avatar'>
+												<BsRobot size={18} />
+											</div>
+											<div className='chat-message-bubble chat-message-loading'>
+												<motion.span
+													animate={{opacity: [0.4, 1, 0.4]}}
+													transition={{duration: 1.5, repeat: Infinity}}
+												>
+													●
+												</motion.span>
+												<motion.span
+													animate={{opacity: [0.4, 1, 0.4]}}
+													transition={{duration: 1.5, repeat: Infinity, delay: 0.2}}
+												>
+													●
+												</motion.span>
+												<motion.span
+													animate={{opacity: [0.4, 1, 0.4]}}
+													transition={{duration: 1.5, repeat: Infinity, delay: 0.4}}
+												>
+													●
+												</motion.span>
+											</div>
+										</motion.div>
+									)}
+									<div ref={messagesEndRef} />
+								</>
+							)}
 						</div>
 
 						{/* Input Section */}
 						<div className='chat-modal-input-section'>
-							<div className='chat-modal-input-label'>Your Question</div>
 							<form onSubmit={handleSubmit} className='chat-modal-input-form'>
 								<textarea
 									ref={inputRef}
@@ -156,7 +157,7 @@ function ChatWindow() {
 										}
 									}}
 									disabled={isLoading}
-									rows={3}
+									rows={2}
 									autoFocus
 								/>
 								<div className='chat-modal-input-footer'>
