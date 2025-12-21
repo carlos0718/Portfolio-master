@@ -135,17 +135,27 @@
 	color: white;
 }
 
-.chat-modal-header-left h3 {
+.chat-modal-title-container h3 {
 	margin: 0;
 	font-size: 20px;
 	font-weight: 600;
 	color: white;
-	line-height: 1.2;
+	line-height: 1.4;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
-.chat-modal-header-left p {
-	margin: 4px 0 0 0;
-	font-size: 13px;
+.chat-modal-separator {
+	color: rgba(168, 85, 247, 0.5);
+	font-weight: 300;
+	font-size: 18px;
+}
+
+.chat-modal-subtitle {
+	font-size: 14px;
+	font-weight: 400;
 	color: rgba(255, 255, 255, 0.6);
 }
 
@@ -452,12 +462,16 @@
 		padding: 16px;
 	}
 
-	.chat-modal-header-left h3 {
+	.chat-modal-title-container h3 {
 		font-size: 18px;
 	}
 
-	.chat-modal-header-left p {
+	.chat-modal-subtitle {
 		font-size: 12px;
+	}
+
+	.chat-modal-separator {
+		font-size: 16px;
 	}
 
 	.chat-modal-icon {
@@ -490,11 +504,12 @@
 		gap: 12px;
 	}
 
-	.chat-modal-header-left h3 {
+	.chat-modal-title-container h3 {
 		font-size: 16px;
 	}
 
-	.chat-modal-header-left p {
+	.chat-modal-separator,
+	.chat-modal-subtitle {
 		display: none;
 	}
 
