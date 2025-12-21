@@ -6,7 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import {AiOutlineDownload} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 import {motion, AnimatePresence} from 'framer-motion';
-import Confetti from 'react-confetti';
+import confetti from 'canvas-confetti';
 
 import {downloadFile, listFile} from '../aws-s3/awsS3';
 
@@ -19,11 +19,6 @@ function NavBar() {
 		{label: 'Frontend Developer Resume', fileName: 'Carlos-Jesus-resume-frontend.pdf', key: 'Carlos-Jesus-resume-frontend.pdf'}
 	]);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const [showConfetti, setShowConfetti] = useState(false);
-	const [windowDimensions, setWindowDimensions] = useState({
-		width: window.innerWidth,
-		height: window.innerHeight
-	});
 	const dropdownRef = useRef(null);
 
 	React.useEffect(() => {
@@ -43,19 +38,6 @@ function NavBar() {
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, []);
-
-	// Manejar dimensiones de ventana para confetti
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowDimensions({
-				width: window.innerWidth,
-				height: window.innerHeight
-			});
-		};
-
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
 	}, []);
 
 	const loadCVFiles = async () => {
@@ -154,13 +136,48 @@ function NavBar() {
 		try {
 			setIsDropdownOpen(false);
 
-			// Activar confetti
-			setShowConfetti(true);
+			// Lanzar confetti con colores púrpura
+			const count = 200;
+			const defaults = {
+				origin: {y: 0.7},
+				colors: ['#a855f7', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95']
+			};
 
-			// Desactivar confetti después de 4 segundos
-			setTimeout(() => {
-				setShowConfetti(false);
-			}, 4000);
+			function fire(particleRatio, opts) {
+				confetti({
+					...defaults,
+					...opts,
+					particleCount: Math.floor(count * particleRatio)
+				});
+			}
+
+			// Efecto de explosión múltiple
+			fire(0.25, {
+				spread: 26,
+				startVelocity: 55
+			});
+
+			fire(0.2, {
+				spread: 60
+			});
+
+			fire(0.35, {
+				spread: 100,
+				decay: 0.91,
+				scalar: 0.8
+			});
+
+			fire(0.1, {
+				spread: 120,
+				startVelocity: 25,
+				decay: 0.92,
+				scalar: 1.2
+			});
+
+			fire(0.1, {
+				spread: 120,
+				startVelocity: 45
+			});
 
 			// Si AWS está configurado, descargar desde S3
 			if (process.env.REACT_APP_AWS_REGION && cvFile.key) {
@@ -193,19 +210,8 @@ function NavBar() {
 	};
 
 	return (
-		<>
-			{showConfetti && (
-				<Confetti
-					width={windowDimensions.width}
-					height={windowDimensions.height}
-					recycle={false}
-					numberOfPieces={400}
-					gravity={0.3}
-					colors={['#a855f7', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95']}
-				/>
-			)}
-			<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? 'sticky' : 'navbar'}>
-				<Container fluid className='navbar-container'>
+		<Navbar expanded={expand} fixed='top' expand='md' className={navColour ? 'sticky' : 'navbar'}>
+			<Container fluid className='navbar-container'>
 				<Navbar.Brand as={Link} to='/' className='navbar-brand-custom'>
 					<div className='brand-logo'>
 						<div className='brand-icon'>CJ</div>
@@ -338,7 +344,6 @@ function NavBar() {
 				</Navbar.Collapse>
 			</Container>
 		</Navbar>
-		</>
 	);
 }
 
