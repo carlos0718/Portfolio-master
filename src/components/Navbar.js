@@ -166,6 +166,13 @@ function NavBar() {
 					origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
 				});
 
+				// Desde el centro
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.4, 0.6), y: Math.random() - 0.2}
+				});
+
 				// Desde la derecha
 				confetti({
 					...defaults,
