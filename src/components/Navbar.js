@@ -6,6 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import {AiOutlineDownload} from 'react-icons/ai';
 import {Link} from 'react-router-dom';
 import {motion, AnimatePresence} from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 import {downloadFile, listFile} from '../aws-s3/awsS3';
 
@@ -134,6 +135,52 @@ function NavBar() {
 	const handleClickDownload = async (cvFile) => {
 		try {
 			setIsDropdownOpen(false);
+
+			// Lanzar confetti con colores variados que cubre todo el viewport
+			const duration = 3 * 1000;
+			const animationEnd = Date.now() + duration;
+			const defaults = {
+				startVelocity: 30,
+				spread: 360,
+				ticks: 60,
+				zIndex: 9999
+			};
+
+			function randomInRange(min, max) {
+				return Math.random() * (max - min) + min;
+			}
+
+			const interval = setInterval(function () {
+				const timeLeft = animationEnd - Date.now();
+
+				if (timeLeft <= 0) {
+					return clearInterval(interval);
+				}
+
+				const particleCount = 50 * (timeLeft / duration);
+
+				// Desde la izquierda
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
+				});
+
+				// Desde el centro
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.4, 0.6), y: Math.random() - 0.2}
+				});
+
+				// Desde la derecha
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.7, 0.9), y: Math.random() - 0.2}
+				});
+			}, 250);
+
 			// Si AWS está configurado, descargar desde S3
 			if (process.env.REACT_APP_AWS_REGION && cvFile.key) {
 				const blobUrl = await downloadFile(cvFile.key);
