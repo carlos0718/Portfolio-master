@@ -4,31 +4,59 @@ import {BsX, BsRobot, BsTrash, BsSend} from 'react-icons/bs';
 import {useChatContext} from '../../context/ChatContext';
 import './Chat.css';
 
-// Helper function to convert URLs to clickeable links
+// Helper function to parse and style message content
 function parseMessageContent(text) {
+	// First, split by URLs
 	const urlRegex = /(https?:\/\/[^\s]+)/g;
-	const parts = text.split(urlRegex);
+	const parts = [];
 
-	return parts.map((part, index) => {
-		if (part.match(urlRegex)) {
-			return (
-				<a
-					key={index}
-					href={part}
-					target="_blank"
-					rel="noopener noreferrer"
-					style={{
-						color: '#a855f7',
-						textDecoration: 'underline',
-						cursor: 'pointer'
-					}}
-				>
-					{part}
-				</a>
-			);
+	text.split('\n').forEach((line, lineIndex) => {
+		if (lineIndex > 0) {
+			parts.push(<br key={`br-${lineIndex}`} />);
 		}
-		return part;
+
+		const urlParts = line.split(urlRegex);
+
+		urlParts.forEach((part, index) => {
+			if (part.match(urlRegex)) {
+				// Render URLs as clickeable links
+				parts.push(
+					<a
+						key={`url-${lineIndex}-${index}`}
+						href={part}
+						target="_blank"
+						rel="noopener noreferrer"
+						style={{
+							color: '#a855f7',
+							textDecoration: 'underline',
+							cursor: 'pointer'
+						}}
+					>
+						{part}
+					</a>
+				);
+			} else {
+				// Check for company/project names with colon pattern (e.g., "Globons:", "Proyecto Javit:")
+				const titleRegex = /^([A-Z][A-Za-z0-9\s&.-]+):/;
+				const match = part.match(titleRegex);
+
+				if (match) {
+					const title = match[1];
+					const rest = part.substring(match[0].length);
+					parts.push(
+						<span key={`title-${lineIndex}-${index}`}>
+							<span style={{color: '#a855f7', fontWeight: '600'}}>{title}:</span>
+							{rest}
+						</span>
+					);
+				} else {
+					parts.push(<span key={`text-${lineIndex}-${index}`}>{part}</span>);
+				}
+			}
+		});
 	});
+
+	return parts;
 }
 
 function ChatWindow() {
@@ -78,9 +106,12 @@ function ChatWindow() {
 								<div className='chat-modal-icon'>
 									<BsRobot size={24} />
 								</div>
-								<div>
-									<h3>AI Assistant</h3>
-									<p>Ask me anything about Carlos's professional profile</p>
+								<div className='chat-modal-title-container'>
+									<h3>
+										AI Assistant
+										<span className='chat-modal-separator'> | </span>
+										<span className='chat-modal-subtitle'>Ask me anything about Carlos's professional profile</span>
+									</h3>
 								</div>
 							</div>
 							<div className='chat-modal-header-actions'>
