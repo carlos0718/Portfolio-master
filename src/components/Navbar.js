@@ -136,48 +136,43 @@ function NavBar() {
 		try {
 			setIsDropdownOpen(false);
 
-			// Lanzar confetti con colores púrpura
-			const count = 200;
+			// Lanzar confetti con colores variados que cubre todo el viewport
+			const duration = 3 * 1000;
+			const animationEnd = Date.now() + duration;
 			const defaults = {
-				origin: {y: 0.7},
-				colors: ['#a855f7', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95']
+				startVelocity: 30,
+				spread: 360,
+				ticks: 60,
+				zIndex: 9999
 			};
 
-			function fire(particleRatio, opts) {
-				confetti({
-					...defaults,
-					...opts,
-					particleCount: Math.floor(count * particleRatio)
-				});
+			function randomInRange(min, max) {
+				return Math.random() * (max - min) + min;
 			}
 
-			// Efecto de explosión múltiple
-			fire(0.25, {
-				spread: 26,
-				startVelocity: 55
-			});
+			const interval = setInterval(function () {
+				const timeLeft = animationEnd - Date.now();
 
-			fire(0.2, {
-				spread: 60
-			});
+				if (timeLeft <= 0) {
+					return clearInterval(interval);
+				}
 
-			fire(0.35, {
-				spread: 100,
-				decay: 0.91,
-				scalar: 0.8
-			});
+				const particleCount = 50 * (timeLeft / duration);
 
-			fire(0.1, {
-				spread: 120,
-				startVelocity: 25,
-				decay: 0.92,
-				scalar: 1.2
-			});
+				// Desde la izquierda
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.1, 0.3), y: Math.random() - 0.2}
+				});
 
-			fire(0.1, {
-				spread: 120,
-				startVelocity: 45
-			});
+				// Desde la derecha
+				confetti({
+					...defaults,
+					particleCount,
+					origin: {x: randomInRange(0.7, 0.9), y: Math.random() - 0.2}
+				});
+			}, 250);
 
 			// Si AWS está configurado, descargar desde S3
 			if (process.env.REACT_APP_AWS_REGION && cvFile.key) {
