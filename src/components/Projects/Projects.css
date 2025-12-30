@@ -80,6 +80,60 @@
 	box-shadow: 0 12px 40px rgba(168, 85, 247, 0.3);
 }
 
+/* Estilos responsivos para ProjectSlide dentro del carrusel */
+@media (max-width: 768px) {
+	.horizontal-carousel-slide > div {
+		flex-direction: column !important;
+		padding: 0 !important;
+	}
+
+	.horizontal-carousel-slide > div > div:first-child {
+		flex: 0 0 auto !important;
+		max-height: 250px !important;
+	}
+
+	.horizontal-carousel-slide > div > div:last-child {
+		padding: 24px !important;
+	}
+
+	.horizontal-carousel-slide h2 {
+		font-size: 1.6rem !important;
+	}
+
+	.horizontal-carousel-slide p {
+		font-size: 0.9rem !important;
+	}
+}
+
+@media (max-width: 480px) {
+	.horizontal-carousel-slide > div > div:first-child {
+		max-height: 200px !important;
+		min-height: 200px !important;
+	}
+
+	.horizontal-carousel-slide > div > div:last-child {
+		padding: 20px !important;
+	}
+
+	.horizontal-carousel-slide h2 {
+		font-size: 1.4rem !important;
+		margin-bottom: 12px !important;
+	}
+
+	.horizontal-carousel-slide > div > div:last-child > div:first-child p:last-child {
+		margin-bottom: 20px !important;
+	}
+
+	.horizontal-carousel-slide > div > div:last-child > div:last-child > div:first-child {
+		margin-bottom: 20px !important;
+	}
+
+	.horizontal-carousel-slide button {
+		font-size: 0.9rem !important;
+		padding: 12px 20px !important;
+	}
+}
+
 /* Estilos para el carrusel */
 .carousel-dots {
 	display: flex;
