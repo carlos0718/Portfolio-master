@@ -1754,6 +1754,11 @@ svg.react-activity-calendar__calendar text {
   .hero-description {
     font-size: 16px;
     line-height: 26px;
+    margin-bottom: 24px;
+  }
+
+  .hero-buttons {
+    margin-top: 24px;
   }
 
   .hero-main-row {
@@ -1805,11 +1810,13 @@ svg.react-activity-calendar__calendar text {
   .hero-description {
     font-size: 15px;
     line-height: 24px;
+    margin-bottom: 32px;
   }
 
   .hero-buttons {
     flex-direction: column;
     width: 100%;
+    margin-top: 32px;
   }
 
   .btn-ver-proyectos,
