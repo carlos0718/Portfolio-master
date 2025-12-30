@@ -1753,18 +1753,15 @@ svg.react-activity-calendar__calendar text {
   .hero-description {
     font-size: 16px;
     line-height: 26px;
-    min-height: 100px;
-    padding-bottom: 40px;
-  }
-
-  .hero-text-section {
-    max-width: 100% !important;
-    gap: 60px !important;
   }
 
   .hero-main-row {
     flex-direction: column !important;
     gap: 40px !important;
+  }
+
+  .hero-text-section {
+    max-width: 100% !important;
   }
 
   .hero-profile-section {
@@ -1807,12 +1804,6 @@ svg.react-activity-calendar__calendar text {
   .hero-description {
     font-size: 15px;
     line-height: 24px;
-    min-height: 120px;
-    padding-bottom: 50px;
-  }
-
-  .hero-text-section {
-    gap: 80px !important;
   }
 
   .hero-buttons {
@@ -1867,47 +1858,5 @@ svg.react-activity-calendar__calendar text {
     height: 350px;
     top: -100px;
     right: -100px;
-  }
-}
-
-/* Extra small devices (phones less than 480px) */
-@media (max-width: 480px) {
-  .hero-description {
-    min-height: 140px !important;
-    padding-bottom: 60px !important;
-  }
-
-  .hero-text-section {
-    gap: 100px !important;
-  }
-
-  .hero-title h1 {
-    font-size: 42px !important;
-    line-height: 40px !important;
-  }
-}
-
-/* Very small devices (390px and below - iPhone 12/13/14) */
-@media (max-width: 390px) {
-  .hero-description {
-    margin-bottom: 150px !important;
-    min-height: 180px !important;
-  }
-
-  .hero-buttons {
-    margin-top: 150px !important;
-  }
-
-  .hero-title h1 {
-    font-size: 38px !important;
-    line-height: 36px !important;
-  }
-
-  .hero-subtitle h2 {
-    font-size: 16px !important;
-  }
-
-  .hero-content {
-    padding: 20px 16px !important;
   }
 }
