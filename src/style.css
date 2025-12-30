@@ -1891,12 +1891,12 @@ svg.react-activity-calendar__calendar text {
 /* Very small devices (390px and below - iPhone 12/13/14) */
 @media (max-width: 390px) {
   .hero-description {
-    margin-bottom: 110px !important;
-    min-height: 150px !important;
+    margin-bottom: 150px !important;
+    min-height: 180px !important;
   }
 
   .hero-buttons {
-    margin-top: 110px !important;
+    margin-top: 150px !important;
   }
 
   .hero-title h1 {
