@@ -96,18 +96,6 @@ const ACTIVE_CHIP_STYLE = {
 	borderColor: '#ec4899'
 };
 
-const DROPDOWN_STYLE = {
-	width: '100%',
-	padding: '12px 16px',
-	background: 'rgba(168, 85, 247, 0.05)',
-	border: '2px solid rgba(168, 85, 247, 0.3)',
-	borderRadius: '12px',
-	color: 'white',
-	fontSize: '0.95rem',
-	cursor: 'pointer',
-	outline: 'none',
-	transition: 'all 0.3s ease'
-};
 
 function ProjectFilters({
 	searchTerm,
