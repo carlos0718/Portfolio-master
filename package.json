@@ -3,12 +3,11 @@
 	"version": "0.1.0",
 	"private": true,
 	"engines": {
-		"node": ">=20.x"
+		"node": "20.x"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.777.0",
 		"@google/generative-ai": "^0.24.1",
-		"@react-pdf/renderer": "^2.2.0",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.4",
 		"@testing-library/user-event": "^13.5.0",
