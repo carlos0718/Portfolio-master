@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {motion, AnimatePresence} from 'framer-motion';
+import {motion} from 'framer-motion';
 import ProjectSlide from './ProjectSlide';
 
 const AUTOPLAY_INTERVAL = 5000;
@@ -34,14 +34,12 @@ const DOT_STYLE = {
 
 function HorizontalCarousel({projects}) {
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [direction, setDirection] = useState(0);
 	const [isPaused, setIsPaused] = useState(false);
 
 	useEffect(() => {
 		if (isPaused || projects.length <= 1) return;
 
 		const interval = setInterval(() => {
-			setDirection(1);
 			setCurrentIndex((prev) => (prev + 1) % projects.length);
 		}, AUTOPLAY_INTERVAL);
 
@@ -50,7 +48,6 @@ function HorizontalCarousel({projects}) {
 
 	const handleDotClick = (index) => {
 		setIsPaused(true);
-		setDirection(index > currentIndex ? 1 : -1);
 		setCurrentIndex(index);
 		setTimeout(() => setIsPaused(false), 10000);
 	};
@@ -139,11 +136,9 @@ function HorizontalCarousel({projects}) {
 			setIsPaused(true);
 			if (offset < 0) {
 				// Swipe izquierda - siguiente
-				setDirection(1);
 				setCurrentIndex((prev) => (prev + 1) % projects.length);
 			} else {
 				// Swipe derecha - anterior
-				setDirection(-1);
 				setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
 			}
 			setTimeout(() => setIsPaused(false), 10000);
