@@ -136,11 +136,9 @@ function HorizontalCarousel({projects}) {
 			setIsPaused(true);
 			if (offset < 0) {
 				// Swipe izquierda - siguiente
-				setDirection(1);
 				setCurrentIndex((prev) => (prev + 1) % projects.length);
 			} else {
 				// Swipe derecha - anterior
-				setDirection(-1);
 				setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
 			}
 			setTimeout(() => setIsPaused(false), 10000);
