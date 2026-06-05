@@ -112,10 +112,9 @@ export default async function handler(req, res) {
 			});
 		}
 
-		// Return more detailed error in development
 		return res.status(500).json({
 			error: 'An error occurred processing your request. Please try again.',
-			details: process.env.NODE_ENV === 'development' ? error.message : undefined
+			details: error.message
 		});
 	}
 }
