@@ -392,6 +392,36 @@ export const professionalData = {
 	},
 
 	// ========================================
+	// PROFESSIONAL PROFILE DESCRIPTION
+	// ========================================
+
+	profileDescription: {
+		summary: 'Fullstack Developer de perfil senior/resolutivo, capaz de navegar entre código legacy y nuevas tecnologías con una mentalidad quirúrgica: moderniza la tecnología sin alterar la lógica de negocio, priorizando siempre la estabilidad del sistema y la excelencia en la interfaz de usuario. Su trabajo combina la precisión técnica con una fuerte visión de producto.',
+		pillars: [
+			{
+				title: 'Especialista en Modernización de Arquitectura (Legacy to Modern)',
+				description: 'Ha liderado la transición crítica de arquitecturas basadas en jQuery y Bootstrap 3/4 hacia estándares modernos con Vanilla JavaScript y Bootstrap 5.3. No es solo un cambio estético, sino una mejora en el rendimiento y la mantenibilidad a largo plazo, eliminando dependencias pesadas y adoptando estándares web actuales.'
+			},
+			{
+				title: 'Arquitecto de Interfaces Responsivas y Adaptativas',
+				description: 'Demuestra un enfoque Mobile-First y atención meticulosa al detalle en UX. Ha diseñado soluciones específicas para diferentes breakpoints (iPhone, iPad y Desktop), transformando tablas complejas en sistemas de tarjetas y acordeones, asegurando que el flujo de compra sea fluido en cualquier dispositivo.'
+			},
+			{
+				title: 'Desarrollador Backend con Enfoque en Integridad de Datos',
+				description: 'En el lado del servidor (.NET / C# / Razor), maneja lógica de negocio compleja sin romper la compatibilidad con sistemas legados, diseña y consume DTOs eficientes, gestiona estados de sesión y permisos de usuario de forma segura, e implementa sistemas de administración utilizando componentes avanzados como Tabulator.'
+			},
+			{
+				title: 'Ingeniero de Estilos y Consistencia Visual',
+				description: 'Ha implementado un Sistema de Diseño basado en variables CSS (:root), permitiendo que el branding institucional se aplique de forma coherente en toda la aplicación (Frontend y Backend). Su capacidad para centralizar estilos hardcodeados demuestra una mentalidad de escalabilidad.'
+			},
+			{
+				title: 'Debugging y Resolución de Problemas Complejos',
+				description: 'Su rol incluye identificación y corrección de errores críticos: resolución de errores de Mixed Content (HTTPS), mapeo de datos inconsistentes (PascalCase vs camelCase), y optimización de procesos asíncronos para evitar loadings infinitos, mejorando el feedback visual al usuario.'
+			}
+		]
+	},
+
+	// ========================================
 	// DEVELOPMENT PRINCIPLES
 	// ========================================
 

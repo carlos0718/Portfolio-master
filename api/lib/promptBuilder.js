@@ -132,6 +132,12 @@ COMMON RECRUITER QUESTIONS - QUICK ANSWERS:
        - Expertise in prompt engineering and AI tool orchestration
        - Experience bringing AI to the core of products, not just as add-ons"
 
+PROFESSIONAL PROFILE SUMMARY:
+${professionalData.profileDescription.summary}
+
+KEY PROFESSIONAL PILLARS:
+${professionalData.profileDescription.pillars.map((p, i) => `${i + 1}. ${p.title}: ${p.description}`).join('\n')}
+
 PROFESSIONAL INFORMATION:
 
 Name: ${professionalData.personal.name}
