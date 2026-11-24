@@ -8,14 +8,14 @@ export const translations = {
       certificates: 'Certificados',
       downloadCv: 'Descargar CV',
       contact: 'Contactar',
-      aiAssistant: 'Asistente IA',
+      aiAssistant: 'CharlyBot',
       commandHint: 'Comandos'
     },
     hero: {
       eyebrow: 'DISPONIBLE PARA ROLES REMOTOS & PROYECTOS',
       rolePrefix: 'Senior Full Stack Developer',
       roleHighlight: '& AI Engineer',
-      askAiCta: 'Preguntale a mi IA',
+      askAiCta: 'Preguntale a CharlyBot',
       viewProjectsCta: 'Ver Proyectos',
       downloadCvCta: 'Descargar CV',
       copyEmail: 'Copiar email',
@@ -126,18 +126,18 @@ export const translations = {
       academicStripTitle: 'Formación Universitaria'
     },
     chat: {
-      title: 'Asistente IA de Carlos',
+      title: 'CharlyBot',
       subtitle: 'Experiencia laboral y formación académica',
       modeAi: 'Gemini AI',
       modeFallback: 'Consulta Directa',
       modeGuarded: 'Alcance Protegido',
       welcome:
-        '¡Hola! Soy el asistente de **Carlos Jesús**. Puedo responder consultas sobre su **experiencia laboral**, **stack técnico**, **proyectos**, **expectativas salariales** y su **formación académica pasada y actual** (UTN-FRGP y Tecnicatura en Sistemas orientado a Desarrollo Web en la UK). ¿En qué te ayudo?',
+        '¡Hola! Soy **CharlyBot**, el asistente de **Carlos Jesús**. Puedo responder consultas sobre su **experiencia laboral**, **stack técnico**, **proyectos**, **expectativas salariales** y su **formación académica pasada y actual** (UTN-FRGP y Tecnicatura en Sistemas orientado a Desarrollo Web en la UK). ¿En qué te ayudo?',
       placeholder: 'Preguntá sobre su experiencia, estudios (UK/UTN) o stack...',
       send: 'Enviar',
       clear: 'Limpiar chat',
       close: 'Cerrar',
-      openLabel: 'Abrir asistente IA de Carlos',
+      openLabel: 'Abrir CharlyBot',
       scopeNotice: 'Protegido contra prompt injection · Solo perfil laboral y académico',
       quickPrompts: [
         '¿Qué experiencia laboral tiene?',
@@ -164,7 +164,7 @@ export const translations = {
         toggleLang: 'Cambiar idioma a English (EN)',
         downloadCv: 'Descargar CV en PDF',
         copyEmail: 'Copiar email (cajs0718@gmail.com)',
-        openChat: 'Abrir Asistente IA',
+        openChat: 'Abrir CharlyBot',
         askEducation: 'IA: Ver estudios actuales (UK) y UTN',
         askSalary: 'IA: Consultar expectativas salariales'
       },
@@ -185,14 +185,14 @@ export const translations = {
       certificates: 'Certificates',
       downloadCv: 'Download CV',
       contact: 'Contact',
-      aiAssistant: 'AI Assistant',
+      aiAssistant: 'CharlyBot',
       commandHint: 'Commands'
     },
     hero: {
       eyebrow: 'AVAILABLE FOR REMOTE ROLES & PROJECTS',
       rolePrefix: 'Senior Full Stack Developer',
       roleHighlight: '& AI Engineer',
-      askAiCta: 'Ask my AI Assistant',
+      askAiCta: 'Ask CharlyBot',
       viewProjectsCta: 'Explore Projects',
       downloadCvCta: 'Download CV',
       copyEmail: 'Copy email',
@@ -303,18 +303,18 @@ export const translations = {
       academicStripTitle: 'University Degrees'
     },
     chat: {
-      title: 'Carlos\'s AI Assistant',
+      title: 'CharlyBot',
       subtitle: 'Work experience & academic background',
       modeAi: 'Gemini AI',
       modeFallback: 'Direct Knowledge',
       modeGuarded: 'Guarded Scope',
       welcome:
-        'Hi! I\'m **Carlos Jesús\'s** assistant. I can answer questions about his **work experience**, **tech stack**, **projects**, **salary expectations**, and **past & current academic background** (UTN-FRGP graduate & currently studying Systems – Web Development at UK). How can I help?',
+        'Hi! I\'m **CharlyBot**, **Carlos Jesús\'s** AI assistant. I can answer questions about his **work experience**, **tech stack**, **projects**, **salary expectations**, and **past & current academic background** (UTN-FRGP graduate & currently studying Systems – Web Development at UK). How can I help?',
       placeholder: 'Ask about his experience, studies (UK/UTN), or stack...',
       send: 'Send',
       clear: 'Clear chat',
       close: 'Close',
-      openLabel: 'Open Carlos AI Assistant',
+      openLabel: 'Open CharlyBot',
       scopeNotice: 'Prompt-injection guarded · Work & academic scope only',
       quickPrompts: [
         'Summarize his work experience',
@@ -341,7 +341,7 @@ export const translations = {
         toggleLang: 'Switch language to Español (ES)',
         downloadCv: 'Download CV (PDF)',
         copyEmail: 'Copy email (cajs0718@gmail.com)',
-        openChat: 'Open AI Assistant',
+        openChat: 'Open CharlyBot',
         askEducation: 'AI: View current (UK) & UTN studies',
         askSalary: 'AI: Check salary expectations'
       },

@@ -71,15 +71,15 @@ const OFF_TOPIC_PATTERNS = [
 export function getScopeRefusalMessage(lang = 'es', isInjection = false) {
   if (lang === 'en') {
     if (isInjection) {
-      return 'I can only act as Carlos Jesús\'s professional assistant and answer questions strictly about his work experience, technical skills, projects, and academic background (past and current). How can I help you evaluate his profile?';
+      return 'I\'m CharlyBot and can only act as Carlos Jesús\'s professional assistant, answering questions strictly about his work experience, technical skills, projects, and academic background (past and current). How can I help you evaluate his profile?';
     }
-    return 'I\'m specialized exclusively in Carlos Jesús\'s work experience and academic background (past and current studies, certifications, projects, tech stack, and availability). Feel free to ask anything about his professional profile!';
+    return 'I\'m CharlyBot, specialized exclusively in Carlos Jesús\'s work experience and academic background (past and current studies, certifications, projects, tech stack, and availability). Feel free to ask anything about his professional profile!';
   }
 
   if (isInjection) {
-    return 'Solo puedo operar como el asistente profesional de Carlos Jesús y responder consultas estrictamente relacionadas con su experiencia laboral, proyectos, stack técnico y formación académica (pasada y actual). ¿Qué te gustaría saber sobre su perfil?';
+    return 'Soy CharlyBot y solo puedo operar como el asistente profesional de Carlos Jesús, respondiendo consultas estrictamente relacionadas con su experiencia laboral, proyectos, stack técnico y formación académica (pasada y actual). ¿Qué te gustaría saber sobre su perfil?';
   }
-  return 'Estoy enfocado exclusivamente en la experiencia laboral y la formación académica (pasada y actual) de Carlos Jesús — incluyendo sus proyectos, tecnologías, certificaciones, disponibilidad y contacto. ¡Preguntame lo que necesites sobre su perfil profesional!';
+  return 'Soy CharlyBot y estoy enfocado exclusivamente en la experiencia laboral y la formación académica (pasada y actual) de Carlos Jesús — incluyendo sus proyectos, tecnologías, certificaciones, disponibilidad y contacto. ¡Preguntame lo que necesites sobre su perfil profesional!';
 }
 
 export function inspectUserInput(rawMessage) {
