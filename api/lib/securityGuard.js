@@ -60,11 +60,15 @@ const INJECTION_PATTERNS = [
 
 // Clearly unrelated tasks when no portfolio/career/academic signal is present
 const PORTFOLIO_SIGNAL_REGEX =
-  /\b(carlos|jesus|jesús|experiencia|experience|trabajo|trabajos|work|job|role|rol|puesto|empresa|company|globons|istea|marfrig|rockstar|bief|proyecto|proyectos|project|projects|github|repo|stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|next\.?js|node|dotnet|\.net|c#|sql|postgres|docker|aws|gcp|ia|ai|inteligencia artificial|gemini|claude|n8n|automatiz|salario|salary|sueldo|pretensi|rate|usd|ars|dolar|dólar|remoto|remote|hibrido|híbrido|hybrid|disponib|availab|cv|resume|curriculum|currículum|descargar|download|contact|contacto|email|mail|linkedin|whatsapp|estudio|estudios|estudia|estudiando|study|studying|education|educaci|academic|académic|universidad|university|utn|kennedy|\buk\b|tecnicatura|carrera|degree|certificad|certificate|curso|cursos|course|bootcamp|taller|workshop|coderhouse|nucba|cac|mentor|mentoring|idioma|ingles|inglés|english|spanish|arquitectura|legacy|wcag|accesibilidad|hola|hello|hi|hey|buenas|perfil|profile|ayuda|help)\b/i;
+  /\b(carlos|charly|charlybot|jesus|jesús|experiencia|experience|trabajo|trabajos|work|job|role|rol|puesto|empresa|company|globons|istea|marfrig|rockstar|bief|proyecto|proyectos|project|projects|github|repo|stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|react\s+native|expo|next\.?js|node|dotnet|\.net|c#|python|sql|postgres|supabase|rls|docker|aws|s3|gcp|ia|ai|inteligencia artificial|gemini|claude|n8n|automatiz|cuotify|quotify|rocky-spec|kronos|kitchen|rappi|e-learning|elearning|salario|salary|sueldo|pretensi|rate|usd|ars|dolar|dólar|remoto|remote|hibrido|híbrido|hybrid|disponib|availab|cv|resume|curriculum|currículum|descargar|download|contact|contacto|email|mail|linkedin|whatsapp|estudio|estudios|estudia|estudiando|study|studying|education|educaci|academic|académic|universidad|university|utn|kennedy|\buk\b|tecnicatura|carrera|degree|certificad|certificate|curso|cursos|course|bootcamp|taller|workshop|coderhouse|nucba|cac|mentor|mentoring|idioma|ingles|inglés|english|spanish|arquitectura|legacy|wcag|accesibilidad|hola|hello|hi|hey|buenas|perfil|profile|ayuda|help)\b/i;
+
+// Explicit off-topic task requests blocked unconditionally (even if they mention a tech like Python/React)
+const STRICT_OFF_TOPIC_TASKS = [
+  /\b(escribe|escribí|escribeme|escríbeme|write|generate|create|hazme|haceme|programame)\s+(un|una|a|an|me)?\s*(c[oó]digo|script|programa|ensayo|essay|tarea|homework|bot\s+de\s+scraping|scraper|malware|exploit|sql\s+injection)\b/i
+];
 
 const OFF_TOPIC_PATTERNS = [
   /\b(receta|recipe|cocinar|cook|pizza|empanada|horoscopo|horóscopo|horoscope|chiste|joke|poema|poem|cuento|story|cancion|canción|song|letra|lyrics)\b/i,
-  /\b(escribe|escribí|escribeme|escríbeme|write|generate|create|hazme|haceme|programame)\s+(un|una|a|an|me)?\s*(c[oó]digo|script|programa|ensayo|essay|tarea|homework|bot\s+de\s+scraping|scraper|malware|exploit|sql\s+injection)\b/i,
   /\b(quien\s+gan[oó]|who\s+won|mundial|world\s+cup|partido|clima|weather|pron[oó]stico|noticias|news|pol[ií]tica|politics|presidente|president|elecciones|bitcoin|cripto|crypto|acciones|stocks|apuesta|betting|diagn[oó]stico\s+m[eé]dico|receta\s+m[eé]dica)\b/i
 ];
 
@@ -127,7 +131,21 @@ export function inspectUserInput(rawMessage) {
     }
   }
 
-  // Layer 1B: Obvious off-topic filter when no portfolio/career/academic signal is present
+  // Layer 1B: Unconditional off-topic task requests (e.g., "write me a Python scraper")
+  for (const pattern of STRICT_OFF_TOPIC_TASKS) {
+    if (pattern.test(sanitizedText)) {
+      return {
+        safe: false,
+        blocked: true,
+        blockedReason: 'off_topic',
+        lang,
+        sanitizedText,
+        refusalMessage: getScopeRefusalMessage(lang, false)
+      };
+    }
+  }
+
+  // Layer 1C: Obvious off-topic filter when no portfolio/career/academic signal is present
   const hasPortfolioSignal = PORTFOLIO_SIGNAL_REGEX.test(sanitizedText);
   if (!hasPortfolioSignal) {
     for (const pattern of OFF_TOPIC_PATTERNS) {

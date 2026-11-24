@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import GitHubCalendar from 'react-github-calendar';
-import { ArrowRight, Award, GraduationCap, Sparkles } from 'lucide-react';
+import { ArrowRight, Award, ExternalLink, Github, GraduationCap, Sparkles } from 'lucide-react';
 import { professionalData } from '../../data/professionalData';
 import { certificatesData } from '../../data/certificatesData';
 import { useLanguage } from '../../context/LanguageContext';
@@ -69,15 +69,46 @@ export function FeaturedCases() {
                   </div>
                 </div>
 
-                <div className="mt-5 flex flex-wrap gap-1.5 border-t border-white/[0.06] pt-4">
-                  {project.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2.5 py-0.5 font-mono text-[11px] text-zinc-400"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] pt-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2.5 py-0.5 font-mono text-[11px] text-zinc-400"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+
+                  {(project.repoUrl || project.demoUrl) && (
+                    <div className="flex items-center gap-1.5">
+                      {project.repoUrl && (
+                        <a
+                          href={project.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`GitHub ${project.name[lang]}`}
+                          className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white"
+                        >
+                          <Github className="h-3.5 w-3.5" />
+                          <span>Repo</span>
+                        </a>
+                      )}
+                      {project.demoUrl && (
+                        <a
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Demo ${project.name[lang]}`}
+                          className="inline-flex items-center gap-1 rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 font-mono text-[11px] text-cyan-200 transition-colors hover:bg-cyan-400/20"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          <span>Demo</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               </SpotlightCard>
             </motion.div>

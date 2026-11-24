@@ -86,19 +86,21 @@ If you're hiring for a specific role (**Frontend**, **Full Stack**, or **AI Engi
   }
 
   // 4. AI & Automation expertise
-  if (/\b(\bia\b|\bai\b|inteligencia\s+artificial|gemini|claude|n8n|automatiz|automation|chatbot|copilot|cursor|prompt)\b/i.test(q)) {
+  if (/\b(\bia\b|\bai\b|inteligencia\s+artificial|gemini|claude|n8n|automatiz|automation|chatbot|copilot|cursor|prompt|rocky|kronos|kitchen|rappi)\b/i.test(q)) {
     if (isEs) {
       return `**Experiencia de Carlos Jesús en IA y Automatización:**
 
-• **AI Automation Bot (2025 – Presente):** Flujos automatizados con **n8n Cloud**, Telegram Bot API y Google Sheets, ahorrando +10 hs/semana en procesamiento manual.
-• **Asistente IA con Guardrails:** Implementación serverless con **Google Gemini API (@google/genai)**, defensa anti-prompt-injection y fallback inteligente.
-• **Ingeniería Asistida por IA:** Uso diario de **Claude Code, Cursor, Windsurf y GitHub Copilot**, reduciendo tiempos de entrega en un **25–40%** en Globons y promoviendo buenas prácticas de IA con sus alumnos en **ISTEA Ed IT**.`;
+• **rocky-spec (2026):** Toolkit multi-agente open-source en Python para Spec-Driven Development compatible con Claude Code y Cursor (https://github.com/carlos0718/rocky-spec).
+• **Kronos AI Assistant & Rappi AI (2026):** Asistente de escritorio por voz en Python con LLM + sistema de análisis operacional conversacional con **Claude Sonnet**.
+• **Kitchen AI Companion & CharlyBot:** Apps de IA en producción integrando **Supabase**, **Gemini API (@google/genai)** y guardrails anti-prompt-injection.
+• **Ingeniería Asistida por IA:** Skills propias para Claude Code (charly-skills-dev) y reducción de tiempos de entrega en un **25–40%** en Globons.`;
     }
     return `**Carlos Jesús's AI & Automation Experience:**
 
-• **AI Automation Bot (2025 – Present):** Automated workflows using **n8n Cloud**, Telegram Bot API, and Google Sheets, saving 10+ hours/week.
-• **Guardrailed AI Assistant:** Serverless conversational architecture built with **Google Gemini API (@google/genai)**, anti-prompt-injection defenses, and deterministic fallback.
-• **AI-Assisted Engineering:** Daily workflow with **Claude Code, Cursor, Windsurf, and GitHub Copilot**, accelerating delivery by **25–40%** at Globons and mentoring students at **ISTEA Ed IT**.`;
+• **rocky-spec (2026):** Open-source Python multi-agent toolkit for Spec-Driven Development across Claude Code & Cursor (https://github.com/carlos0718/rocky-spec).
+• **Kronos AI Assistant & Rappi AI (2026):** Voice-controlled desktop LLM assistant in Python + conversational ops analytics powered by **Claude Sonnet**.
+• **Kitchen AI Companion & CharlyBot:** Production AI apps integrating **Supabase**, **Gemini API (@google/genai)**, and 3-layer prompt-injection guardrails.
+• **AI-Assisted Engineering:** Custom Claude Code skills and **25–40%** faster feature delivery at Globons.`;
   }
 
   // 5. Work Experience & Impact
@@ -126,7 +128,7 @@ ${lines.join('\n')}`;
 
   // 6. Technical Stack / Skills
   if (
-    /\b(stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|next|node|dotnet|\.net|c#|sql|postgres|docker|aws|lenguaje)\b/i.test(
+    /\b(stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|next|node|dotnet|\.net|c#|python|sql|postgres|supabase|rls|expo|docker|aws|lenguaje)\b/i.test(
       q
     )
   ) {

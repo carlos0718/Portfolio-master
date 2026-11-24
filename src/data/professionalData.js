@@ -390,88 +390,166 @@ export const professionalData = {
   },
 
   technicalSkills: {
-    frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript (ES6+)', 'Tailwind CSS', 'Blazor', 'HTML5 / CSS3', 'Redux / Zustand'],
-    backend: ['.NET Core 8', 'C#', 'Node.js', 'Express', 'RESTful APIs', 'Microservices', 'Entity Framework Core'],
-    databases: ['SQL Server', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase'],
-    cloud: ['AWS', 'Google Cloud', 'Azure Container Apps', 'Docker', 'Vercel', 'GitLab CI / GitHub'],
-    aiTools: ['Gemini API', 'Claude Code', 'Claude AI', 'n8n Cloud', 'Cursor', 'GitHub Copilot', 'Windsurf', 'Prompt Engineering'],
-    tools: ['Git', 'GitHub', 'GitLab', 'VS Code', 'Visual Studio', 'Postman', 'Figma', 'Storybook', 'Lighthouse', 'Jira'],
-    stateManagement: ['Redux', 'Zustand', 'Context API'],
-    styling: ['Tailwind CSS', 'Bootstrap 5', 'Material UI', 'Sass', 'Shadcn UI']
+    frontend: [
+      'React',
+      'Next.js',
+      'TypeScript',
+      'JavaScript (ES6+)',
+      'React Native (Expo)',
+      'Tailwind CSS',
+      'Shadcn / Radix UI',
+      'TanStack Query',
+      'Zustand / Redux',
+      'Zod',
+      'Blazor'
+    ],
+    backend: [
+      '.NET Core 8',
+      'C#',
+      'Node.js',
+      'Express',
+      'Python',
+      'RESTful APIs',
+      'Microservices',
+      'Entity Framework Core'
+    ],
+    databases: ['Supabase (Auth & RLS)', 'PostgreSQL', 'SQL Server', 'MongoDB', 'Redis'],
+    cloud: ['AWS (S3)', 'Vercel', 'Azure Container Apps', 'Google Cloud', 'Docker', 'GitHub Actions / GitLab CI'],
+    aiTools: [
+      'Gemini API',
+      'Claude API (Anthropic)',
+      'Claude Code & Skills',
+      'Spec-Driven Dev (rocky-spec)',
+      'n8n Cloud',
+      'Cursor',
+      'GitHub Copilot',
+      'Prompt Guardrails'
+    ],
+    tools: ['Git', 'GitHub', 'GitLab', 'Vitest / Jest', 'VS Code', 'Visual Studio', 'Postman', 'Figma', 'Storybook', 'Lighthouse'],
+    stateManagement: ['Zustand', 'TanStack Query', 'Redux', 'Context API'],
+    styling: ['Tailwind CSS', 'Shadcn / Radix UI', 'Bootstrap 5', 'Material UI', 'Sass']
   },
 
   featuredProjects: [
     {
-      id: 'ai-automation-bot',
-      category: 'AI & Automation',
+      id: 'cuotify-app',
+      category: 'FinTech Mobile · Supabase',
       name: {
-        es: 'AI Automation Bot',
-        en: 'AI Automation Bot'
+        es: 'Cuotify — App de Préstamos Personales',
+        en: 'Cuotify — Personal Loans Mobile App'
       },
       description: {
-        es: 'Bot automatizado de procesamiento de datos integrado con Telegram para notificaciones en tiempo real y Google Sheets como almacenamiento estructurado en la nube.',
-        en: 'Automated data processing bot integrated with Telegram for real-time alerts and Google Sheets for structured cloud storage.'
+        es: 'Aplicación móvil (React Native / Expo) y landing en Next.js para gestionar préstamos personales con interés simple o francés, cronogramas de pago, mora configurable, alertas de vencimiento y backend en Supabase.',
+        en: 'Cross-platform mobile app (React Native / Expo) and Next.js landing to manage personal loans with simple/French amortization, payment schedules, configurable late fees, reminders, and Supabase backend.'
       },
-      technologies: ['n8n Cloud', 'Telegram Bot API', 'Google Sheets API', 'Webhooks'],
+      technologies: ['React Native', 'Expo', 'TypeScript', 'Supabase', 'Zustand', 'Zod', 'Jest CI'],
       impact: {
-        es: 'Ahorro de +10 hs/semana en tareas operativas repetitivas',
-        en: 'Saved 10+ hours/week eliminating repetitive manual processing'
+        es: 'Producto FinTech end-to-end con Auth/DB en Supabase y tests CI',
+        en: 'End-to-end FinTech product powered by Supabase & automated Jest CI'
       },
-      period: '2025 – Present'
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/cuotify-app',
+      demoUrl: ''
+    },
+    {
+      id: 'elearning-supabase-saas',
+      category: 'EdTech & Multi-Tenant · Supabase',
+      name: {
+        es: 'Plataforma E-Learning & SaaS Multi-Tienda (Supabase RLS)',
+        en: 'E-Learning Platform & Multi-Store SaaS (Supabase RLS)'
+      },
+      description: {
+        es: 'Arquitecturas full-stack con Next.js y Supabase PostgreSQL: plataforma e-learning propia + MVP multi-tienda con aislamiento estricto por Row-Level Security (RLS), paginación por URL y exportación CSV segura.',
+        en: 'Full-stack architectures with Next.js & Supabase PostgreSQL: custom e-learning platform plus a multi-store orders MVP featuring strict Row-Level Security (RLS) tenant isolation, URL pagination, and safe CSV export.'
+      },
+      technologies: ['Next.js', 'TypeScript', 'Supabase SSR', 'PostgreSQL RLS', 'Tailwind CSS', 'Vitest'],
+      impact: {
+        es: 'Aislamiento multi-tenant a nivel base de datos (RLS) y SSR',
+        en: 'Database-level multi-tenant isolation (RLS) with full SSR'
+      },
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/challenge-rocketplace',
+      demoUrl: ''
+    },
+    {
+      id: 'rocky-spec',
+      category: 'AI DevTools · Open Source',
+      name: {
+        es: 'rocky-spec — Toolkit Multi-Agente Spec-Driven',
+        en: 'rocky-spec — Multi-Agent Spec-Driven Toolkit'
+      },
+      description: {
+        es: 'Toolkit open-source en Python para Spec-Driven Development (nivel Spec-Anchored), agnóstico de agente (Claude Code, Cursor y más), que mantiene SPEC.md y TODO.md sincronizados con confirmaciones explícitas de seguridad.',
+        en: 'Open-source Python toolkit for Spec-Anchored Development—agent-agnostic across Claude Code, Cursor & more—keeping SPEC.md and TODO.md synchronized with explicit safety gates before destructive git actions.'
+      },
+      technologies: ['Python', 'Multi-Agent Workflows', 'Claude Code', 'Cursor', 'Spec-Driven Dev'],
+      impact: {
+        es: 'Flujo reproducible para agentes de IA en proyectos reales',
+        en: 'Reproducible spec-anchored workflow for AI coding agents'
+      },
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/rocky-spec',
+      demoUrl: ''
+    },
+    {
+      id: 'kronos-rappi-kitchen-ai',
+      category: 'Applied AI Systems',
+      name: {
+        es: 'Kronos Voice AI & Kitchen AI Companion',
+        en: 'Kronos Voice AI & Kitchen AI Companion'
+      },
+      description: {
+        es: 'Soluciones reales con LLMs: Kronos (asistente de escritorio por voz en Python con métricas de latencia), Rappi AI (análisis operacional con Claude Sonnet) y Kitchen AI Companion (nutricionista/chef IA con Supabase y React).',
+        en: 'Applied LLM products: Kronos (Python voice-controlled desktop assistant with latency benchmarks), Rappi AI (operational analytics powered by Claude Sonnet), and Kitchen AI Companion (React + Supabase AI nutrition assistant).'
+      },
+      technologies: ['Python', 'Claude Sonnet', 'React', 'Supabase', 'Radix / Shadcn', 'TanStack Query'],
+      impact: {
+        es: 'Productos de IA en producción con foco en UX y baja latencia',
+        en: 'Production AI apps combining strong UX with measured latency'
+      },
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/kitchen-ai-companion',
+      demoUrl: 'https://kitchen-ai-companion.vercel.app'
     },
     {
       id: 'pdf-invoice-system',
-      category: 'FinTech SaaS',
+      category: 'Enterprise FinTech SaaS',
       name: {
-        es: 'Sistema de Consolidación de Facturas PDF',
-        en: 'PDF Invoice Consolidation System'
+        es: 'Sistema de Consolidación de Facturas PDF (Globons)',
+        en: 'PDF Invoice Consolidation System (Globons)'
       },
       description: {
-        es: 'Plataforma SaaS en arquitectura de microservicios para extraer datos de múltiples facturas, consolidar hasta 4 por hoja y generar PDFs unificados listos para auditoría.',
-        en: 'Microservices SaaS platform that extracts data from multiple financial invoices, consolidates 4 per page, and generates audit-ready unified PDFs.'
+        es: 'Plataforma SaaS empresarial en microservicios para extraer datos de múltiples facturas, consolidar hasta 4 por hoja y generar PDFs unificados listos para auditoría financiera.',
+        en: 'Enterprise microservices SaaS platform extracting data from multiple financial invoices, consolidating 4 per page, and generating audit-ready unified PDFs.'
       },
       technologies: ['.NET Core', 'Node.js', 'React', 'MUI', 'Docker', 'SQL Server'],
       impact: {
         es: '-50% en tiempos de auditoría y 99.9% uptime financiero',
         en: '-50% audit turnaround time and 99.9% financial uptime'
       },
-      period: '2022 – 2024'
-    },
-    {
-      id: 'beef-lifecycle-cms',
-      category: 'Supply Chain',
-      name: {
-        es: 'CMS de Trazabilidad Cárnica (Marfrig)',
-        en: 'Beef Product Lifecycle CMS (Marfrig)'
-      },
-      description: {
-        es: 'Aplicación Full Stack desde cero para el seguimiento en tiempo real del ciclo de vida de productos cárnicos, control de stock y analítica operativa.',
-        en: 'Greenfield full-stack CMS tracking the end-to-end beef product lifecycle with real-time inventory management and operational visibility.'
-      },
-      technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Redux'],
-      impact: {
-        es: '-25% cuellos de botella y -30% discrepancias de inventario',
-        en: '-25% supply chain bottlenecks and -30% inventory discrepancies'
-      },
-      period: '2023'
+      period: '2022 – 2024',
+      repoUrl: '',
+      demoUrl: ''
     },
     {
       id: 'portfolio-ai-assistant',
-      category: 'AI Engineering',
+      category: 'AI Security & Serverless',
       name: {
-        es: 'Asistente IA con Guardrails Anti-Injection',
-        en: 'Guardrailed Portfolio AI Assistant'
+        es: 'CharlyBot — Asistente IA con Guardrails & AWS S3',
+        en: 'CharlyBot — Guardrailed AI Assistant & AWS S3 Vault'
       },
       description: {
-        es: 'Asistente conversacional serverless con Gemini API (@google/genai), defensa en 3 capas contra prompt injection, cotización dólar blue en vivo y fallback determinístico.',
-        en: 'Serverless conversational assistant powered by Gemini (@google/genai) featuring 3-layer anti-prompt-injection defense, live FX rates, and deterministic offline fallback.'
+        es: 'Arquitectura serverless en Vercel con Gemini API (@google/genai), defensa anti-prompt-injection en 3 capas, AWS S3 privado con Pre-signed URLs y fallback determinístico bilingüe.',
+        en: 'Vercel serverless architecture powered by Gemini (@google/genai), 3-layer anti-prompt-injection guardrails, private AWS S3 Pre-signed URLs, and bilingual deterministic fallback.'
       },
-      technologies: ['Gemini API', 'Vercel Functions', 'React 18', 'Tailwind CSS', 'Security Guardrails'],
+      technologies: ['Gemini API', 'Vercel Functions', 'AWS S3', 'React 18', 'Tailwind CSS', 'Guardrails'],
       impact: {
-        es: 'Disponibilidad 100% bilingüe (ES/EN) con alcance blindado',
-        en: '100% bilingual (ES/EN) availability with strict scope protection'
+        es: '0 secretos expuestos en cliente y 100% disponibilidad ES/EN',
+        en: 'Zero client-exposed secrets and 100% ES/EN availability'
       },
-      period: '2025 – Present'
+      period: '2025 – 2026',
+      repoUrl: 'https://github.com/carlos0718/Portfolio-master',
+      demoUrl: ''
     }
   ],
 
