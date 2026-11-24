@@ -103,7 +103,46 @@ export const professionalData = {
 
   experience: [
     {
+      id: 'side-projects',
+      kind: 'side-project',
+      company: 'Proyectos Personales & Open Source',
+      companyEn: 'Personal Projects & Open Source',
+      companyKey: null,
+      project: 'Side Projects & R&D',
+      role: {
+        es: 'Independent Full Stack & AI Builder',
+        en: 'Independent Full Stack & AI Builder'
+      },
+      startDate: '2025-01',
+      endDate: null,
+      period: { es: '2025 – Presente', en: '2025 – Present' },
+      location: 'Buenos Aires, Argentina (Remote)',
+      description: {
+        es: 'Diseño y desarrollo end-to-end de productos propios y herramientas open-source explorando aplicaciones de escritorio con IA, apps móviles FinTech, arquitecturas multi-tenant con Supabase RLS y flujos multi-agente.',
+        en: 'End-to-end design and engineering of personal products and open-source tools spanning desktop voice AI assistants, FinTech mobile apps, Supabase RLS multi-tenant architectures, and multi-agent developer workflows.'
+      },
+      impactBadges: [
+        { es: 'Kronos Voice AI (Desktop)', en: 'Kronos Voice AI (Desktop)' },
+        { es: 'Cuotify (Expo + Supabase)', en: 'Cuotify (Expo + Supabase)' },
+        { es: 'rocky-spec (Open Source)', en: 'rocky-spec (Open Source)' }
+      ],
+      technologies: ['Python', 'Ollama', 'Claude API', 'React Native (Expo)', 'Next.js', 'Supabase (RLS)', 'TypeScript', 'Gemini API'],
+      achievements: {
+        es: [
+          'Construí Kronos AI Assistant, app de escritorio autónoma por voz en Python con pipeline híbrido local/cloud (Ollama, Parakeet, Piper, Claude, ElevenLabs) y control estricto de permisos.',
+          'Desarrollé Cuotify (React Native/Expo + Supabase) y una plataforma e-learning propia aplicando autenticación, PostgreSQL y aislamiento por Row-Level Security (RLS).',
+          'Creé rocky-spec (toolkit multi-agente open-source para Spec-Driven Development) y Kitchen AI Companion como proyecto final del curso de AI Engineer en la UTN.'
+        ],
+        en: [
+          'Built Kronos AI Assistant, an autonomous Python desktop voice assistant with a hybrid local/cloud pipeline (Ollama, Parakeet, Piper, Claude, ElevenLabs) and permission-scoped OS actions.',
+          'Shipped Cuotify (React Native/Expo + Supabase) and a custom e-learning platform leveraging PostgreSQL Auth and Row-Level Security (RLS).',
+          'Created rocky-spec (open-source multi-agent Spec-Driven Development toolkit) and Kitchen AI Companion as the capstone project for the UTN AI Engineer program.'
+        ]
+      }
+    },
+    {
       id: 'istea',
+      kind: 'work',
       company: 'ISTEA Ed IT',
       companyKey: 'logoistea',
       role: {
@@ -353,10 +392,10 @@ export const professionalData = {
           en: 'Backend Systems & Data Integrity'
         },
         description: {
-          es: 'Diseño APIs seguras y microservicios en .NET Core, C# y Node.js con SQL Server y PostgreSQL, manejando DTOs eficientes, permisos y lógica financiera crítica con 99.9% de uptime.',
-          en: 'Designing resilient APIs and microservices in .NET Core, C#, and Node.js backed by SQL Server and PostgreSQL—delivering efficient DTOs, auth, and 99.9% uptime on mission-critical workflows.'
+          es: 'Diseño APIs seguras, microservicios y capas de datos en .NET Core, C# y Node.js con Supabase (PostgreSQL + RLS), SQL Server y MongoDB, manejando DTOs eficientes, permisos y lógica crítica con 99.9% de uptime.',
+          en: 'Designing resilient APIs, microservices, and data layers in .NET Core, C#, and Node.js backed by Supabase (PostgreSQL + RLS), SQL Server, and MongoDB—delivering efficient DTOs, auth, and 99.9% uptime.'
         },
-        chips: ['.NET Core 8', 'Node.js', 'SQL Server', 'PostgreSQL', 'Docker']
+        chips: ['.NET Core 8', 'Node.js', 'Supabase', 'PostgreSQL', 'SQL Server', 'MongoDB', 'Docker']
       },
       {
         id: 'design-systems',
@@ -432,7 +471,29 @@ export const professionalData = {
 
   featuredProjects: [
     {
+      id: 'kronos-voice-ai',
+      projectType: 'personal',
+      category: 'Desktop Voice AI · Python',
+      name: {
+        es: 'Kronos AI Assistant — App de Escritorio por Voz',
+        en: 'Kronos AI Assistant — Desktop Voice AI App'
+      },
+      description: {
+        es: 'Aplicación de escritorio autónoma en Python activada por voz ("Kronos") que ejecuta acciones reales sobre el sistema (apps, carpetas con permisos explícitos, archivos, clima y búsqueda web). Pipeline híbrido local/cloud con Ollama, Parakeet (STT), Piper (TTS), Claude y ElevenLabs con fallback offline en <3s y credenciales seguras en Windows.',
+        en: 'Autonomous Python desktop voice assistant (wake-word "Kronos") executing real permission-scoped OS actions (apps, folders, files, weather, web search). Hybrid local/cloud pipeline using Ollama, Parakeet (STT), Piper (TTS), Claude, and ElevenLabs with <3s offline fallback and Windows Credential Manager security.'
+      },
+      technologies: ['Python', 'Ollama', 'Claude API', 'Parakeet / Piper', 'ElevenLabs', 'Desktop OS'],
+      impact: {
+        es: 'Asistente de escritorio híbrido local/cloud con latencia medida y permisos seguros',
+        en: 'Hybrid local/cloud desktop assistant with benchmarked latency & strict safety scopes'
+      },
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/kronos-assistant',
+      demoUrl: ''
+    },
+    {
       id: 'cuotify-app',
+      projectType: 'personal',
       category: 'FinTech Mobile · Supabase',
       name: {
         es: 'Cuotify — App de Préstamos Personales',
@@ -453,6 +514,7 @@ export const professionalData = {
     },
     {
       id: 'elearning-supabase-saas',
+      projectType: 'personal',
       category: 'EdTech & Multi-Tenant · Supabase',
       name: {
         es: 'Plataforma E-Learning & SaaS Multi-Tienda (Supabase RLS)',
@@ -472,7 +534,29 @@ export const professionalData = {
       demoUrl: ''
     },
     {
+      id: 'kitchen-ai-companion',
+      projectType: 'personal',
+      category: 'UTN AI Engineer · Proyecto Final',
+      name: {
+        es: 'Kitchen AI Companion — Proyecto Final AI Engineer (UTN)',
+        en: 'Kitchen AI Companion — UTN AI Engineer Capstone'
+      },
+      description: {
+        es: 'Proyecto final desarrollado para el curso de AI Engineer en la UTN: aplicación web de asistencia culinaria y nutricional impulsada por IA que personaliza recetas y planes según objetivos deportivos, construida con React, TypeScript, Supabase, Radix/Shadcn UI y TanStack Query.',
+        en: 'Capstone project built for the UTN AI Engineer course: an AI-powered culinary and sports nutrition assistant personalizing meal plans and recipes, engineered with React, TypeScript, Supabase, Radix/Shadcn UI, and TanStack Query.'
+      },
+      technologies: ['React', 'TypeScript', 'Supabase', 'Shadcn / Radix UI', 'TanStack Query', 'Zod'],
+      impact: {
+        es: 'Proyecto final integrador del curso AI Engineer en UTN (código abierto en GitHub)',
+        en: 'Capstone project for the UTN AI Engineer program (open source on GitHub)'
+      },
+      period: '2026',
+      repoUrl: 'https://github.com/carlos0718/kitchen-ai-companion',
+      demoUrl: ''
+    },
+    {
       id: 'rocky-spec',
+      projectType: 'personal',
       category: 'AI DevTools · Open Source',
       name: {
         es: 'rocky-spec — Toolkit Multi-Agente Spec-Driven',
@@ -492,27 +576,8 @@ export const professionalData = {
       demoUrl: ''
     },
     {
-      id: 'kronos-rappi-kitchen-ai',
-      category: 'Applied AI Systems',
-      name: {
-        es: 'Kronos Voice AI & Kitchen AI Companion',
-        en: 'Kronos Voice AI & Kitchen AI Companion'
-      },
-      description: {
-        es: 'Soluciones reales con LLMs: Kronos (asistente de escritorio por voz en Python con métricas de latencia), Rappi AI (análisis operacional con Claude Sonnet) y Kitchen AI Companion (nutricionista/chef IA con Supabase y React).',
-        en: 'Applied LLM products: Kronos (Python voice-controlled desktop assistant with latency benchmarks), Rappi AI (operational analytics powered by Claude Sonnet), and Kitchen AI Companion (React + Supabase AI nutrition assistant).'
-      },
-      technologies: ['Python', 'Claude Sonnet', 'React', 'Supabase', 'Radix / Shadcn', 'TanStack Query'],
-      impact: {
-        es: 'Productos de IA en producción con foco en UX y baja latencia',
-        en: 'Production AI apps combining strong UX with measured latency'
-      },
-      period: '2026',
-      repoUrl: 'https://github.com/carlos0718/kitchen-ai-companion',
-      demoUrl: 'https://kitchen-ai-companion.vercel.app'
-    },
-    {
       id: 'pdf-invoice-system',
+      projectType: 'enterprise',
       category: 'Enterprise FinTech SaaS',
       name: {
         es: 'Sistema de Consolidación de Facturas PDF (Globons)',
@@ -529,26 +594,6 @@ export const professionalData = {
       },
       period: '2022 – 2024',
       repoUrl: '',
-      demoUrl: ''
-    },
-    {
-      id: 'portfolio-ai-assistant',
-      category: 'AI Security & Serverless',
-      name: {
-        es: 'CharlyBot — Asistente IA con Guardrails & AWS S3',
-        en: 'CharlyBot — Guardrailed AI Assistant & AWS S3 Vault'
-      },
-      description: {
-        es: 'Arquitectura serverless en Vercel con Gemini API (@google/genai), defensa anti-prompt-injection en 3 capas, AWS S3 privado con Pre-signed URLs y fallback determinístico bilingüe.',
-        en: 'Vercel serverless architecture powered by Gemini (@google/genai), 3-layer anti-prompt-injection guardrails, private AWS S3 Pre-signed URLs, and bilingual deterministic fallback.'
-      },
-      technologies: ['Gemini API', 'Vercel Functions', 'AWS S3', 'React 18', 'Tailwind CSS', 'Guardrails'],
-      impact: {
-        es: '0 secretos expuestos en cliente y 100% disponibilidad ES/EN',
-        en: 'Zero client-exposed secrets and 100% ES/EN availability'
-      },
-      period: '2025 – 2026',
-      repoUrl: 'https://github.com/carlos0718/Portfolio-master',
       demoUrl: ''
     }
   ],

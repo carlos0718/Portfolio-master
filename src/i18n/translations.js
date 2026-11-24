@@ -47,14 +47,19 @@ export const translations = {
         'Un enfoque pragmático de ingeniería senior: modernización sin fricción, código mantenible, accesibilidad WCAG 2.1 AA y aceleración real con IA.'
     },
     experience: {
-      badge: 'TRAYECTORIA & IMPACTO MEDIBLE',
-      title: 'Experiencia Laboral',
+      badge: 'TRAYECTORIA & SIDE PROJECTS',
+      title: 'Experiencia Laboral & Side Projects',
       subtitle:
-        'Resultados verificables en productos SaaS financieros, cadenas de suministro, e-commerce y mentoría técnica.',
+        'Resultados verificables en empresas de tecnología, mentoría docente y proyectos personales de ingeniería e IA.',
       present: 'Presente',
       achievementsLabel: 'Logros clave',
       expandMore: 'Ver logros',
-      collapse: 'Ocultar logros'
+      collapse: 'Ocultar logros',
+      filters: {
+        all: 'Todos',
+        work: 'Experiencia Laboral',
+        sideProjects: 'Side Projects'
+      }
     },
     stack: {
       badge: 'STACK TECNOLÓGICO & IA',
@@ -69,9 +74,11 @@ export const translations = {
       }
     },
     cases: {
-      badge: 'CASOS DE ESTUDIO & CREDENCIALES',
+      badge: 'PROYECTOS PERSONALES, EMPRESARIALES & FORMACIÓN',
       title: 'Proyectos Destacados & Formación',
-      subtitle: 'Sistemas reales en producción, actividad continua en GitHub y formación académica universitaria.',
+      subtitle: 'Proyectos personales open-source y de IA, casos empresariales en producción, actividad en GitHub y formación universitaria.',
+      personalBadge: 'Proyecto Personal',
+      enterpriseBadge: 'Proyecto Empresarial',
       allProjectsBtn: 'Explorar todos los repositorios',
       githubTitle: 'Actividad en GitHub',
       educationTitle: 'Formación Académica',
@@ -224,14 +231,19 @@ export const translations = {
         'A pragmatic senior engineering mindset: frictionless modernization, clean maintainable code, WCAG 2.1 AA accessibility, and measurable AI acceleration.'
     },
     experience: {
-      badge: 'TRACK RECORD & MEASURABLE IMPACT',
-      title: 'Work Experience',
+      badge: 'TRACK RECORD & SIDE PROJECTS',
+      title: 'Work Experience & Side Projects',
       subtitle:
-        'Verified business outcomes across financial SaaS platforms, supply chain systems, e-commerce, and technical mentoring.',
+        'Verified business outcomes across engineering teams, technical mentoring, and personal AI & full-stack builds.',
       present: 'Present',
       achievementsLabel: 'Key achievements',
       expandMore: 'View achievements',
-      collapse: 'Hide achievements'
+      collapse: 'Hide achievements',
+      filters: {
+        all: 'All',
+        work: 'Work Experience',
+        sideProjects: 'Side Projects'
+      }
     },
     stack: {
       badge: 'TECH STACK & AI WORKFLOW',
@@ -246,9 +258,11 @@ export const translations = {
       }
     },
     cases: {
-      badge: 'CASE STUDIES & CREDENTIALS',
-      title: 'Featured Work & Education',
-      subtitle: 'Production impact highlights, live GitHub activity, and past & current university education.',
+      badge: 'PERSONAL & ENTERPRISE BUILDS + CREDENTIALS',
+      title: 'Featured Projects & Education',
+      subtitle: 'Personal open-source & AI products, production enterprise systems, live GitHub activity, and university education.',
+      personalBadge: 'Personal Project',
+      enterpriseBadge: 'Enterprise Project',
       allProjectsBtn: 'Explore all repositories',
       githubTitle: 'GitHub Activity',
       educationTitle: 'Academic Background',

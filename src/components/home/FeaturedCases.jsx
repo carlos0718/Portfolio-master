@@ -49,10 +49,23 @@ export function FeaturedCases() {
             >
               <SpotlightCard className="flex h-full flex-col justify-between p-6">
                 <div>
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <span className="rounded-lg border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 font-mono text-[11px] font-medium text-cyan-300">
-                      {project.category}
-                    </span>
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span
+                        className={`rounded-lg border px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider ${
+                          project.projectType === 'enterprise'
+                            ? 'border-emerald-400/30 bg-emerald-500/10 text-emerald-300'
+                            : 'border-indigo-400/30 bg-indigo-500/15 text-indigo-200'
+                        }`}
+                      >
+                        {project.projectType === 'enterprise'
+                          ? t.cases.enterpriseBadge
+                          : t.cases.personalBadge}
+                      </span>
+                      <span className="rounded-lg border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-0.5 font-mono text-[11px] font-medium text-cyan-300">
+                        {project.category}
+                      </span>
+                    </div>
                     <span className="font-mono text-xs text-zinc-500">{project.period}</span>
                   </div>
 

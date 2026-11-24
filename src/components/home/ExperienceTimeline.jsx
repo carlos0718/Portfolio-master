@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Building2, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Building2, ChevronDown, ChevronUp, Rocket, Sparkles } from 'lucide-react';
 import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
 import { SpotlightCard } from '../common/SpotlightCard';
@@ -15,8 +15,9 @@ const COMPANY_LOGOS = {
 
 export function ExperienceTimeline() {
   const { lang, t } = useLanguage();
-  // First 3 roles expanded by default so recruiters immediately see current senior impact
+  const [filter, setFilter] = useState('all'); // 'all' | 'work' | 'side-project'
   const [expandedIds, setExpandedIds] = useState({
+    'side-projects': true,
     istea: true,
     'globons-psa': true,
     'globons-javit': true
@@ -26,28 +27,70 @@ export function ExperienceTimeline() {
     setExpandedIds((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const visibleItems = professionalData.experience.filter((job) => {
+    const kind = job.kind || 'work';
+    if (filter === 'all') return true;
+    return kind === filter;
+  });
+
+  const filterTabs = [
+    { id: 'all', label: t.experience.filters.all },
+    { id: 'work', label: t.experience.filters.work },
+    { id: 'side-project', label: t.experience.filters.sideProjects }
+  ];
+
   return (
     <section id="experience" className="scroll-mt-24 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="mb-12 max-w-2xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.07] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-emerald-300">
-            {t.experience.badge}
-          </span>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            {t.experience.title}
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-zinc-400 sm:text-base">
-            {t.experience.subtitle}
-          </p>
+        {/* Section Header + Filter Pills */}
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.07] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-emerald-300">
+              {t.experience.badge}
+            </span>
+            <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              {t.experience.title}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-400 sm:text-base">
+              {t.experience.subtitle}
+            </p>
+          </div>
+
+          <div
+            role="tablist"
+            aria-label="Experience filter"
+            className="inline-flex w-fit items-center gap-1 rounded-xl border border-white/10 bg-surface/80 p-1"
+          >
+            {filterTabs.map((tab) => {
+              const active = filter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setFilter(tab.id)}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                    active
+                      ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-inset ring-cyan-400/35'
+                      : 'text-zinc-400 hover:bg-white/[0.05] hover:text-zinc-100'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Vertical Timeline */}
         <div className="relative space-y-5 before:absolute before:bottom-4 before:left-5 before:top-4 before:hidden before:w-px before:bg-gradient-to-b before:from-cyan-400/40 before:via-white/10 before:to-transparent md:before:block">
-          {professionalData.experience.map((job, idx) => {
+          {visibleItems.map((job, idx) => {
             const logoSrc = job.companyKey ? COMPANY_LOGOS[job.companyKey] : null;
             const isExpanded = Boolean(expandedIds[job.id]);
             const isCurrent = job.endDate === null;
+            const isSideProject = job.kind === 'side-project';
+            const companyLabel = lang === 'en' && job.companyEn ? job.companyEn : job.company;
 
             return (
               <motion.div
@@ -62,7 +105,9 @@ export function ExperienceTimeline() {
                 <span
                   aria-hidden="true"
                   className={`absolute left-[13px] top-7 hidden h-3.5 w-3.5 rounded-full border-2 border-obsidian md:block ${
-                    isCurrent
+                    isSideProject
+                      ? 'bg-indigo-400 shadow-[0_0_12px_rgba(129,140,248,0.75)]'
+                      : isCurrent
                       ? 'bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.7)]'
                       : 'bg-cyan-400/70'
                   }`}
@@ -72,14 +117,22 @@ export function ExperienceTimeline() {
                   <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                     <div className="flex items-start gap-4">
                       {/* Company Logo or Clean Monogram */}
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.06] p-1.5">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border p-1.5 ${
+                          isSideProject
+                            ? 'border-indigo-400/35 bg-indigo-500/15'
+                            : 'border-white/10 bg-white/[0.06]'
+                        }`}
+                      >
                         {logoSrc ? (
                           <img
                             src={logoSrc}
-                            alt={job.company}
+                            alt={companyLabel}
                             className="h-full w-full rounded-lg object-contain"
                             loading="lazy"
                           />
+                        ) : isSideProject ? (
+                          <Rocket className="h-5 w-5 text-indigo-300" />
                         ) : (
                           <Building2 className="h-5 w-5 text-cyan-300" />
                         )}
@@ -91,12 +144,24 @@ export function ExperienceTimeline() {
                             {job.role[lang]}
                           </h3>
                           {job.project && (
-                            <span className="rounded-md border border-indigo-400/30 bg-indigo-500/10 px-2 py-0.5 font-mono text-[11px] font-medium text-indigo-200">
+                            <span
+                              className={`rounded-md border px-2 py-0.5 font-mono text-[11px] font-medium ${
+                                isSideProject
+                                  ? 'border-indigo-400/40 bg-indigo-500/15 text-indigo-200'
+                                  : 'border-indigo-400/30 bg-indigo-500/10 text-indigo-200'
+                              }`}
+                            >
                               {job.project}
                             </span>
                           )}
                         </div>
-                        <p className="mt-0.5 text-sm font-medium text-cyan-300">{job.company}</p>
+                        <p
+                          className={`mt-0.5 text-sm font-medium ${
+                            isSideProject ? 'text-indigo-300' : 'text-cyan-300'
+                          }`}
+                        >
+                          {companyLabel}
+                        </p>
                       </div>
                     </div>
 
