@@ -1,120 +1,175 @@
-// Vercel Serverless Function for AI Chat
-import {GoogleGenerativeAI} from '@google/generative-ai';
-import {buildSystemPrompt} from './lib/promptBuilder.js';
-import {checkRateLimit} from './lib/rateLimit.js';
+// Vercel Serverless Function for Guardrailed AI Portfolio Assistant
+import { GoogleGenAI } from '@google/genai';
+import { buildLiveContext, buildSystemPrompt } from './lib/promptBuilder.js';
+import { buildFallbackResponse } from './lib/fallbackResponder.js';
+import { checkRateLimit } from './lib/rateLimit.js';
+import {
+  inspectUserInput,
+  sanitizeHistory,
+  validateAssistantOutput,
+  wrapUserMessage
+} from './lib/securityGuard.js';
+
+const DEFAULT_MODEL_CASCADE = [
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-flash',
+  'gemini-3.5-flash-lite'
+];
+
+function getModelCascade() {
+  const configured = process.env.GEMINI_MODEL?.trim();
+  if (!configured) return DEFAULT_MODEL_CASCADE;
+  return [configured, ...DEFAULT_MODEL_CASCADE.filter((m) => m !== configured)];
+}
+
+function classifyGeminiError(error) {
+  const msg = String(error?.message || '').toLowerCase();
+  const status = error?.status || error?.statusCode || error?.code;
+
+  if (
+    status === 402 ||
+    msg.includes('prepayment') ||
+    msg.includes('credits are depleted') ||
+    msg.includes('billing')
+  ) {
+    return 'billing_depleted';
+  }
+  if (status === 429 || msg.includes('quota') || msg.includes('resource_exhausted')) {
+    return 'quota_exceeded';
+  }
+  if (status === 401 || status === 403 || msg.includes('api key') || msg.includes('api_key_invalid')) {
+    return 'invalid_key';
+  }
+  if (status === 404 || msg.includes('not found') || msg.includes('not supported')) {
+    return 'model_unavailable';
+  }
+  return 'provider_error';
+}
 
 export default async function handler(req, res) {
-	// CORS headers
-	res.setHeader('Access-Control-Allow-Credentials', true);
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-	// Handle OPTIONS request for CORS preflight
-	if (req.method === 'OPTIONS') {
-		return res.status(200).end();
-	}
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-	// Only allow POST requests
-	if (req.method !== 'POST') {
-		return res.status(405).json({error: 'Method not allowed'});
-	}
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-	try {
-		// Rate limiting
-		const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-		const rateLimitCheck = checkRateLimit(clientIp);
+  try {
+    // 1. Rate limiting
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const clientIp =
+      (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0]?.trim()) ||
+      req.socket?.remoteAddress ||
+      'unknown';
 
-		if (!rateLimitCheck.allowed) {
-			return res.status(429).json({
-				error: 'Too many requests. Please try again later.',
-				retryAfter: rateLimitCheck.retryAfter
-			});
-		}
+    const rateLimitCheck = checkRateLimit(clientIp);
+    if (!rateLimitCheck.allowed) {
+      return res.status(429).json({
+        error: 'Too many requests. Please try again in a moment.',
+        retryAfter: rateLimitCheck.retryAfter
+      });
+    }
 
-		const {message, conversationHistory = []} = req.body;
+    const { message, conversationHistory = [] } = req.body || {};
 
-		// Validate message
-		if (!message || typeof message !== 'string') {
-			return res.status(400).json({error: 'Invalid message'});
-		}
+    // 2. Layer 1 Security Guard: Input validation, Prompt Injection & Off-topic check
+    const inspection = inspectUserInput(message);
+    if (!inspection.safe) {
+      if (inspection.blocked) {
+        return res.status(200).json({
+          response: inspection.refusalMessage,
+          mode: 'guarded',
+          blockedReason: inspection.blockedReason,
+          conversationId: Date.now()
+        });
+      }
+      return res.status(inspection.statusCode || 400).json({
+        error: inspection.error
+      });
+    }
 
-		if (message.length > 1000) {
-			return res.status(400).json({error: 'Message too long (max 1000 characters)'});
-		}
+    const { sanitizedText, lang } = inspection;
 
-		// Check for API key
-		if (!process.env.GEMINI_API_KEY) {
-			console.error('GEMINI_API_KEY not found in environment variables');
-			return res.status(500).json({
-				error: 'Chat service is not configured properly. Please contact support.'
-			});
-		}
+    // Load live context (exchange rate + cached GitHub stats)
+    const liveContext = await buildLiveContext();
 
-		// Initialize Gemini AI
-		const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-		const model = genAI.getGenerativeModel({model: 'gemini-2.5-flash-lite'});
+    // If API key is missing, serve deterministic fallback directly
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!apiKey) {
+      return res.status(200).json({
+        response: buildFallbackResponse(sanitizedText, lang, liveContext),
+        mode: 'fallback',
+        fallbackReason: 'missing_key',
+        conversationId: Date.now()
+      });
+    }
 
-		// Build system prompt with professional data
-		const systemPrompt = await buildSystemPrompt();
+    // 3. Layer 2 Security Guard: Sanitized history + XML sandboxing + hardened systemInstruction
+    const systemInstruction = await buildSystemPrompt(liveContext);
+    const safeHistory = sanitizeHistory(conversationHistory);
+    const contents = [
+      ...safeHistory,
+      {
+        role: 'user',
+        parts: [{ text: wrapUserMessage(sanitizedText) }]
+      }
+    ];
 
-		// Format conversation history for Gemini
-		const chatHistory = conversationHistory.map((msg) => ({
-			role: msg.role === 'user' ? 'user' : 'model',
-			parts: [{text: msg.content}]
-		}));
+    const ai = new GoogleGenAI({ apiKey });
+    const models = getModelCascade();
+    let lastErrorReason = 'provider_error';
 
-		// Start chat with system prompt and history
-		const chat = model.startChat({
-			history: [
-				{role: 'user', parts: [{text: systemPrompt}]},
-				{
-					role: 'model',
-					parts: [
-						{
-							text: "Understood. I will act as Carlos Jesús's professional assistant, responding in the same language as queries and providing accurate information about his experience, skills, and career preferences."
-						}
-					]
-				},
-				...chatHistory
-			],
-			generationConfig: {
-				maxOutputTokens: 800,
-				temperature: 0.7,
-				topP: 0.9
-			}
-		});
+    for (const modelName of models) {
+      try {
+        const result = await ai.models.generateContent({
+          model: modelName,
+          contents,
+          config: {
+            systemInstruction,
+            temperature: 0.35,
+            topP: 0.85,
+            maxOutputTokens: 600
+          }
+        });
 
-		// Send user message
-		const result = await chat.sendMessage(message);
-		const response = await result.response;
-		const text = response.text();
+        const rawText = result?.text || '';
+        // 4. Layer 3 Security Guard: Output leakage check
+        const validatedText = validateAssistantOutput(rawText, lang);
 
-		return res.status(200).json({
-			response: text,
-			conversationId: Date.now()
-		});
-	} catch (error) {
-		console.error('Chat API Error:', error);
-		console.error('Error message:', error.message);
-		console.error('Error stack:', error.stack);
+        return res.status(200).json({
+          response: validatedText,
+          mode: 'ai',
+          model: modelName,
+          conversationId: Date.now()
+        });
+      } catch (modelError) {
+        lastErrorReason = classifyGeminiError(modelError);
+        console.warn(`[API /api/chat] Model ${modelName} failed (${lastErrorReason}):`, modelError?.message);
 
-		// Handle specific error types
-		if (error.message?.includes('quota')) {
-			return res.status(503).json({
-				error: 'The chat service is temporarily unavailable due to high demand. Please try again later.'
-			});
-		}
+        // If billing/key is invalid, trying other Gemini models won't help — jump to fallback immediately
+        if (lastErrorReason === 'billing_depleted' || lastErrorReason === 'invalid_key') {
+          break;
+        }
+      }
+    }
 
-		if (error.message?.includes('API key') || error.message?.includes('API_KEY_INVALID')) {
-			return res.status(500).json({
-				error: 'Chat service configuration error. Please verify GEMINI_API_KEY in environment variables.'
-			});
-		}
-
-		return res.status(500).json({
-			error: 'An error occurred processing your request. Please try again.',
-			details: error.message
-		});
-	}
+    // 5. Graceful resilience: deterministic bilingual fallback instead of broken 500/402
+    return res.status(200).json({
+      response: buildFallbackResponse(sanitizedText, lang, liveContext),
+      mode: 'fallback',
+      fallbackReason: lastErrorReason,
+      conversationId: Date.now()
+    });
+  } catch (error) {
+    console.error('[API /api/chat] Unexpected error:', error?.message);
+    return res.status(500).json({
+      error: 'An error occurred processing your request. Please try again.'
+    });
+  }
 }

@@ -1,8 +1,9 @@
-import globons from "./globons.png";
-import logoistea from "./logoistea.png";
-import nativa from "./nativa.jpeg";
-import rockstar_solutions from "./rockstar_solutions.jpeg";
-import coursera from "./coursera.jpg";
-import bief from "./bief.svg";
+import globons from './globons.png';
+import logoistea from './logoistea.png';
+import nativa from './nativa.jpeg';
+import rockstar_solutions from './rockstar_solutions.jpeg';
+import coursera from './coursera.jpg';
+import coderhouse from './coderhouse.png';
+import bief from './bief.svg';
 
-export {globons, logoistea, nativa, rockstar_solutions, coursera, bief};
+export { globons, logoistea, nativa, rockstar_solutions, coursera, coderhouse, bief };

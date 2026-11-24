@@ -1,440 +1,527 @@
+const currentYear = new Date().getFullYear();
+
 export const professionalData = {
-	personal: {
-		name: 'Carlos Jesús',
-		age: new Date().getFullYear() - 1990, // Dynamic calculation
-		location: 'Buenos Aires, Argentina',
-		title: 'Full Stack Developer & AI Engineer',
-		yearsOfExperience: new Date().getFullYear() - 2020, // Dynamic calculation
-		linkedin: 'https://www.linkedin.com/in/carlos-jesus-dev/',
-		github: 'https://github.com/carlos0718',
-		whatsapp: '+5491162677682',
-		email: 'cajs0718@gmail.com'
-	},
+  personal: {
+    name: 'Carlos Jesús',
+    shortName: 'CJ',
+    brand: 'carlos.dev',
+    location: 'Buenos Aires, Argentina',
+    title: {
+      es: 'Senior Full Stack Developer & AI Engineer',
+      en: 'Senior Full Stack Developer & AI Engineer'
+    },
+    tagline: {
+      es: 'Modernizo arquitecturas legacy a estándares web actuales y construyo productos Full Stack escalables potenciados con Inteligencia Artificial.',
+      en: 'Modernizing legacy architectures into current web standards and shipping scalable Full Stack products powered by Artificial Intelligence.'
+    },
+    yearsOfExperience: Math.max(5, currentYear - 2020),
+    linkedin: 'https://www.linkedin.com/in/carlos-jesus-dev/',
+    github: 'https://github.com/carlos0718',
+    githubUsername: 'carlos0718',
+    whatsapp: '+5491162677682',
+    whatsappUrl: 'https://wa.me/5491162677682',
+    email: 'cajs0718@gmail.com',
+    cvPath: '/Carlos-Jesus-CV.pdf',
+    availability: {
+      es: 'Disponible para proyectos y roles remotos',
+      en: 'Available for remote roles & projects'
+    }
+  },
 
-	education: {
-		degree: 'University Technical Degree in Programming',
-		institution: 'UTN-FRGP Buenos Aires, Argentina',
-		status: 'Graduate',
-		period: 'March 2019 - December 2023'
-	},
+  metrics: [
+    {
+      id: 'exp',
+      value: Math.max(5, currentYear - 2020),
+      prefix: '+',
+      suffix: '',
+      label: { es: 'Años de Exp.', en: 'Years Exp.' },
+      accent: 'cyan'
+    },
+    {
+      id: 'audit',
+      value: 50,
+      prefix: '-',
+      suffix: '%',
+      label: { es: 'Tiempo Auditoría', en: 'Audit Time' },
+      accent: 'emerald'
+    },
+    {
+      id: 'mentored',
+      value: 25,
+      prefix: '+',
+      suffix: '',
+      label: { es: 'Devs Mentoreados', en: 'Devs Mentored' },
+      accent: 'indigo'
+    },
+    {
+      id: 'uptime',
+      value: 99.9,
+      prefix: '',
+      suffix: '%',
+      decimals: 1,
+      label: { es: 'Uptime Producción', en: 'Prod Uptime' },
+      accent: 'emerald'
+    }
+  ],
 
-	experience: [
-		{
-			company: 'ISTEA Ed IT',
-			role: 'Software Development Mentor',
-			period: 'May 2024 - Present',
-			location: 'Buenos Aires, Argentina',
-			description:
-				'Teaching and mentoring 25+ students in HTML, CSS, JavaScript, and Bootstrap. Promoting AI coding assistants adoption and web accessibility best practices.',
-			technologies: ['HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Lighthouse', 'AI Tools'],
-			achievements: [
-				'Achieved average project score of 90% with positive student reviews',
-				'Elevated accessibility compliance scores by 85% (WCAG 2.1 AA standards)',
-				'Enhanced student productivity through AI tools adoption'
-			]
-		},
-		{
-			company: 'Globons - The Digital Innovation Company',
-			role: 'Full Stack Developer',
-			period: 'March 2024 - Present',
-			location: 'Buenos Aires, Argentina',
-			project: 'PSA Project',
-			description:
-				'Implementing product grids and location-based features using JavaScript, jQuery, Bootstrap, and Google Maps API. Working with .NET Core 8, Blazor, and SQL Server.',
-			technologies: ['.NET Core 8', 'Blazor', 'JavaScript', 'jQuery', 'Bootstrap', 'SQL Server', 'Docker', 'GitLab'],
-			achievements: [
-				'Optimized app performance by 30%',
-				'Increased user engagement with local businesses by 40%',
-				'Accelerated delivery by 40% with improved testing workflow',
-				'Reduced feature delivery time by 25% using AI-driven tools'
-			]
-		},
-		{
-			company: 'Globons - The Digital Innovation Company',
-			role: 'Full Stack Developer',
-			period: 'January 2022 - February 2024',
-			location: 'Buenos Aires, Argentina',
-			project: 'Javit Project',
-			description:
-				'Developed PDF invoice consolidation API and interactive invoice listing tool. Implemented microservices architecture with .NET Core and Node.js.',
-			technologies: ['.NET Core 4', 'Node.js', 'React', 'MUI', 'SQL Server', 'Docker', 'Formik', 'Yup'],
-			achievements: [
-				'Reduced audit time by 50%',
-				'Improved invoice processing workflow by 25% company-wide',
-				'Achieved 99.9% system uptime for financial operations'
-			]
-		},
-		{
-			company: 'Marfrig Food',
-			role: 'Full Stack Developer',
-			period: 'May 2023 - October 2023',
-			location: 'Buenos Aires, Argentina',
-			description: 'Engineered full-stack CMS for beef product lifecycle tracking with RESTful APIs and responsive UIs.',
-			technologies: ['React.js', 'Node.js', 'Express', 'PostgreSQL', 'Redux', 'React Bootstrap'],
-			achievements: [
-				'Slashed supply chain bottlenecks by 25%',
-				'Reduced inventory discrepancies by 30%',
-				'Enhanced data retrieval speed by 25%'
-			]
-		},
-		{
-			company: 'Rockstar Solutions',
-			role: 'Full Stack Developer',
-			period: 'May 2021 - December 2021',
-			location: 'Buenos Aires, Argentina',
-			description: 'Developed CMS modules using Angular 11 and .NET Core with SQL Server database design.',
-			technologies: ['Angular 11', 'Angular Material', 'TypeScript', '.NET Core', 'SQL Server'],
-			achievements: ['Improved user experience by 20% with reactive forms', 'Reduced integration errors by 40%']
-		},
-		{
-			company: 'Bief',
-			role: 'Frontend Developer',
-			period: 'December 2020 - July 2021',
-			location: 'Buenos Aires, Argentina',
-			description: 'Built and maintained admin panel for apparel e-commerce platform with React and Next.js.',
-			technologies: ['React', 'Next.js', 'Storybook', 'Sass', 'Material UI', 'ESLint'],
-			achievements: [
-				'Reduced loading times by 25%',
-				'Lowered bug rates by 40% applying design patterns',
-				'Saved team 10 hours/week with consistent coding standards'
-			]
-		}
-	],
+  education: [
+    {
+      id: 'uk-sistemas-web',
+      degree: {
+        es: 'Tecnicatura Universitaria en Sistemas orientado a Desarrollo Web',
+        en: 'University Technical Degree in Systems (Web Development Focus)'
+      },
+      institution: 'Universidad Argentina John F. Kennedy (UK)',
+      shortInstitution: 'Universidad Kennedy (UK)',
+      location: 'Buenos Aires, Argentina',
+      status: 'in_progress',
+      statusLabel: { es: 'En curso', en: 'In Progress' },
+      period: { es: 'Actualidad — En curso', en: 'Present — In Progress' },
+      description: {
+        es: 'Formación universitaria actual enfocada en ingeniería de sistemas, arquitectura de software y desarrollo de aplicaciones web modernas.',
+        en: 'Current university program focused on systems engineering, software architecture, and modern web application development.'
+      }
+    },
+    {
+      id: 'utn-programacion',
+      degree: {
+        es: 'Tecnicatura Universitaria en Programación',
+        en: 'University Technical Degree in Programming'
+      },
+      institution: 'Universidad Tecnológica Nacional (UTN-FRGP)',
+      shortInstitution: 'UTN-FRGP',
+      location: 'Buenos Aires, Argentina',
+      status: 'completed',
+      statusLabel: { es: 'Graduado', en: 'Graduate' },
+      period: { es: 'Marzo 2019 – Diciembre 2023', en: 'March 2019 – December 2023' },
+      description: {
+        es: 'Base sólida en programación orientada a objetos, estructuras de datos, arquitectura limpia, bases de datos relacionales y desarrollo full stack.',
+        en: 'Strong foundation in object-oriented programming, data structures, clean architecture, relational databases, and full-stack software engineering.'
+      }
+    }
+  ],
 
-	technicalSkills: {
-		frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'Blazor'],
-		backend: ['Node.js', '.NET Core', 'C#', 'Express', 'Python'],
-		databases: ['SQL Server', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase'],
-		cloud: ['AWS', 'Azure Container Apps', 'Google Cloud Platform', 'Docker', 'Vercel', 'Heroku'],
-		aiTools: ['Claude AI', 'ChatGPT', 'GitHub Copilot', 'Cursor', 'Windsurf', 'Kiro AI', 'Gemini API', 'n8n Cloud'],
-		tools: ['Git', 'GitHub', 'GitLab', 'VS Code', 'Visual Studio', 'Cursor', 'Windsurf', 'Jira', 'Postman', 'Figma', 'Storybook', 'ESLint'],
-		stateManagement: ['Redux', 'Zustand', 'Context API'],
-		styling: ['Bootstrap', 'Tailwind CSS', 'Material UI', 'Sass', 'Shadcn'],
-		validation: ['Formik', 'Yup'],
-		other: [
-			'RESTful APIs',
-			'Microservices',
-			'Google Maps API',
-			'Google OAuth',
-			'Responsive Design (Mobile-First)',
-			'Clean Architecture',
-			'Design Patterns',
-			'Kanban (Jira)',
-			'Git Flow'
-		]
-	},
+  experience: [
+    {
+      id: 'istea',
+      company: 'ISTEA Ed IT',
+      companyKey: 'logoistea',
+      role: {
+        es: 'Mentor de Desarrollo de Software',
+        en: 'Software Development Mentor'
+      },
+      startDate: '2024-05',
+      endDate: null,
+      period: { es: 'Mayo 2024 – Presente', en: 'May 2024 – Present' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Docencia y mentoría técnica a más de 25 estudiantes en HTML5, CSS3, JavaScript y Bootstrap, impulsando la adopción responsable de asistentes de IA y estándares de accesibilidad web.',
+        en: 'Teaching and mentoring 25+ aspiring developers in HTML5, CSS3, JavaScript, and Bootstrap while promoting AI coding assistants and WCAG web accessibility standards.'
+      },
+      impactBadges: [
+        { es: '90% puntaje promedio', en: '90% avg score' },
+        { es: '+85% WCAG 2.1 AA', en: '+85% WCAG 2.1 AA' },
+        { es: '25+ estudiantes', en: '25+ students' }
+      ],
+      technologies: ['HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Lighthouse', 'AI Tools'],
+      achievements: {
+        es: [
+          'Logré un puntaje promedio de 90% en proyectos finales con evaluaciones altamente positivas.',
+          'Elevé el cumplimiento de accesibilidad web en un 85% aplicando estándares WCAG 2.1 AA con Lighthouse.',
+          'Potencié la productividad y calidad de código de los estudiantes integrando asistentes de IA.'
+        ],
+        en: [
+          'Achieved a 90% average final project score with consistently positive student feedback.',
+          'Elevated web accessibility compliance by 85% following WCAG 2.1 AA standards via Lighthouse.',
+          'Boosted student productivity and code quality through guided adoption of AI coding tools.'
+        ]
+      }
+    },
+    {
+      id: 'globons-psa',
+      company: 'Globons — Digital Innovation',
+      companyKey: 'globons',
+      project: 'PSA Project',
+      role: {
+        es: 'Full Stack Developer',
+        en: 'Full Stack Developer'
+      },
+      startDate: '2024-03',
+      endDate: null,
+      period: { es: 'Marzo 2024 – Presente', en: 'March 2024 – Present' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Modernización de arquitectura frontend (jQuery/Bootstrap 3-4 a Vanilla JS y Bootstrap 5.3), grids de productos, geolocalización con Google Maps API y backend en .NET Core 8, Blazor y SQL Server.',
+        en: 'Modernizing legacy frontend architecture (jQuery/Bootstrap 3-4 to Vanilla JS & Bootstrap 5.3), product grids, Google Maps geolocation, and backend services in .NET Core 8, Blazor, and SQL Server.'
+      },
+      impactBadges: [
+        { es: '+30% performance', en: '+30% performance' },
+        { es: '+40% engagement', en: '+40% engagement' },
+        { es: '-25% tiempo entrega IA', en: '-25% AI delivery' }
+      ],
+      technologies: ['.NET Core 8', 'Blazor', 'EF Core', 'JavaScript', 'Bootstrap 5', 'SQL Server', 'Docker', 'Google Maps API', 'GitLab'],
+      achievements: {
+        es: [
+          'Optimicé el rendimiento general de la aplicación en un 30% eliminando dependencias heredadas.',
+          'Incrementé en un 40% la interacción con comercios locales integrando búsqueda geolocalizada con Google Maps API.',
+          'Aceleré la entrega de funcionalidades en un 40% con flujos de testing mejorados y un 25% adicional mediante herramientas de IA.'
+        ],
+        en: [
+          'Optimized overall application performance by 30% while modernizing legacy UI modules.',
+          'Increased local business engagement by 40% via Google Maps API location-based search.',
+          'Accelerated delivery by 40% through improved QA workflows and cut feature lead time by 25% with AI tooling.'
+        ]
+      }
+    },
+    {
+      id: 'globons-javit',
+      company: 'Globons — Digital Innovation',
+      companyKey: 'globons',
+      project: 'Javit Project',
+      role: {
+        es: 'Full Stack Developer',
+        en: 'Full Stack Developer'
+      },
+      startDate: '2022-01',
+      endDate: '2024-02',
+      period: { es: 'Enero 2022 – Febrero 2024', en: 'January 2022 – February 2024' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Desarrollo de plataforma SaaS financiera para consolidación automática de facturas PDF (extracción y unificación 4 por página) con arquitectura de microservicios en .NET Core, Node.js y React.',
+        en: 'Built a financial SaaS platform for automated PDF invoice consolidation (extraction & 4-per-page unified output) using a microservices architecture with .NET Core, Node.js, and React.'
+      },
+      impactBadges: [
+        { es: '-50% tiempo auditoría', en: '-50% audit time' },
+        { es: '99.9% uptime', en: '99.9% uptime' },
+        { es: '+25% eficiencia', en: '+25% workflow' }
+      ],
+      technologies: ['.NET Core', 'Node.js', 'React', 'MUI', 'SQL Server', 'Docker', 'Formik', 'Yup'],
+      achievements: {
+        es: [
+          'Reduje los tiempos de auditoría financiera en un 50% automatizando la consolidación de comprobantes PDF.',
+          'Mejoré el flujo de procesamiento de facturas en un 25% a nivel compañía.',
+          'Aseguré un 99.9% de disponibilidad en operaciones financieras críticas e introduje Docker para entornos consistentes.'
+        ],
+        en: [
+          'Reduced financial audit time by 50% with automated PDF invoice extraction and consolidation.',
+          'Improved company-wide invoice processing workflows by 25%.',
+          'Maintained 99.9% production uptime for financial operations and standardized deployments with Docker.'
+        ]
+      }
+    },
+    {
+      id: 'marfrig',
+      company: 'Marfrig Food',
+      companyKey: null,
+      role: {
+        es: 'Full Stack Developer',
+        en: 'Full Stack Developer'
+      },
+      startDate: '2023-05',
+      endDate: '2023-10',
+      period: { es: 'Mayo 2023 – Octubre 2023', en: 'May 2023 – October 2023' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Ingeniería full-stack desde cero de un CMS para trazabilidad en tiempo real del ciclo de vida de productos cárnicos, con APIs RESTful en Node.js/Express, PostgreSQL y UI reactiva.',
+        en: 'Engineered a greenfield full-stack CMS for real-time beef product lifecycle tracking with RESTful APIs in Node.js/Express, optimized PostgreSQL queries, and responsive React UIs.'
+      },
+      impactBadges: [
+        { es: '-30% discrepancias', en: '-30% discrepancies' },
+        { es: '-25% cuellos botella', en: '-25% bottlenecks' },
+        { es: '-40% duplicación', en: '-40% duplication' }
+      ],
+      technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Redux'],
+      achievements: {
+        es: [
+          'Reduje cuellos de botella en la cadena de suministro en un 25% y discrepancias de inventario en un 30%.',
+          'Disminuí la duplicación de datos en un 40% optimizando el esquema y consultas SQL complejas en PostgreSQL.',
+          'Aceleré la recuperación de datos en un 25% mejorando la eficiencia operativa del usuario en un 35%.'
+        ],
+        en: [
+          'Slashed supply chain bottlenecks by 25% and reduced inventory discrepancies by 30%.',
+          'Cut data duplication by 40% through normalized schema design and optimized PostgreSQL queries.',
+          'Improved data retrieval speed by 25% and overall user interaction efficiency by 35%.'
+        ]
+      }
+    },
+    {
+      id: 'rockstar',
+      company: 'Rockstar Solutions',
+      companyKey: 'rockstar_solutions',
+      role: {
+        es: 'Full Stack Developer',
+        en: 'Full Stack Developer'
+      },
+      startDate: '2021-05',
+      endDate: '2021-12',
+      period: { es: 'Mayo 2021 – Diciembre 2021', en: 'May 2021 – December 2021' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Desarrollo de módulos CMS empresariales con Angular 11 y servicios backend en .NET Core con capa de datos normalizada en SQL Server y stored procedures.',
+        en: 'Developed enterprise CMS modules with Angular 11 and .NET Core backend services backed by normalized SQL Server data layers and stored procedures.'
+      },
+      impactBadges: [
+        { es: '-40% errores integración', en: '-40% integration bugs' },
+        { es: '+20% UX forms', en: '+20% UX forms' }
+      ],
+      technologies: ['Angular 11', 'Angular Material', 'TypeScript', '.NET Core', 'EF Core', 'SQL Server'],
+      achievements: {
+        es: [
+          'Mejoré la experiencia de usuario en un 20% implementando formularios reactivos con validaciones robustas.',
+          'Reduje errores de integración entre frontend y backend en un 40%.'
+        ],
+        en: [
+          'Improved user experience by 20% through reactive forms and structured validation.',
+          'Reduced frontend-backend integration defects by 40%.'
+        ]
+      }
+    },
+    {
+      id: 'bief',
+      company: 'Bief',
+      companyKey: 'bief',
+      role: {
+        es: 'Frontend Developer',
+        en: 'Frontend Developer'
+      },
+      startDate: '2020-12',
+      endDate: '2021-07',
+      period: { es: 'Diciembre 2020 – Julio 2021', en: 'December 2020 – July 2021' },
+      location: 'Buenos Aires, Argentina',
+      description: {
+        es: 'Construcción y refactorización del panel administrativo para plataforma e-commerce de indumentaria utilizando React, Next.js y Storybook.',
+        en: 'Built and refactored the administrative backoffice for an apparel e-commerce platform using React, Next.js, and Storybook.'
+      },
+      impactBadges: [
+        { es: '-40% bugs', en: '-40% bug rate' },
+        { es: '-25% tiempos carga', en: '-25% load time' }
+      ],
+      technologies: ['React', 'Next.js', 'Storybook', 'Sass', 'Material UI', 'ESLint'],
+      achievements: {
+        es: [
+          'Reduje los tiempos de carga en un 25% y la tasa de bugs en un 40% aplicando patrones de diseño modulares.',
+          'Ahorré al equipo más de 10 horas semanales estandarizando convenciones con ESLint y Storybook.'
+        ],
+        en: [
+          'Reduced page load times by 25% and lowered bug rates by 40% using modular design patterns.',
+          'Saved the team 10+ hours/week by standardizing coding guidelines with ESLint and Storybook.'
+        ]
+      }
+    }
+  ],
 
-	salaryExpectations: {
-		argentina: {
-			amount: 2500,
-			currency: 'USD',
-			type: 'gross',
-			notes: "Convert to ARS using 'dólar blue venta' exchange rate"
-		},
-		latam: {
-			amount: 3500,
-			currency: 'USD',
-			type: 'gross'
-		}
-	},
+  profileDescription: {
+    summary: {
+      es: 'Full Stack Developer de perfil senior y resolutivo, capaz de navegar entre sistemas legacy y tecnologías modernas con precisión quirúrgica: modernizo arquitecturas sin romper la lógica de negocio, priorizando estabilidad, rendimiento y excelencia en UX.',
+      en: 'Senior, solution-driven Full Stack Developer & AI Engineer bridging legacy systems and modern web architectures with surgical precision—upgrading technology without breaking business logic while prioritizing reliability, speed, and UX craft.'
+    },
+    pillars: [
+      {
+        id: 'modernization',
+        span: 'large',
+        tag: 'ARCHITECTURE',
+        title: {
+          es: 'Modernización de Arquitectura (Legacy → Modern)',
+          en: 'Architecture Modernization (Legacy → Modern)'
+        },
+        description: {
+          es: 'Lidero transiciones críticas desde jQuery y Bootstrap 3/4 hacia estándares web modernos, Vanilla JS y frameworks reactivos, mejorando rendimiento y mantenibilidad sin alterar reglas de negocio.',
+          en: 'Leading critical migrations from jQuery and Bootstrap 3/4 to modern web standards, Vanilla JS, and reactive frameworks—boosting performance and maintainability without breaking core business rules.'
+        },
+        chips: ['Clean Architecture', 'Vanilla JS', 'React / Next.js', 'Web Standards']
+      },
+      {
+        id: 'ai-engineering',
+        span: 'medium',
+        tag: 'AI ENGINEERING',
+        title: {
+          es: 'Ingeniería Asistida por IA & Automatización',
+          en: 'AI-Assisted Engineering & Automation'
+        },
+        description: {
+          es: 'Integro APIs generativas (Gemini, Claude) y flujos automatizados (n8n) tanto en productos finales como en el ciclo de desarrollo, acelerando entregas entre un 25% y 40%.',
+          en: 'Integrating generative APIs (Gemini, Claude) and workflow automation (n8n) into both end-user products and engineering pipelines, accelerating delivery by 25–40%.'
+        },
+        chips: ['Gemini API', 'Claude Code', 'n8n Cloud', 'Prompt Guardrails']
+      },
+      {
+        id: 'backend-integrity',
+        span: 'medium',
+        tag: 'BACKEND & DATA',
+        title: {
+          es: 'Backend Robusto & Integridad de Datos',
+          en: 'Backend Systems & Data Integrity'
+        },
+        description: {
+          es: 'Diseño APIs seguras y microservicios en .NET Core, C# y Node.js con SQL Server y PostgreSQL, manejando DTOs eficientes, permisos y lógica financiera crítica con 99.9% de uptime.',
+          en: 'Designing resilient APIs and microservices in .NET Core, C#, and Node.js backed by SQL Server and PostgreSQL—delivering efficient DTOs, auth, and 99.9% uptime on mission-critical workflows.'
+        },
+        chips: ['.NET Core 8', 'Node.js', 'SQL Server', 'PostgreSQL', 'Docker']
+      },
+      {
+        id: 'design-systems',
+        span: 'medium',
+        tag: 'UI / UX & WCAG',
+        title: {
+          es: 'Sistemas de Diseño & Accesibilidad',
+          en: 'Design Systems & Accessibility'
+        },
+        description: {
+          es: 'Construyo interfaces Mobile-First basadas en tokens CSS, componentes accesibles bajo WCAG 2.1 AA y patrones adaptativos que transforman flujos complejos en experiencias claras.',
+          en: 'Crafting Mobile-First interfaces driven by CSS tokens, WCAG 2.1 AA accessibility compliance, and adaptive layouts that turn dense enterprise workflows into intuitive experiences.'
+        },
+        chips: ['Tailwind CSS', 'CSS Tokens', 'WCAG 2.1 AA', 'Responsive UX']
+      },
+      {
+        id: 'debugging-mentoring',
+        span: 'medium',
+        tag: 'RELIABILITY',
+        title: {
+          es: 'Resolución Compleja & Mentoría Técnica',
+          en: 'Complex Debugging & Tech Mentoring'
+        },
+        description: {
+          es: 'Diagnóstico quirúrgico de errores críticos en producción (HTTPS/Mixed Content, mapeo de contratos, asincronía) combinado con mentoría técnica activa a nuevos desarrolladores en ISTEA.',
+          en: 'Surgical root-cause analysis on production bottlenecks (HTTPS/Mixed Content, contract mismatches, async race conditions) paired with active developer mentoring at ISTEA.'
+        },
+        chips: ['Lighthouse', 'Git Flow', 'Code Review', 'Mentoring']
+      }
+    ]
+  },
 
-	workPreferences: {
-		modality: '100% remote preferred',
-		maxHybrid: '1 day/week hybrid acceptable',
-		targetRoles: ['Frontend Developer', 'Fullstack Developer', 'AI Engineer']
-	},
+  technicalSkills: {
+    frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript (ES6+)', 'Tailwind CSS', 'Blazor', 'HTML5 / CSS3', 'Redux / Zustand'],
+    backend: ['.NET Core 8', 'C#', 'Node.js', 'Express', 'RESTful APIs', 'Microservices', 'Entity Framework Core'],
+    databases: ['SQL Server', 'PostgreSQL', 'MongoDB', 'Redis', 'Firebase'],
+    cloud: ['AWS', 'Google Cloud', 'Azure Container Apps', 'Docker', 'Vercel', 'GitLab CI / GitHub'],
+    aiTools: ['Gemini API', 'Claude Code', 'Claude AI', 'n8n Cloud', 'Cursor', 'GitHub Copilot', 'Windsurf', 'Prompt Engineering'],
+    tools: ['Git', 'GitHub', 'GitLab', 'VS Code', 'Visual Studio', 'Postman', 'Figma', 'Storybook', 'Lighthouse', 'Jira'],
+    stateManagement: ['Redux', 'Zustand', 'Context API'],
+    styling: ['Tailwind CSS', 'Bootstrap 5', 'Material UI', 'Sass', 'Shadcn UI']
+  },
 
-	interests: ['Playing Games', 'Playing Futbol', 'Travelling', 'AI & Automation'],
+  featuredProjects: [
+    {
+      id: 'ai-automation-bot',
+      category: 'AI & Automation',
+      name: {
+        es: 'AI Automation Bot',
+        en: 'AI Automation Bot'
+      },
+      description: {
+        es: 'Bot automatizado de procesamiento de datos integrado con Telegram para notificaciones en tiempo real y Google Sheets como almacenamiento estructurado en la nube.',
+        en: 'Automated data processing bot integrated with Telegram for real-time alerts and Google Sheets for structured cloud storage.'
+      },
+      technologies: ['n8n Cloud', 'Telegram Bot API', 'Google Sheets API', 'Webhooks'],
+      impact: {
+        es: 'Ahorro de +10 hs/semana en tareas operativas repetitivas',
+        en: 'Saved 10+ hours/week eliminating repetitive manual processing'
+      },
+      period: '2025 – Present'
+    },
+    {
+      id: 'pdf-invoice-system',
+      category: 'FinTech SaaS',
+      name: {
+        es: 'Sistema de Consolidación de Facturas PDF',
+        en: 'PDF Invoice Consolidation System'
+      },
+      description: {
+        es: 'Plataforma SaaS en arquitectura de microservicios para extraer datos de múltiples facturas, consolidar hasta 4 por hoja y generar PDFs unificados listos para auditoría.',
+        en: 'Microservices SaaS platform that extracts data from multiple financial invoices, consolidates 4 per page, and generates audit-ready unified PDFs.'
+      },
+      technologies: ['.NET Core', 'Node.js', 'React', 'MUI', 'Docker', 'SQL Server'],
+      impact: {
+        es: '-50% en tiempos de auditoría y 99.9% uptime financiero',
+        en: '-50% audit turnaround time and 99.9% financial uptime'
+      },
+      period: '2022 – 2024'
+    },
+    {
+      id: 'beef-lifecycle-cms',
+      category: 'Supply Chain',
+      name: {
+        es: 'CMS de Trazabilidad Cárnica (Marfrig)',
+        en: 'Beef Product Lifecycle CMS (Marfrig)'
+      },
+      description: {
+        es: 'Aplicación Full Stack desde cero para el seguimiento en tiempo real del ciclo de vida de productos cárnicos, control de stock y analítica operativa.',
+        en: 'Greenfield full-stack CMS tracking the end-to-end beef product lifecycle with real-time inventory management and operational visibility.'
+      },
+      technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'Redux'],
+      impact: {
+        es: '-25% cuellos de botella y -30% discrepancias de inventario',
+        en: '-25% supply chain bottlenecks and -30% inventory discrepancies'
+      },
+      period: '2023'
+    },
+    {
+      id: 'portfolio-ai-assistant',
+      category: 'AI Engineering',
+      name: {
+        es: 'Asistente IA con Guardrails Anti-Injection',
+        en: 'Guardrailed Portfolio AI Assistant'
+      },
+      description: {
+        es: 'Asistente conversacional serverless con Gemini API (@google/genai), defensa en 3 capas contra prompt injection, cotización dólar blue en vivo y fallback determinístico.',
+        en: 'Serverless conversational assistant powered by Gemini (@google/genai) featuring 3-layer anti-prompt-injection defense, live FX rates, and deterministic offline fallback.'
+      },
+      technologies: ['Gemini API', 'Vercel Functions', 'React 18', 'Tailwind CSS', 'Security Guardrails'],
+      impact: {
+        es: 'Disponibilidad 100% bilingüe (ES/EN) con alcance blindado',
+        en: '100% bilingual (ES/EN) availability with strict scope protection'
+      },
+      period: '2025 – Present'
+    }
+  ],
 
-	motto: 'Persist, insist until your dreams come true ✨',
+  salaryExpectations: {
+    argentina: {
+      amount: 2500,
+      currency: 'USD',
+      type: 'gross',
+      notes: "Convert to ARS using 'dólar blue venta' exchange rate"
+    },
+    latam: {
+      amount: 3500,
+      currency: 'USD',
+      type: 'gross'
+    }
+  },
 
-	// ========================================
-	// WORK HISTORY (Real from CVs)
-	// ========================================
+  workPreferences: {
+    modality: '100% remote preferred',
+    maxHybrid: '1 day/week hybrid acceptable (Buenos Aires)',
+    targetRoles: ['Senior Full Stack Developer', 'Frontend Developer', 'AI Engineer']
+  },
 
-	workHistory: [
-		{
-			company: 'ISTEA Ed IT',
-			role: 'Software Development Mentor',
-			period: 'May 2024 - Present',
-			location: 'Buenos Aires, Argentina',
-			responsibilities: [
-				'Mentored 25+ aspiring front-end developers in HTML, CSS, JavaScript, and Bootstrap',
-				'Designed practical exercises including shopping cart with API consumption and localStorage',
-				'Promoted adoption of AI coding assistants (Claude, Copilot) among students',
-				'Championed accessibility improvements using Lighthouse tool'
-			],
-			achievements: [
-				'Achieved average project score of 90% with positive student reviews',
-				'Elevated accessibility compliance scores by 85% (WCAG 2.1 AA standards)',
-				'Enhanced student productivity and code quality through AI tools adoption'
-			]
-		},
-		{
-			company: 'Globons - The Digital Innovation Company',
-			role: 'Full Stack Developer',
-			period: 'March 2024 - Present',
-			location: 'Buenos Aires, Argentina (PSA Project)',
-			responsibilities: [
-				'Implemented product grids (stock, backordered, claimed) using JavaScript, jQuery, Bootstrap',
-				'Integrated Google Maps API enabling location-based search functionalities',
-				'Documented bugs, implemented fixes, and tested before merging branches',
-				'Integrated responsive design frameworks for desktop and mobile'
-			],
-			achievements: [
-				'Optimized app performance by 30%',
-				'Increased user engagement with local businesses by 40%',
-				'Accelerated delivery by 40% with improved testing workflow',
-				'Utilized AI-driven tools (Claude, Cursor, Copilot) reducing feature delivery time by 25%'
-			],
-			technologies: ['.NET Core 8', 'EF Core', 'SQL Server', 'Blazor', 'JavaScript', 'jQuery', 'Bootstrap', 'Docker', 'GitLab']
-		},
-		{
-			company: 'Globons - The Digital Innovation Company',
-			role: 'Full Stack Developer',
-			period: 'January 2022 - February 2024',
-			location: 'Buenos Aires, Argentina (Javit Project)',
-			responsibilities: [
-				'Developed PDF invoice consolidation API (extract, consolidate 4 per page, generate unified PDF)',
-				'Implemented secure and scalable endpoints in .NET Core 4 with microservices (Node.js)',
-				'Launched interactive invoice listing tool with React and MUI',
-				'Introduced Docker ensuring consistent environments'
-			],
-			achievements: [
-				'Reduced audit time by 50%',
-				'Improved invoice processing workflow by 25% company-wide',
-				'Accelerated feature delivery by 25% with Docker',
-				'Achieved 99.9% system uptime for financial operations'
-			],
-			technologies: ['.NET Core 4', 'EF Core', 'SQL Server', 'Node.js', 'Docker', 'React', 'MUI', 'Formik', 'Yup', 'GitHub']
-		},
-		{
-			company: 'Marfrig Food',
-			role: 'Full Stack Developer',
-			period: 'May 2023 - October 2023',
-			location: 'Buenos Aires, Argentina',
-			responsibilities: [
-				'Engineered full-stack CMS for beef product lifecycle tracking',
-				'Developed RESTful API endpoints with Node.js and Express for inventory management',
-				'Designed and optimized complex SQL queries across PostgreSQL tables',
-				'Built responsive UIs with React.js, Redux, and React Bootstrap'
-			],
-			achievements: [
-				'Slashed supply chain bottlenecks by 25%',
-				'Reduced data duplication by 40%',
-				'Achieved 30% reduction in inventory discrepancies',
-				'Enhanced data retrieval speed by 25%',
-				'Improved user interaction efficiency by 35%'
-			],
-			technologies: ['React.js', 'Node.js', 'Express', 'PostgreSQL', 'Redux', 'React Bootstrap']
-		},
-		{
-			company: 'Rockstar Solutions',
-			role: 'Full Stack Developer',
-			period: 'May 2021 - December 2021',
-			location: 'Buenos Aires, Argentina',
-			responsibilities: [
-				'Developed CMS modules using Angular 11 and Angular Material',
-				'Created backend services with .NET Core and EF Core for content management',
-				'Designed SQL Server data layer with normalization and stored procedures',
-				'Orchestrated cross-functional communication between frontend and backend teams'
-			],
-			achievements: [
-				'Improved user experience by 20% with reactive forms and validation',
-				'Reduced integration errors by 40%',
-				'Accelerated project delivery with seamless React/.NET integration'
-			],
-			technologies: ['Angular 11', 'Angular Material', 'TypeScript', '.NET Core', 'EF Core', 'SQL Server', 'NetZero']
-		},
-		{
-			company: 'Bief',
-			role: 'Frontend Developer',
-			period: 'December 2020 - July 2021',
-			location: 'Buenos Aires, Argentina',
-			responsibilities: [
-				'Built and maintained admin panel for apparel e-commerce platform',
-				'Developed and refactored UI components for product, order, and customer management',
-				'Implemented responsive and scalable design',
-				'Standardized coding conventions with ESLint'
-			],
-			achievements: [
-				'Reduced loading times by 25%',
-				'Lowered bug rates by 40% applying design patterns',
-				'Saved team 10 hours/week with consistent coding standards',
-				'Decreased development time by 20% with modular design'
-			],
-			technologies: ['React', 'Next.js', 'Storybook', 'Sass', 'Material UI', 'ESLint']
-		}
-	],
+  languages: [
+    { language: 'Spanish', level: 'Native' },
+    { language: 'English', level: 'B1 (Intermediate) — Actively improving with private lessons' }
+  ],
 
-	// ========================================
-	// CERTIFICATIONS (Real from CVs)
-	// ========================================
+  softSkills: [
+    'Team collaboration',
+    'Problem solving',
+    'Mentoring and teaching',
+    'Effective communication',
+    'Clean code advocate',
+    'Agile / Kanban methodologies'
+  ],
 
-	certifications: [
-		{
-			name: 'Web Design Bootcamp',
-			issuer: 'NUCBA',
-			date: 'August 2024 - September 2024',
-			description: 'Minor in Web Apps Design'
-		},
-		{
-			name: 'AWS Essential & Next.js',
-			issuer: 'Coderhouse Bootcamp',
-			date: 'March 2024 - July 2024',
-			description: 'Cloud computing and modern React framework'
-		},
-		{
-			name: 'Google Cloud Essential',
-			issuer: 'UTN-FRGP',
-			date: 'November 2023 - December 2023',
-			description: 'Google Cloud Platform fundamentals'
-		},
-		{
-			name: 'Fullstack JS Developer',
-			issuer: 'CAC Bootcamp',
-			date: 'April 2021 - August 2021',
-			description: 'Minor in React.js, Node.js'
-		},
-		{
-			name: 'Frontend Developer (JavaScript, ReactJS)',
-			issuer: 'Coderhouse Bootcamp',
-			date: 'December 2019 - May 2020',
-			description: 'Minor in React.js'
-		}
-	],
+  aiExpertise: {
+    tools: ['Claude Code', 'Claude AI', 'Gemini API', 'ChatGPT', 'GitHub Copilot', 'Cursor', 'Windsurf', 'n8n Cloud'],
+    frameworks: ['Google GenAI SDK (@google/genai)', 'n8n Cloud', 'Prompt Guardrails'],
+    experience:
+      'Building AI-powered automations, guardrailed conversational assistants, and AI-assisted full-stack engineering workflows with measurable delivery gains (25–40%).'
+  },
 
-	// ========================================
-	// FEATURED PROJECTS (Real from AI CV)
-	// ========================================
-
-	featuredProjects: [
-		{
-			name: 'AI Automation Bot',
-			description:
-				'Automated data processing bot integrated with Telegram for real-time notifications and Google Sheets for cloud-based storage',
-			technologies: ['n8n Cloud', 'Telegram Bot API', 'Google Sheets API'],
-			role: 'Developer',
-			impact: 'Automated repetitive data processing tasks, saving hours of manual work',
-			period: 'January 2025 - Present'
-		},
-		{
-			name: 'AI-Assisted Development Environment',
-			description: 'Integrated multiple AI coding assistants across full-stack projects to improve development velocity',
-			technologies: ['Claude', 'Cursor', 'Windsurf', 'GitHub Copilot', 'ChatGPT'],
-			role: 'Developer & Researcher',
-			impact: 'Reduced repetitive coding tasks and accelerated feature delivery by 25%',
-			period: '2024 - Present'
-		},
-		{
-			name: 'PDF Invoice Consolidation System',
-			description: 'System to extract data from multiple invoices, consolidate up to 4 per page, and generate unified PDFs',
-			technologies: ['.NET Core 4', 'Node.js', 'React', 'MUI', 'PDF manipulation libraries'],
-			role: 'Lead Developer',
-			impact: 'Reduced audit time by 50% and improved invoice processing workflow by 25%',
-			period: '2022 - 2024'
-		},
-		{
-			name: 'Beef Product Lifecycle CMS',
-			description: 'Full-stack CMS application for real-time tracking of beef product lifecycle',
-			technologies: ['React.js', 'Node.js', 'Express', 'PostgreSQL', 'Redux'],
-			role: 'Full Stack Developer',
-			impact: 'Slashed supply chain bottlenecks by 25%, reduced inventory discrepancies by 30%',
-			period: '2023'
-		}
-	],
-
-	// ========================================
-	// ADDITIONAL INFORMATION
-	// ========================================
-
-	languages: [
-		{language: 'Spanish', level: 'Native'},
-		{language: 'English', level: 'B1 (Intermediate) - Currently taking private lessons'}
-	],
-
-	softSkills: [
-		'Team collaboration',
-		'Problem solving',
-		'Quick learner',
-		'Effective communication',
-		'Time management',
-		'Mentoring and teaching',
-		'Clean code advocate',
-		'Continuous learning mindset',
-		'Agile/Kanban methodologies'
-	],
-
-	// ========================================
-	// HIGHLIGHTED ACHIEVEMENTS
-	// ========================================
-
-	highlights: [
-		'Mentored 25+ developers with 90% average project scores',
-		'Reduced audit time by 50% with automated invoice consolidation system',
-		'Improved app performance by 30-40% across multiple projects',
-		'Integrated AI tools reducing feature delivery time by 25%',
-		'Achieved 85% accessibility compliance improvement (WCAG 2.1 AA)',
-		'Built applications serving thousands of users with 99.9% uptime',
-		'Reduced integration errors by 40% with improved Git Flow practices',
-		'Saved development teams 10+ hours/week with standardized practices'
-	],
-
-	// ========================================
-	// AI & AUTOMATION EXPERTISE
-	// ========================================
-
-	aiExpertise: {
-		tools: ['Claude AI', 'Claude code', 'ChatGPT', 'GitHub Copilot', 'Cursor', 'Windsurf', 'Kiro AI', 'Gemini API', 'n8n Cloud'],
-		frameworks: ['Gemini API', 'n8n Cloud'],
-		experience:
-			'Actively researching and implementing AI-powered automation to accelerate development cycles and create intelligent applications. Specialized in integrating AI coding assistants to enhance productivity and code quality.'
-	},
-
-	// ========================================
-	// PROFESSIONAL PROFILE DESCRIPTION
-	// ========================================
-
-	profileDescription: {
-		summary: 'Fullstack Developer de perfil senior/resolutivo, capaz de navegar entre código legacy y nuevas tecnologías con una mentalidad quirúrgica: moderniza la tecnología sin alterar la lógica de negocio, priorizando siempre la estabilidad del sistema y la excelencia en la interfaz de usuario. Su trabajo combina la precisión técnica con una fuerte visión de producto.',
-		pillars: [
-			{
-				title: 'Especialista en Modernización de Arquitectura (Legacy to Modern)',
-				description: 'Ha liderado la transición crítica de arquitecturas basadas en jQuery y Bootstrap 3/4 hacia estándares modernos con Vanilla JavaScript y Bootstrap 5.3. No es solo un cambio estético, sino una mejora en el rendimiento y la mantenibilidad a largo plazo, eliminando dependencias pesadas y adoptando estándares web actuales.'
-			},
-			{
-				title: 'Arquitecto de Interfaces Responsivas y Adaptativas',
-				description: 'Demuestra un enfoque Mobile-First y atención meticulosa al detalle en UX. Ha diseñado soluciones específicas para diferentes breakpoints (iPhone, iPad y Desktop), transformando tablas complejas en sistemas de tarjetas y acordeones, asegurando que el flujo de compra sea fluido en cualquier dispositivo.'
-			},
-			{
-				title: 'Desarrollador Backend con Enfoque en Integridad de Datos',
-				description: 'En el lado del servidor (.NET / C# / Razor), maneja lógica de negocio compleja sin romper la compatibilidad con sistemas legados, diseña y consume DTOs eficientes, gestiona estados de sesión y permisos de usuario de forma segura, e implementa sistemas de administración utilizando componentes avanzados como Tabulator.'
-			},
-			{
-				title: 'Ingeniero de Estilos y Consistencia Visual',
-				description: 'Ha implementado un Sistema de Diseño basado en variables CSS (:root), permitiendo que el branding institucional se aplique de forma coherente en toda la aplicación (Frontend y Backend). Su capacidad para centralizar estilos hardcodeados demuestra una mentalidad de escalabilidad.'
-			},
-			{
-				title: 'Debugging y Resolución de Problemas Complejos',
-				description: 'Su rol incluye identificación y corrección de errores críticos: resolución de errores de Mixed Content (HTTPS), mapeo de datos inconsistentes (PascalCase vs camelCase), y optimización de procesos asíncronos para evitar loadings infinitos, mejorando el feedback visual al usuario.'
-			}
-		]
-	},
-
-	// ========================================
-	// DEVELOPMENT PRINCIPLES
-	// ========================================
-
-	principles: [
-		'OOP (Object-Oriented Programming)',
-		'SOLID principles',
-		"DRY (Don't Repeat Yourself)",
-		'KISS (Keep It Simple, Stupid)',
-		'Design Patterns',
-		'Clean Architecture',
-		'Modular Architecture',
-		'RESTful API design',
-		'Responsive Design (Mobile-First)',
-		'Accessibility (WCAG 2.1 AA)'
-	]
+  principles: [
+    'Clean Architecture',
+    'SOLID Principles',
+    'Design Patterns',
+    'Modern Web Standards (Baseline)',
+    'Accessibility (WCAG 2.1 AA)',
+    'Mobile-First Responsive Design'
+  ]
 };

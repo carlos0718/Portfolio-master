@@ -1,11 +1,33 @@
 {
-	"buildCommand": "CI=false npm run build",
-	"outputDirectory": "build",
-	"devCommand": "npm start",
-	"installCommand": "npm install",
-	"functions": {
-		"api/chat.js": {
-			"maxDuration": 30
-		}
-	}
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "functions": {
+    "api/chat.js": {
+      "maxDuration": 30
+    },
+    "api/github.js": {
+      "maxDuration": 15
+    },
+    "api/cv.js": {
+      "maxDuration": 15
+    },
+    "api/certificates.js": {
+      "maxDuration": 15
+    },
+    "api/admin/upload.js": {
+      "maxDuration": 25
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
