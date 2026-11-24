@@ -183,7 +183,7 @@ export function ChatWidget() {
           ) : (
             <>
               <AIBotAvatar
-                size={40}
+                size={44}
                 state={isLoading ? 'thinking' : launcherHovered ? 'hover' : 'idle'}
               />
               <span
