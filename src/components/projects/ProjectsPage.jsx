@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ExternalLink, Github, Search, Star, X } from 'lucide-react';
 import { useGitHubData } from '../../hooks/useGitHubData';
 import { useLanguage } from '../../context/LanguageContext';
-import { getDefaultProjectImage } from '../../utils/projectImages';
 import { SpotlightCard } from '../common/SpotlightCard';
+import { ProjectCover } from './ProjectCover';
 import { ProjectModal } from './ProjectModal';
 
 function RepoCard({ project, onSelect, featured = false }) {
@@ -16,6 +16,12 @@ function RepoCard({ project, onSelect, featured = false }) {
     project.demoLink &&
     project.demoLink !== project.ghLink &&
     /^https?:\/\//i.test(project.demoLink);
+  const resolvedDescription =
+    project.curatedDescription?.[lang] ||
+    project.description ||
+    (lang === 'es'
+      ? 'Proyecto desarrollado y publicado en GitHub.'
+      : 'Software project built and published on GitHub.');
 
   return (
     <SpotlightCard
@@ -31,27 +37,21 @@ function RepoCard({ project, onSelect, featured = false }) {
       }}
       className="group flex h-full cursor-pointer flex-col overflow-hidden"
     >
-      {/* Image Stage */}
+      {/* Image / Curated Cover Stage */}
       <div className="relative aspect-[16/10] w-full overflow-hidden border-b border-white/[0.06] bg-obsidian">
-        <img
-          src={project.image}
-          alt={project.title}
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = getDefaultProjectImage(project.title, project.languages);
-          }}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/90 via-transparent to-transparent" />
+        <ProjectCover project={project} />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/75 via-transparent to-transparent" />
         {featured && (
-          <span className="absolute left-3 top-3 rounded-full border border-cyan-400/35 bg-obsidian/80 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-cyan-300 backdrop-blur">
+          <span className="absolute left-3 top-3 rounded-full border border-cyan-400/35 bg-obsidian/85 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-cyan-300 backdrop-blur">
             Pinned
           </span>
         )}
-        <div className="absolute right-3 top-3 flex items-center gap-1 rounded-lg border border-white/10 bg-obsidian/75 px-2 py-0.5 font-mono text-[11px] text-zinc-300 backdrop-blur">
-          <Star className="h-3 w-3 text-amber-400" />
-          <span>{project.stars || 0}</span>
-        </div>
+        {project.stars > 0 && (
+          <div className="absolute right-3 top-3 flex items-center gap-1 rounded-lg border border-white/10 bg-obsidian/80 px-2 py-0.5 font-mono text-[11px] text-zinc-300 backdrop-blur">
+            <Star className="h-3 w-3 text-amber-400" />
+            <span>{project.stars}</span>
+          </div>
+        )}
       </div>
 
       {/* Body */}
@@ -64,10 +64,7 @@ function RepoCard({ project, onSelect, featured = false }) {
             <ArrowUpRight className="h-4 w-4 shrink-0 text-zinc-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cyan-300" />
           </div>
           <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-zinc-400">
-            {project.description ||
-              (lang === 'es'
-                ? 'Proyecto desarrollado y publicado en GitHub.'
-                : 'Software project built and published on GitHub.')}
+            {resolvedDescription}
           </p>
         </div>
 
@@ -148,6 +145,8 @@ export function ProjectsPage() {
         (p) =>
           p.title.toLowerCase().includes(q) ||
           (p.description && p.description.toLowerCase().includes(q)) ||
+          (p.curatedDescription?.es && p.curatedDescription.es.toLowerCase().includes(q)) ||
+          (p.curatedDescription?.en && p.curatedDescription.en.toLowerCase().includes(q)) ||
           Object.keys(p.languages || {}).some((l) => l.toLowerCase().includes(q)) ||
           (p.topics || []).some((tp) => tp.toLowerCase().includes(q))
       );

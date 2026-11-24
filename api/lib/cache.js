@@ -47,6 +47,8 @@ async function fetchUserProfile(username, token) {
   };
 }
 
+const EXCLUDED_REPOS = new Set(['warp']);
+
 async function fetchPublicRepos(username, token) {
   const response = await fetch(
     `https://api.github.com/users/${username}/repos?sort=updated&direction=desc&per_page=60&type=owner`,
@@ -59,7 +61,7 @@ async function fetchPublicRepos(username, token) {
   if (!Array.isArray(repos)) return [];
 
   return repos
-    .filter((repo) => !repo.fork && !repo.private)
+    .filter((repo) => !repo.fork && !repo.private && !EXCLUDED_REPOS.has(repo.name.toLowerCase()))
     .map((repo) => {
       const languages = {};
       if (repo.language) {

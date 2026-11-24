@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ExternalLink, Github, Star, GitFork, X } from 'lucide-react';
-import { getDefaultProjectImage } from '../../utils/projectImages';
 import { useLanguage } from '../../context/LanguageContext';
+import { ProjectCover } from './ProjectCover';
 
 /**
  * Project Detail Modal built on native HTML <dialog> (Modern Web Guidance 1.0)
@@ -67,15 +67,8 @@ export function ProjectModal({ project, onClose }) {
 
         {/* Preview Stage */}
         <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-white/10 bg-obsidian">
-          <img
-            src={project.image}
-            alt={project.title}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = getDefaultProjectImage(project.title, project.languages);
-            }}
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+          <ProjectCover project={project} large />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/70 via-transparent to-transparent" />
         </div>
 
         {/* Content */}
@@ -105,7 +98,8 @@ export function ProjectModal({ project, onClose }) {
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-zinc-300 sm:text-base">
-            {project.description ||
+            {project.curatedDescription?.[lang] ||
+              project.description ||
               (lang === 'es'
                 ? 'Repositorio de código en GitHub.'
                 : 'Source code repository on GitHub.')}

@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
-import { getProjectImage } from '../utils/projectImages';
+import { getProjectMeta } from '../data/projectMetadata';
 
 let memoryCache = null;
 
 function mapRepo(repo) {
+  const meta = getProjectMeta(repo.name);
+  const rawDemo = repo.homepage || '';
+  const cleanDemo = meta?.disableDeadDemo ? '' : rawDemo;
+
   return {
     id: repo.id,
     title: repo.name,
     description: repo.description || '',
+    curatedDescription: meta?.description || null,
+    badge: meta?.badge || null,
+    accent: meta?.accent || null,
+    icon: meta?.icon || null,
+    logo: meta?.logo || null,
     ghLink: repo.htmlUrl,
-    demoLink: repo.homepage || '',
+    demoLink: cleanDemo,
     languages: repo.languages || (repo.primaryLanguage ? { [repo.primaryLanguage]: 100 } : {}),
     primaryLanguage: repo.primaryLanguage || Object.keys(repo.languages || {})[0] || null,
     topics: repo.topics || [],
@@ -17,7 +26,7 @@ function mapRepo(repo) {
     forks: repo.forks || 0,
     createdAtRaw: repo.createdAt,
     updatedAtRaw: repo.updatedAt,
-    image: getProjectImage(repo.name, repo.languages || {}, repo.homepage || null)
+    image: meta?.image || null
   };
 }
 
