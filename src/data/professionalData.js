@@ -131,12 +131,12 @@ export const professionalData = {
         es: [
           'Construí Kronos AI Assistant, app de escritorio autónoma por voz en Python con pipeline híbrido local/cloud (Ollama, Parakeet, Piper, Claude, ElevenLabs) y control estricto de permisos.',
           'Desarrollé Cuotify (React Native/Expo + Supabase) y una plataforma e-learning propia aplicando autenticación, PostgreSQL y aislamiento por Row-Level Security (RLS).',
-          'Creé rocky-spec (toolkit multi-agente open-source para Spec-Driven Development) y Kitchen AI Companion como proyecto final del curso de AI Engineer en la UTN.'
+          'Creé rocky-spec (toolkit multi-agente open-source para Spec-Driven Development) y Kitchen AI Companion como proyecto final del Bootcamp de AI Engineer en NUCBA.'
         ],
         en: [
           'Built Kronos AI Assistant, an autonomous Python desktop voice assistant with a hybrid local/cloud pipeline (Ollama, Parakeet, Piper, Claude, ElevenLabs) and permission-scoped OS actions.',
           'Shipped Cuotify (React Native/Expo + Supabase) and a custom e-learning platform leveraging PostgreSQL Auth and Row-Level Security (RLS).',
-          'Created rocky-spec (open-source multi-agent Spec-Driven Development toolkit) and Kitchen AI Companion as the capstone project for the UTN AI Engineer program.'
+          'Created rocky-spec (open-source multi-agent Spec-Driven Development toolkit) and Kitchen AI Companion as the capstone project for the NUCBA AI Engineer Bootcamp.'
         ]
       }
     },
@@ -536,19 +536,19 @@ export const professionalData = {
     {
       id: 'kitchen-ai-companion',
       projectType: 'personal',
-      category: 'UTN AI Engineer · Proyecto Final',
+      category: 'NUCBA AI Engineer · Bootcamp Final',
       name: {
-        es: 'Kitchen AI Companion — Proyecto Final AI Engineer (UTN)',
-        en: 'Kitchen AI Companion — UTN AI Engineer Capstone'
+        es: 'Kitchen AI Companion — Proyecto Final AI Engineer (NUCBA)',
+        en: 'Kitchen AI Companion — NUCBA AI Engineer Capstone'
       },
       description: {
-        es: 'Proyecto final desarrollado para el curso de AI Engineer en la UTN: aplicación web de asistencia culinaria y nutricional impulsada por IA que personaliza recetas y planes según objetivos deportivos, construida con React, TypeScript, Supabase, Radix/Shadcn UI y TanStack Query.',
-        en: 'Capstone project built for the UTN AI Engineer course: an AI-powered culinary and sports nutrition assistant personalizing meal plans and recipes, engineered with React, TypeScript, Supabase, Radix/Shadcn UI, and TanStack Query.'
+        es: 'Proyecto final desarrollado para el Bootcamp de AI Engineer en NUCBA: aplicación web de asistencia culinaria y nutricional impulsada por IA que personaliza recetas y planes según objetivos deportivos, construida con React, TypeScript, Supabase, Radix/Shadcn UI y TanStack Query.',
+        en: 'Capstone project built for the NUCBA AI Engineer Bootcamp: an AI-powered culinary and sports nutrition assistant personalizing meal plans and recipes, engineered with React, TypeScript, Supabase, Radix/Shadcn UI, and TanStack Query.'
       },
       technologies: ['React', 'TypeScript', 'Supabase', 'Shadcn / Radix UI', 'TanStack Query', 'Zod'],
       impact: {
-        es: 'Proyecto final integrador del curso AI Engineer en UTN (código abierto en GitHub)',
-        en: 'Capstone project for the UTN AI Engineer program (open source on GitHub)'
+        es: 'Proyecto final integrador del Bootcamp AI Engineer en NUCBA (open source en GitHub)',
+        en: 'Capstone project for the NUCBA AI Engineer Bootcamp (open source on GitHub)'
       },
       period: '2026',
       repoUrl: 'https://github.com/carlos0718/kitchen-ai-companion',

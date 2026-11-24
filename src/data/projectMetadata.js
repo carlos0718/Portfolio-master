@@ -62,7 +62,7 @@ export const projectMetadata = {
     }
   },
   'challenge-rappi-ai': {
-    image: null,
+    image: '/projects/challenge-rappi-ai.jpg',
     icon: 'sparkles',
     badge: { es: 'Applied AI · Claude Sonnet', en: 'Applied AI · Claude Sonnet' },
     accent: 'indigo',
@@ -73,12 +73,12 @@ export const projectMetadata = {
   },
   'kitchen-ai-companion': {
     image: '/projects/kitchen-ai-companion.jpg',
-    badge: { es: 'Proyecto Final · UTN AI Engineer', en: 'Capstone · UTN AI Engineer' },
+    badge: { es: 'Proyecto Final · NUCBA AI Engineer', en: 'Capstone · NUCBA AI Engineer' },
     accent: 'indigo',
     disableDeadDemo: true,
     description: {
-      es: 'Proyecto final del curso de AI Engineer en la UTN: asistente culinario y nutricional inteligente que personaliza recetas y planes según objetivos deportivos con React, TypeScript, Supabase, Shadcn/Radix y TanStack Query.',
-      en: 'Capstone project for the UTN AI Engineer course: AI-powered culinary and sports nutrition companion built with React, TypeScript, Supabase, Shadcn/Radix UI, and TanStack Query.'
+      es: 'Proyecto final del Bootcamp de AI Engineer en NUCBA: asistente culinario y nutricional inteligente que personaliza recetas y planes según objetivos deportivos con React, TypeScript, Supabase, Shadcn/Radix y TanStack Query.',
+      en: 'Capstone project for the NUCBA AI Engineer Bootcamp: AI-powered culinary and sports nutrition companion built with React, TypeScript, Supabase, Shadcn/Radix UI, and TanStack Query.'
     }
   },
   listenfy: {
@@ -202,6 +202,27 @@ export const projectMetadata = {
       es: 'Componente interactivo FAQ Accordion responsivo desarrollado en TypeScript cuidando accesibilidad, micro-interacciones y fidelidad de diseño.',
       en: 'Responsive FAQ Accordion UI component crafted in TypeScript with clean accessibility, micro-interactions, and design fidelity.'
     }
+  },
+  'laboratio-de-desarrollo-web-istea': {
+    image: '/projects/istea-lab-web.jpg',
+    badge: { es: 'Mentoría ISTEA · Web Lab', en: 'ISTEA Mentoring · Web Lab' },
+    accent: 'cyan'
+  },
+  'recipe-page': {
+    image: '/projects/recipe-page.jpg',
+    badge: { es: 'Frontend Mentor · Responsive', en: 'Frontend Mentor · Responsive' },
+    accent: 'amber'
+  },
+  tictactoe: {
+    image: '/projects/tictactoe.jpg',
+    badge: { es: 'React + Vite · Game', en: 'React + Vite · Game' },
+    accent: 'indigo'
+  },
+  'website-tpfinal_nucba': {
+    image: null,
+    disableDeadDemo: true,
+    badge: { es: 'NUCBA · Web Design', en: 'NUCBA · Web Design' },
+    accent: 'cyan'
   }
 };
 

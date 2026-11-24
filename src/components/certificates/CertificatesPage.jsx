@@ -5,6 +5,7 @@ import { certificateCategories } from '../../data/certificatesData';
 import { professionalData } from '../../data/professionalData';
 import { useCertificates } from '../../hooks/useCertificates';
 import { useLanguage } from '../../context/LanguageContext';
+import { runViewTransition } from '../../utils/viewTransition';
 import { SpotlightCard } from '../common/SpotlightCard';
 import { CertificateCard } from './CertificateCard';
 import { CertificateLightbox } from './CertificateLightbox';
@@ -106,7 +107,7 @@ export function CertificatesPage() {
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setActiveCategory(cat.id)}
+                  onClick={() => runViewTransition(() => setActiveCategory(cat.id))}
                   className={`relative rounded-xl px-3.5 py-2 text-xs font-medium transition-colors ${
                     isActive
                       ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-inset ring-cyan-400/35'
@@ -135,7 +136,7 @@ export function CertificatesPage() {
             <div className="flex items-center rounded-xl border border-white/10 bg-obsidian/80 p-1">
               <button
                 type="button"
-                onClick={() => setViewMode('grid')}
+                onClick={() => runViewTransition(() => setViewMode('grid'))}
                 aria-label={t.certificates.gridView}
                 className={`rounded-lg p-1.5 transition-colors ${
                   viewMode === 'grid'
@@ -147,7 +148,7 @@ export function CertificatesPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setViewMode('list')}
+                onClick={() => runViewTransition(() => setViewMode('list'))}
                 aria-label={t.certificates.listView}
                 className={`rounded-lg p-1.5 transition-colors ${
                   viewMode === 'list'

@@ -17,22 +17,22 @@ export const certificateCategories = [
 
 export const certificatesData = [
   {
-    id: 'utn-ai-engineer',
+    id: 'nucba-ai-engineer',
     title: {
-      es: 'AI Engineer',
-      en: 'AI Engineer'
+      es: 'AI Engineer Bootcamp',
+      en: 'AI Engineer Bootcamp'
     },
-    issuer: 'UTN',
+    issuer: 'NUCBA',
     issuerKey: null,
-    category: 'cloud-ai',
+    category: 'bootcamp',
     date: '2026-04',
     dateLabel: {
       es: '2026',
       en: '2026'
     },
     description: {
-      es: 'Formación especializada en ingeniería de aplicaciones con Inteligencia Artificial, integración de LLMs, diseño de prompts y arquitectura de productos IA (proyecto final: Kitchen AI Companion).',
-      en: 'Specialized program in AI application engineering, LLM integration, prompt architecture, and production AI workflows (capstone project: Kitchen AI Companion).'
+      es: 'Bootcamp intensivo de ingeniería de aplicaciones con Inteligencia Artificial, integración de LLMs, diseño de prompts y arquitectura de productos IA (proyecto final: Kitchen AI Companion).',
+      en: 'Intensive bootcamp in AI application engineering, LLM integration, prompt architecture, and production AI workflows (capstone project: Kitchen AI Companion).'
     },
     skills: ['AI Engineering', 'LLMs', 'Prompt Engineering', 'Supabase', 'React'],
     file: null,

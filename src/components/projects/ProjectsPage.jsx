@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, ExternalLink, Github, Search, Star, X } from 'lucide-react';
 import { useGitHubData } from '../../hooks/useGitHubData';
 import { useLanguage } from '../../context/LanguageContext';
+import { runViewTransition } from '../../utils/viewTransition';
 import { SpotlightCard } from '../common/SpotlightCard';
 import { ProjectCover } from './ProjectCover';
 import { ProjectModal } from './ProjectModal';
 
-function RepoCard({ project, onSelect, featured = false }) {
+function RepoCard({ project, onSelect, featured = false, transitionPrefix = 'repo' }) {
   const { lang } = useLanguage();
+  const safeId = String(project.id || project.title).replace(/[^a-zA-Z0-9_-]/g, '');
   const topLangs = Object.keys(project.languages || {})
     .filter((l) => l !== 'Nix')
     .slice(0, 3);
@@ -29,6 +31,7 @@ function RepoCard({ project, onSelect, featured = false }) {
       onClick={() => onSelect(project)}
       role="button"
       tabIndex={0}
+      style={{ viewTransitionName: `${transitionPrefix}-${safeId}` }}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -178,10 +181,12 @@ export function ProjectsPage() {
   const hasFilters = Boolean(search || selectedLang || selectedYear);
 
   const clearFilters = () => {
-    setSearch('');
-    setSelectedLang('');
-    setSelectedYear('');
-    setSortBy('recent');
+    runViewTransition(() => {
+      setSearch('');
+      setSelectedLang('');
+      setSelectedYear('');
+      setSortBy('recent');
+    });
   };
 
   return (
@@ -234,6 +239,7 @@ export function ProjectsPage() {
                       project={project}
                       onSelect={setSelectedProject}
                       featured
+                      transitionPrefix="pinned"
                     />
                   ))}
                 </div>
@@ -267,7 +273,10 @@ export function ProjectsPage() {
                 <div className="flex flex-wrap gap-2.5">
                   <select
                     value={selectedLang}
-                    onChange={(e) => setSelectedLang(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      runViewTransition(() => setSelectedLang(val));
+                    }}
                     aria-label={t.projects.allLanguages}
                     className="rounded-xl border border-white/10 bg-obsidian/80 px-3.5 py-2.5 text-xs font-medium text-zinc-200 outline-none focus:border-cyan-400/50"
                   >
@@ -281,7 +290,10 @@ export function ProjectsPage() {
 
                   <select
                     value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      runViewTransition(() => setSelectedYear(val));
+                    }}
                     aria-label={t.projects.allYears}
                     className="rounded-xl border border-white/10 bg-obsidian/80 px-3.5 py-2.5 text-xs font-medium text-zinc-200 outline-none focus:border-cyan-400/50"
                   >
@@ -295,7 +307,10 @@ export function ProjectsPage() {
 
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      runViewTransition(() => setSortBy(val));
+                    }}
                     aria-label="Sort"
                     className="rounded-xl border border-white/10 bg-obsidian/80 px-3.5 py-2.5 text-xs font-medium text-zinc-200 outline-none focus:border-cyan-400/50"
                   >
