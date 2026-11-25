@@ -19,6 +19,7 @@ export const certificateCategories = [
 export const certificatesData = [
   {
     id: 'nucba-ai-engineer',
+    matchAliases: ['aiengineering', 'aiengineer'],
     title: {
       es: 'AI Engineer Bootcamp',
       en: 'AI Engineer Bootcamp'
@@ -26,21 +27,22 @@ export const certificatesData = [
     issuer: 'NUCBA',
     issuerKey: null,
     category: 'bootcamp',
-    date: '2026-04',
+    date: '2026-03',
     dateLabel: {
-      es: '2026',
-      en: '2026'
+      es: 'Marzo 2026',
+      en: 'March 2026'
     },
     description: {
       es: 'Bootcamp intensivo de ingeniería de aplicaciones con Inteligencia Artificial, integración de LLMs, diseño de prompts y arquitectura de productos IA (proyecto final: Kitchen AI Companion).',
       en: 'Intensive bootcamp in AI application engineering, LLM integration, prompt architecture, and production AI workflows (capstone project: Kitchen AI Companion).'
     },
-    skills: ['AI Engineering', 'LLMs', 'Prompt Engineering', 'Supabase', 'React'],
+    skills: ['AI Engineering', 'LLMs', 'Prompt Engineering', 'System Prompts', 'Human-in-the-Loop', 'Context & Memory'],
     file: null,
     credentialUrl: ''
   },
   {
     id: 'nucba-web-design',
+    matchAliases: ['disenoweb', 'webdesign'],
     title: {
       es: 'Web Design Bootcamp',
       en: 'Web Design Bootcamp'
@@ -48,17 +50,17 @@ export const certificatesData = [
     issuer: 'NUCBA',
     issuerKey: null,
     category: 'bootcamp',
-    date: '2024-09',
+    date: '2024-10',
     dateLabel: {
-      es: 'Ago 2024 – Sep 2024',
-      en: 'Aug 2024 – Sep 2024'
+      es: 'Octubre 2024',
+      en: 'October 2024'
     },
     description: {
       es: 'Especialización intensiva en diseño de interfaces para aplicaciones web modernas, sistemas de diseño, jerarquía visual y experiencia de usuario responsiva.',
       en: 'Intensive specialization in modern web application UI design, design systems, visual hierarchy, and responsive user experience.'
     },
-    skills: ['UI Design', 'Responsive Design', 'Design Systems', 'UX'],
-    file: null, // Drop file in public/certificates/nucba-web-design.png and update this path
+    skills: ['HTML5', 'CSS3', 'Flexbox & Grid', 'Figma', 'Responsive Design', 'UI/UX'],
+    file: null,
     credentialUrl: ''
   },
   {
@@ -85,6 +87,7 @@ export const certificatesData = [
   },
   {
     id: 'utn-gcp-essential',
+    matchAliases: ['latamgce2022', 'gcpessential', 'googlecloudessential'],
     title: {
       es: 'Google Cloud Essential',
       en: 'Google Cloud Essential'
@@ -94,14 +97,14 @@ export const certificatesData = [
     category: 'cloud-ai',
     date: '2023-12',
     dateLabel: {
-      es: 'Nov 2023 – Dic 2023',
-      en: 'Nov 2023 – Dec 2023'
+      es: 'Diciembre 2023',
+      en: 'December 2023'
     },
     description: {
       es: 'Fundamentos de infraestructura en Google Cloud Platform: cómputo, redes, almacenamiento, contenedores y servicios gestionados en la nube.',
       en: 'Core Google Cloud Platform infrastructure fundamentals: compute, networking, storage, containers, and managed cloud services.'
     },
-    skills: ['Google Cloud', 'Cloud Infra', 'Docker', 'DevOps'],
+    skills: ['Google Cloud', 'GCP Console', 'Cloud Infra', 'Docker', 'DevOps'],
     file: null,
     credentialUrl: ''
   },

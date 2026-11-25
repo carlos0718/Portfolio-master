@@ -2,7 +2,9 @@ import { getCertificateObjectFromS3, listSignedCertificates } from './lib/s3.js'
 import { certificatesData } from '../src/data/certificatesData.js';
 
 function normalizeSlug(str = '') {
-  return str
+  return String(str)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/\.[^.]+$/, '')
     .replace(/[^a-z0-9]/g, '');
@@ -62,17 +64,34 @@ export default async function handler(req, res) {
 
     // 1. Attach matching S3 signed URLs onto curated static catalog entries
     const mergedStatic = certificatesData.map((cert) => {
+      const { matchAliases = [], ...publicCert } = cert;
       const certSlug = normalizeSlug(cert.id);
+      const aliases = matchAliases.map(normalizeSlug).filter(Boolean);
+
       const match = s3Items.find((s3Obj) => {
+        if (matchedS3Keys.has(s3Obj.key)) return false;
         const fileSlug = normalizeSlug(s3Obj.fileName);
-        return fileSlug === certSlug || fileSlug.includes(certSlug) || certSlug.includes(fileSlug);
+        const titleSlug = normalizeSlug(s3Obj.metadata?.title);
+        if (
+          fileSlug === certSlug ||
+          fileSlug.includes(certSlug) ||
+          certSlug.includes(fileSlug)
+        ) {
+          return true;
+        }
+        return aliases.some(
+          (alias) =>
+            fileSlug === alias ||
+            fileSlug.includes(alias) ||
+            (titleSlug && (titleSlug === alias || titleSlug.includes(alias)))
+        );
       });
 
-      if (!match) return cert;
+      if (!match) return publicCert;
       matchedS3Keys.add(match.key);
 
       return {
-        ...cert,
+        ...publicCert,
         file: match.url,
         previewUrl: match.isPdf
           ? `/api/certificates?file=${encodeURIComponent(match.key)}`
