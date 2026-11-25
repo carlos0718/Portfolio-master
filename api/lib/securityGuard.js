@@ -12,7 +12,7 @@ export const MAX_MESSAGE_LENGTH = 600;
 export const MAX_HISTORY_TURNS = 8;
 
 const SPANISH_HINT_REGEX =
-  /[áéíóúñ¿¡]|\b(hola|que|qué|como|cómo|donde|dónde|cual|cuál|cuanto|cuánto|experiencia|estudios|estudiando|universidad|carrera|certificados|cursos|tecnologias|tecnologías|sueldo|salario|pretension|pretensión|disponibilidad|remoto|contacto|proyectos|trabajo|trabaja|trabajó|habilidades|sobre|carlos|cv|curriculum|currículum|ignora|instrucciones|actua|actúa|dame|escribe|escribeme|escríbeme)\b/i;
+  /[áéíóúñ¿¡]|\b(hola|que|qué|como|cómo|donde|dónde|cual|cuál|cuanto|cuánto|experiencia|estudios|estudiando|universidad|carrera|certificados|cursos|tecnologias|tecnologías|sueldo|salario|pretension|pretensión|disponibilidad|remoto|contacto|proyectos|trabajo|trabaja|trabajó|habilidades|sobre|carlos|cv|curriculum|currículum|entrevista|reunion|reunión|agendar|horario|calendario|llamada|confirmar|correo|ignora|instrucciones|actua|actúa|dame|escribe|escribeme|escríbeme)\b/i;
 
 export function detectLanguage(text = '') {
   if (!text || typeof text !== 'string') return 'es';
@@ -48,7 +48,7 @@ const INJECTION_PATTERNS = [
   // System prompt / secret extraction
   /\b(reveal|show|print|output|dump|repeat|leak|expose|tell me|give me)\b.{0,35}\b(system\s*prompt|hidden\s*prompt|initial\s*prompt|internal\s*instructions?|your\s*instructions?|your\s*rules?|api\s*key|env|secrets?)\b/i,
   /\b(muestra|mostrá|muéstrame|mostrame|revela|revelá|dime|decime|imprime|imprimí|repite|repetí|copia|copiá)\b.{0,35}\b(system\s*prompt|prompt\s*(del\s*sistema|inicial|oculto)|tus\s*instrucciones|tus\s*reglas|clave\s*api|api\s*key|variables\s*de\s*entorno)\b/i,
-  /\b(GEMINI_API_KEY|GITHUB_TOKEN|REACT_APP_|process\.env)\b/i,
+  /\b(GEMINI_API_KEY|GITHUB_TOKEN|GOOGLE_CLIENT_SECRET|GOOGLE_REFRESH_TOKEN|ADMIN_UPLOAD_SECRET|REACT_APP_|process\.env)\b/i,
 
   // Delimiter / fake role injection
   /(<\|im_start\|>|<\|im_end\|>|<\|system\|>|<\|assistant\|>|<\/?user_query>|<\/?system>|<\/?instructions?>)/i,
@@ -60,7 +60,7 @@ const INJECTION_PATTERNS = [
 
 // Clearly unrelated tasks when no portfolio/career/academic signal is present
 const PORTFOLIO_SIGNAL_REGEX =
-  /\b(carlos|charly|charlybot|jesus|jesús|experiencia|experience|trabajo|trabajos|work|job|role|rol|puesto|empresa|company|globons|istea|marfrig|rockstar|bief|proyecto|proyectos|project|projects|github|repo|stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|react\s+native|expo|next\.?js|node|dotnet|\.net|c#|python|sql|postgres|supabase|rls|docker|aws|s3|gcp|ia|ai|inteligencia artificial|gemini|claude|n8n|automatiz|cuotify|quotify|rocky-spec|kronos|kitchen|rappi|e-learning|elearning|salario|salary|sueldo|pretensi|rate|usd|ars|dolar|dólar|remoto|remote|hibrido|híbrido|hybrid|disponib|availab|cv|resume|curriculum|currículum|descargar|download|contact|contacto|email|mail|linkedin|whatsapp|estudio|estudios|estudia|estudiando|study|studying|education|educaci|academic|académic|universidad|university|utn|kennedy|\buk\b|tecnicatura|carrera|degree|certificad|certificate|curso|cursos|course|bootcamp|taller|workshop|coderhouse|nucba|cac|mentor|mentoring|idioma|ingles|inglés|english|spanish|arquitectura|legacy|wcag|accesibilidad|hola|hello|hi|hey|buenas|perfil|profile|ayuda|help)\b/i;
+  /\b(carlos|charly|charlybot|jesus|jesús|experiencia|experience|trabajo|trabajos|work|job|role|rol|puesto|empresa|company|globons|istea|marfrig|rockstar|bief|proyecto|proyectos|project|projects|github|repo|stack|tecnolog|tech|skill|habilidad|frontend|backend|fullstack|full-stack|full stack|react|react\s+native|expo|next\.?js|node|dotnet|\.net|c#|python|sql|postgres|supabase|rls|docker|aws|s3|gcp|ia|ai|inteligencia artificial|gemini|claude|n8n|automatiz|cuotify|quotify|rocky-spec|kronos|kitchen|rappi|e-learning|elearning|salario|salary|sueldo|pretensi|rate|usd|ars|dolar|dólar|remoto|remote|hibrido|híbrido|hybrid|disponib|availab|entrevista|interview|reuni[oó]n|meeting|agendar|schedule|book|reserva|horario|calendario|calendar|llamada|call|slot|meet|cv|resume|curriculum|currículum|descargar|download|contact|contacto|email|mail|correo|linkedin|whatsapp|estudio|estudios|estudia|estudiando|study|studying|education|educaci|academic|académic|universidad|university|utn|kennedy|\buk\b|tecnicatura|carrera|degree|certificad|certificate|curso|cursos|course|bootcamp|taller|workshop|coderhouse|nucba|cac|mentor|mentoring|idioma|ingles|inglés|english|spanish|arquitectura|legacy|wcag|accesibilidad|hola|hello|hi|hey|buenas|perfil|profile|ayuda|help)\b/i;
 
 // Explicit off-topic task requests blocked unconditionally (even if they mention a tech like Python/React)
 const STRICT_OFF_TOPIC_TASKS = [
@@ -239,6 +239,9 @@ const OUTPUT_LEAK_PATTERNS = [
   /<\/?user_query>/i,
   /GEMINI_API_KEY/i,
   /GITHUB_TOKEN/i,
+  /GOOGLE_CLIENT_SECRET/i,
+  /GOOGLE_REFRESH_TOKEN/i,
+  /ADMIN_UPLOAD_SECRET/i,
   /AIza[0-9A-Za-z_-]{20,}/
 ];
 

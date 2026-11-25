@@ -5,6 +5,7 @@ import { ChatProvider } from './context/ChatContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { CommandPalette } from './components/layout/CommandPalette';
+import { AvailabilityModal } from './components/common/AvailabilityModal';
 import { ChatWidget } from './components/chat/ChatWidget';
 import { HomePage } from './pages/HomePage';
 
@@ -99,6 +100,7 @@ function ScrollToTopOnRoute() {
 
 function AppShell() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [availabilityOpen, setAvailabilityOpen] = useState(false);
 
   // Global accessible shortcut: Cmd+K / Ctrl+K
   useEffect(() => {
@@ -115,7 +117,10 @@ function AppShell() {
   return (
     <div className="flex min-h-screen flex-col bg-obsidian text-zinc-100">
       <ScrollToTopOnRoute />
-      <Navbar onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
+      <Navbar
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        onOpenAvailability={() => setAvailabilityOpen(true)}
+      />
 
       <div className="flex-1">
         <RouteErrorBoundary>
@@ -127,7 +132,10 @@ function AppShell() {
             }
           >
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route
+                path="/"
+                element={<HomePage onOpenAvailability={() => setAvailabilityOpen(true)} />}
+              />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/project" element={<Navigate to="/projects" replace />} />
               <Route path="/certificates" element={<CertificatesPage />} />
@@ -144,6 +152,11 @@ function AppShell() {
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
+        onOpenAvailability={() => setAvailabilityOpen(true)}
+      />
+      <AvailabilityModal
+        isOpen={availabilityOpen}
+        onClose={() => setAvailabilityOpen(false)}
       />
     </div>
   );

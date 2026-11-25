@@ -13,6 +13,7 @@ export const translations = {
     },
     hero: {
       eyebrow: 'DISPONIBLE PARA ROLES REMOTOS & PROYECTOS',
+      schedulePill: 'Agendar entrevista',
       rolePrefix: 'Senior Full Stack Developer',
       roleHighlight: '& AI Engineer',
       askAiCta: 'Preguntale a CharlyBot',
@@ -27,16 +28,16 @@ export const translations = {
           prompt: '¿Qué experiencia tiene Carlos en Full Stack con .NET Core y React?'
         },
         {
+          label: 'Disponibilidad y agendar entrevista',
+          prompt: '¿Qué horarios disponibles tiene Carlos esta semana para coordinar una entrevista?'
+        },
+        {
           label: 'Formación actual en la UK y UTN',
           prompt: '¿Cuál es el background académico pasado y actual de Carlos?'
         },
         {
           label: 'Pretensión salarial en ARS hoy',
           prompt: '¿Cuáles son las expectativas salariales de Carlos en USD y ARS?'
-        },
-        {
-          label: 'Casos reales con IA',
-          prompt: '¿En qué casos reales aplicó Carlos Inteligencia Artificial y automatización?'
         }
       ]
     },
@@ -147,8 +148,8 @@ export const translations = {
       openLabel: 'Abrir CharlyBot',
       scopeNotice: 'Protegido contra prompt injection · Solo perfil laboral y académico',
       quickPrompts: [
+        '¿Qué horarios libres tiene esta semana?',
         '¿Qué experiencia laboral tiene?',
-        '¿Qué está estudiando actualmente?',
         'Stack Full Stack + IA',
         'Expectativas salariales y CV'
       ],
@@ -168,6 +169,7 @@ export const translations = {
         goPillars: 'Ir a Pilares de Arquitectura',
         goProjects: 'Abrir Proyectos (GitHub)',
         goCertificates: 'Abrir Vault de Certificados',
+        scheduleInterview: 'Coordinar / Agendar entrevista',
         toggleLang: 'Cambiar idioma a English (EN)',
         downloadCv: 'Descargar CV en PDF',
         copyEmail: 'Copiar email (cajs0718@gmail.com)',
@@ -176,6 +178,42 @@ export const translations = {
         askSalary: 'IA: Consultar expectativas salariales'
       },
       footerHint: '↑↓ navegar · Enter ejecutar · Esc cerrar'
+    },
+    availability: {
+      title: 'Disponibilidad para Entrevistas',
+      subtitle: 'Horarios en tiempo real sincronizados con el calendario de Carlos. Elegí un turno para agendar directo con Google Meet.',
+      liveSynced: 'Calendario en vivo',
+      standardWindowBadge: 'Ventana habitual',
+      refresh: 'Actualizar horarios',
+      yourTimezone: 'Tu zona',
+      slotsWord: 'horarios',
+      noSlotsDay: 'Sin huecos',
+      pickSlotLabel: 'Elegí un horario disponible',
+      noSlotsSelectedDay: 'No quedan horarios libres para este día. Probá seleccionando otro día hábil.',
+      selectedSlotHeading: 'Horario seleccionado',
+      copyProposal: 'Copiar',
+      copied: 'Copiado',
+      nameLabel: 'Tu nombre',
+      namePlaceholder: 'Ej. Ana López',
+      emailLabel: 'Tu correo laboral',
+      emailPlaceholder: 'ana@empresa.com',
+      companyLabel: 'Empresa / Rol (opcional)',
+      companyPlaceholder: 'Ej. TechCorp — Senior Full Stack',
+      notesLabel: 'Notas o enlace (opcional)',
+      notesPlaceholder: 'Ej. Entrevista inicial de 30 min',
+      inviteNotice: 'Google Calendar enviará la invitación con Google Meet a ambos correos.',
+      confirmBookingBtn: 'Confirmar y enviar invitación',
+      bookingSubmitting: 'Agendando...',
+      bookingErrorFallback: 'No se pudo completar la reserva. Probá otro horario o escribile por WhatsApp.',
+      confirmedTitle: '¡Entrevista agendada!',
+      confirmedSubtitle: 'Enviamos la invitación oficial de Google Calendar con enlace de Google Meet a {email} y a Carlos.',
+      whenLabel: 'Fecha y hora',
+      durationLabel: 'Duración',
+      openMeetLink: 'Abrir enlace de Google Meet',
+      directContactPrompt: 'Elegí cómo querés enviar esta propuesta de horario a Carlos:',
+      sendWhatsApp: 'Enviar por WhatsApp',
+      sendEmail: 'Enviar por Email',
+      footerTip: 'También podés pedirle a CharlyBot que agende tu entrevista en el chat.'
     },
     footer: {
       subtitle: 'Senior Full Stack Developer & AI Engineer · Buenos Aires, Argentina',
@@ -197,6 +235,7 @@ export const translations = {
     },
     hero: {
       eyebrow: 'AVAILABLE FOR REMOTE ROLES & PROJECTS',
+      schedulePill: 'Schedule Interview',
       rolePrefix: 'Senior Full Stack Developer',
       roleHighlight: '& AI Engineer',
       askAiCta: 'Ask CharlyBot',
@@ -211,16 +250,16 @@ export const translations = {
           prompt: 'What is Carlos\'s Full Stack experience with .NET Core and React?'
         },
         {
+          label: 'Availability & schedule an interview',
+          prompt: 'What open slots does Carlos have this week for an interview?'
+        },
+        {
           label: 'Current studies (UK) & UTN background',
           prompt: 'What is Carlos\'s past and current academic background?'
         },
         {
           label: 'Salary expectations (USD / live ARS)',
           prompt: 'What are Carlos\'s salary expectations in USD and ARS?'
-        },
-        {
-          label: 'Real AI & automation use cases',
-          prompt: 'What real-world AI and automation solutions has Carlos built?'
         }
       ]
     },
@@ -331,8 +370,8 @@ export const translations = {
       openLabel: 'Open CharlyBot',
       scopeNotice: 'Prompt-injection guarded · Work & academic scope only',
       quickPrompts: [
+        'What open slots does he have this week?',
         'Summarize his work experience',
-        'What is he currently studying?',
         'Full Stack + AI stack',
         'Salary expectations & CV'
       ],
@@ -352,6 +391,7 @@ export const translations = {
         goPillars: 'Jump to Engineering Pillars',
         goProjects: 'Open Projects (GitHub)',
         goCertificates: 'Open Certificates Vault',
+        scheduleInterview: 'Check Availability / Schedule Interview',
         toggleLang: 'Switch language to Español (ES)',
         downloadCv: 'Download CV (PDF)',
         copyEmail: 'Copy email (cajs0718@gmail.com)',
@@ -360,6 +400,42 @@ export const translations = {
         askSalary: 'AI: Check salary expectations'
       },
       footerHint: '↑↓ navigate · Enter select · Esc close'
+    },
+    availability: {
+      title: 'Interview Availability',
+      subtitle: 'Real-time open slots synced with Carlos\'s calendar. Pick a time to book directly with Google Meet.',
+      liveSynced: 'Live Calendar Sync',
+      standardWindowBadge: 'Standard Hours',
+      refresh: 'Refresh slots',
+      yourTimezone: 'Your timezone',
+      slotsWord: 'slots',
+      noSlotsDay: 'No slots',
+      pickSlotLabel: 'Choose an open slot',
+      noSlotsSelectedDay: 'No open slots remain for this day. Please pick another business day.',
+      selectedSlotHeading: 'Selected slot',
+      copyProposal: 'Copy',
+      copied: 'Copied',
+      nameLabel: 'Your name',
+      namePlaceholder: 'e.g. Jane Doe',
+      emailLabel: 'Work email',
+      emailPlaceholder: 'jane@company.com',
+      companyLabel: 'Company / Role (optional)',
+      companyPlaceholder: 'e.g. TechCorp — Senior Full Stack',
+      notesLabel: 'Notes or link (optional)',
+      notesPlaceholder: 'e.g. 30-min intro interview',
+      inviteNotice: 'Google Calendar will email the official invite + Google Meet link to both addresses.',
+      confirmBookingBtn: 'Confirm & Send Invite',
+      bookingSubmitting: 'Booking...',
+      bookingErrorFallback: 'Could not complete the booking. Try another slot or reach out via WhatsApp.',
+      confirmedTitle: 'Interview scheduled!',
+      confirmedSubtitle: 'We sent the official Google Calendar invite with a Google Meet link to {email} and Carlos.',
+      whenLabel: 'Date & time',
+      durationLabel: 'Duration',
+      openMeetLink: 'Open Google Meet link',
+      directContactPrompt: 'Choose how you want to send this proposed slot to Carlos:',
+      sendWhatsApp: 'Send via WhatsApp',
+      sendEmail: 'Send via Email',
+      footerTip: 'You can also ask CharlyBot to book your interview directly in chat.'
     },
     footer: {
       subtitle: 'Senior Full Stack Developer & AI Engineer · Buenos Aires, Argentina',

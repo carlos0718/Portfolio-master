@@ -26,7 +26,9 @@ function vercelApiDevPlugin() {
           '/api/github': './api/github.js',
           '/api/cv': './api/cv.js',
           '/api/certificates': './api/certificates.js',
-          '/api/admin/upload': './api/admin/upload.js'
+          '/api/admin/upload': './api/admin/upload.js',
+          '/api/availability': './api/availability.js',
+          '/api/book': './api/book.js'
         };
 
         const targetModule = allowedRoutes[route];

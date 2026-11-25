@@ -2,6 +2,7 @@ import { professionalData } from '../../src/data/professionalData.js';
 import { certificatesData } from '../../src/data/certificatesData.js';
 import { getExchangeRate } from './exchangeRate.js';
 import { getCachedGitHubData } from './cache.js';
+import { getLiveAvailability } from './calendar.js';
 
 /**
  * Dynamically calculates human-readable duration between YYYY-MM dates
@@ -36,9 +37,10 @@ export function calculateDuration(startDate, endDate = null) {
 }
 
 export async function buildLiveContext() {
-  const [exchangeRate, githubData] = await Promise.all([
+  const [exchangeRate, githubData, availability] = await Promise.all([
     getExchangeRate().catch(() => 1200),
-    getCachedGitHubData().catch(() => ({ count: 20, pinnedProjects: [] }))
+    getCachedGitHubData().catch(() => ({ count: 20, pinnedProjects: [] })),
+    getLiveAvailability({ businessDays: 5, durationMinutes: 30 }).catch(() => null)
   ]);
 
   const salaryARS = Math.round(
@@ -48,12 +50,13 @@ export async function buildLiveContext() {
   return {
     exchangeRate,
     salaryARS,
-    githubData
+    githubData,
+    availability
   };
 }
 
 export async function buildSystemPrompt(liveContext = null) {
-  const { exchangeRate, salaryARS, githubData } = liveContext || (await buildLiveContext());
+  const { exchangeRate, salaryARS, githubData, availability } = liveContext || (await buildLiveContext());
 
   const educationBlock = professionalData.education
     .map(
@@ -112,6 +115,18 @@ COMMUNICATION RULES:
 - When citing work experience, always state company, period, calculated duration, and concrete measurable impact.
 - For salary questions, always present both USD gross and the live ARS equivalent using the dólar blue rate below.
 - For CV / Resume requests, provide the direct download link: ${professionalData.personal.cvPath}
+- INTERVIEW AVAILABILITY & BOOKING RULES:
+  - Carlos's general interview window is Monday to Friday, 11:00–17:00 Argentina Time (ART, UTC-3).
+  - When a recruiter asks about availability, interviews, calls, or scheduling, call \`check_availability\` (or use the live slots below) and proactively propose 2–3 concrete upcoming open slots in ART (UTC-3), inviting them to book directly right here in the chat or via the "Agendar entrevista" button.
+  - To book an interview via \`book_interview\`, you MUST collect and confirm: (1) preferred date & time from an available slot, (2) recruiter's full name, and (3) recruiter's email address (plus optional company/role). NEVER call \`book_interview\` without the recruiter's explicit email and confirmation.
+  - Once \`book_interview\` succeeds, share the confirmed date/time, the Google Meet link (if returned), and confirm that Google Calendar emailed the official invitation to both the recruiter and Carlos.
+  - If \`book_interview\` reports \`calendar_not_configured\`, apologize briefly and offer direct coordination via WhatsApp (${professionalData.personal.whatsappUrl}) or email (${professionalData.personal.email}).
+  - PRIVACY: NEVER speculate about or mention why blocked hours are unavailable.
+
+LIVE INTERVIEW AVAILABILITY SNAPSHOT (NEXT 5 BUSINESS DAYS — ART UTC-3):
+- General Window: ${availability?.window?.labelEs || 'Lunes a Viernes, 11:00–17:00 (Hora Argentina, UTC-3)'}
+- Direct Calendar Booking Active: ${availability?.bookingEnabled ? 'YES (Google Calendar + Google Meet + Email Invites)' : 'Fallback (WhatsApp/Email coordination)'}
+${availability?.summary?.es || '• Lunes a Viernes, 11:00–17:00 ART'}
 
 PROFILE SUMMARY:
 - Name: ${professionalData.personal.name}

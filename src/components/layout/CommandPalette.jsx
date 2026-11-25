@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Award,
   Briefcase,
+  Calendar,
   Check,
   Copy,
   Download,
@@ -24,7 +25,7 @@ import { useCvList } from '../../hooks/useCvList';
  * Built on native HTML <dialog> with Top-Layer backdrop, native Esc handling,
  * and full keyboard arrow navigation (Modern Web Guidance 1.0).
  */
-export function CommandPalette({ isOpen, onClose }) {
+export function CommandPalette({ isOpen, onClose, onOpenAvailability }) {
   const dialogRef = useRef(null);
   const inputRef = useRef(null);
   const navigate = useNavigate();
@@ -120,6 +121,17 @@ export function CommandPalette({ isOpen, onClose }) {
         }
       },
       {
+        id: 'schedule',
+        group: t.commandPalette.groups.actions,
+        label: t.commandPalette.items.scheduleInterview,
+        keywords: 'schedule agendar entrevista interview calendar disponibilidad horarios meet',
+        icon: Calendar,
+        action: () => {
+          onClose();
+          onOpenAvailability?.();
+        }
+      },
+      {
         id: 'lang',
         group: t.commandPalette.groups.actions,
         label: t.commandPalette.items.toggleLang,
@@ -210,7 +222,19 @@ export function CommandPalette({ isOpen, onClose }) {
         }
       }
     ],
-    [t, lang, copied, primaryCv, navigate, location.pathname, toggleLanguage, openChat, askPrompt, onClose]
+    [
+      t,
+      lang,
+      copied,
+      primaryCv,
+      navigate,
+      location.pathname,
+      toggleLanguage,
+      openChat,
+      askPrompt,
+      onClose,
+      onOpenAvailability
+    ]
   );
 
   const filtered = useMemo(() => {

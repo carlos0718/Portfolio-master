@@ -3,6 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import { buildLiveContext, buildSystemPrompt } from './lib/promptBuilder.js';
 import { buildFallbackResponse } from './lib/fallbackResponder.js';
 import { checkRateLimit } from './lib/rateLimit.js';
+import { CALENDAR_TOOL_DECLARATIONS, executeCalendarTool } from './lib/calendarTools.js';
 import {
   inspectUserInput,
   sanitizeHistory,
@@ -127,25 +128,63 @@ export default async function handler(req, res) {
 
     for (const modelName of models) {
       try {
-        const result = await ai.models.generateContent({
-          model: modelName,
-          contents,
-          config: {
-            systemInstruction,
-            temperature: 0.35,
-            topP: 0.85,
-            maxOutputTokens: 600
-          }
-        });
+        const turnContents = [...contents];
+        const toolsUsed = [];
+        let bookedInterview = null;
+        let finalText = '';
 
-        const rawText = result?.text || '';
+        // Bounded tool-calling loop (max 2 tool rounds per user turn)
+        for (let round = 0; round < 3; round++) {
+          const result = await ai.models.generateContent({
+            model: modelName,
+            contents: turnContents,
+            config: {
+              systemInstruction,
+              temperature: 0.35,
+              topP: 0.85,
+              maxOutputTokens: 700,
+              tools: [{ functionDeclarations: CALENDAR_TOOL_DECLARATIONS }]
+            }
+          });
+
+          const calls = result?.functionCalls;
+          if (!Array.isArray(calls) || calls.length === 0) {
+            finalText = result?.text || '';
+            break;
+          }
+
+          // Preserve model's functionCall turn
+          const modelParts = result?.candidates?.[0]?.content?.parts || calls.map((c) => ({ functionCall: c }));
+          turnContents.push({ role: 'model', parts: modelParts });
+
+          // Execute each requested calendar tool safely server-side
+          const responseParts = [];
+          for (const call of calls.slice(0, 2)) {
+            toolsUsed.push(call.name);
+            const toolOutput = await executeCalendarTool(call.name, call.args || {}, clientIp);
+            if (call.name === 'book_interview' && toolOutput?.ok && toolOutput?.booking) {
+              bookedInterview = toolOutput.booking;
+            }
+            responseParts.push({
+              functionResponse: {
+                name: call.name,
+                response: toolOutput
+              }
+            });
+          }
+
+          turnContents.push({ role: 'user', parts: responseParts });
+        }
+
         // 4. Layer 3 Security Guard: Output leakage check
-        const validatedText = validateAssistantOutput(rawText, lang);
+        const validatedText = validateAssistantOutput(finalText, lang);
 
         return res.status(200).json({
           response: validatedText,
           mode: 'ai',
           model: modelName,
+          ...(toolsUsed.length > 0 ? { toolsUsed } : {}),
+          ...(bookedInterview ? { booking: bookedInterview } : {}),
           conversationId: Date.now()
         });
       } catch (modelError) {

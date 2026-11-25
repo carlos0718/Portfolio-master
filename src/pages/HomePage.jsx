@@ -5,10 +5,10 @@ import { ExperienceTimeline } from '../components/home/ExperienceTimeline';
 import { TechStackMatrix } from '../components/home/TechStackMatrix';
 import { FeaturedCases } from '../components/home/FeaturedCases';
 
-export function HomePage() {
+export function HomePage({ onOpenAvailability }) {
   return (
     <main>
-      <HeroSection />
+      <HeroSection onOpenAvailability={onOpenAvailability} />
       <EngineeringPillars />
       <ExperienceTimeline />
       <TechStackMatrix />

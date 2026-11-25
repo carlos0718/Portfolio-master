@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Download, Menu, Search, X, Globe, ArrowUpRight } from 'lucide-react';
+import { Calendar, ChevronDown, Download, Menu, Search, X, Globe, ArrowUpRight } from 'lucide-react';
 import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
 import { useCvList } from '../../hooks/useCvList';
 import { AIBotAvatar } from '../chat/AIBotAvatar';
 
-export function Navbar({ onOpenCommandPalette }) {
+export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
   const { lang, toggleLanguage, t } = useLanguage();
   const { openChat } = useChatContext();
   const { cvs } = useCvList();
@@ -312,6 +312,19 @@ export function Navbar({ onOpenCommandPalette }) {
                 <AIBotAvatar size={18} />
                 <span>{t.nav.aiAssistant}</span>
               </button>
+              {onOpenAvailability && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    onOpenAvailability();
+                  }}
+                  className="col-span-2 inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/35 bg-cyan-400/12 px-3 py-2.5 text-xs font-semibold text-cyan-200"
+                >
+                  <Calendar className="h-3.5 w-3.5 text-cyan-300" />
+                  <span>{t.hero.schedulePill}</span>
+                </button>
+              )}
             </div>
           </div>
         )}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { ArrowRight, Check, Copy, Download, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, Calendar, Check, Copy, Download, MapPin, Sparkles } from 'lucide-react';
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
 import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
@@ -61,7 +61,7 @@ const ACCENT_MAP = {
   indigo: 'text-indigo-300'
 };
 
-export function HeroSection() {
+export function HeroSection({ onOpenAvailability }) {
   const { lang, t } = useLanguage();
   const { openChat, askPrompt } = useChatContext();
   const { profile } = useGitHubData();
@@ -102,15 +102,29 @@ export function HeroSection() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col gap-7 lg:col-span-7"
           >
-            {/* Availability Badge */}
-            <div className="inline-flex w-fit items-center gap-2.5 rounded-full border border-emerald-500/25 bg-emerald-500/[0.08] px-3.5 py-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-              </span>
-              <span className="font-mono text-[11px] font-medium tracking-wider text-emerald-300">
-                {t.hero.eyebrow}
-              </span>
+            {/* Interactive Availability & Schedule Interview Pill */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="inline-flex w-fit items-center gap-2.5 rounded-full border border-emerald-500/25 bg-emerald-500/[0.08] px-3.5 py-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                <span className="font-mono text-[11px] font-medium tracking-wider text-emerald-300">
+                  {t.hero.eyebrow}
+                </span>
+              </div>
+
+              {onOpenAvailability && (
+                <button
+                  type="button"
+                  onClick={onOpenAvailability}
+                  className="group inline-flex w-fit items-center gap-1.5 rounded-full border border-cyan-400/35 bg-cyan-400/10 px-3.5 py-1.5 font-mono text-[11px] font-semibold text-cyan-200 transition-all hover:border-cyan-300/70 hover:bg-cyan-400/20 hover:text-white active:scale-[0.98]"
+                >
+                  <Calendar className="h-3.5 w-3.5 text-cyan-300" />
+                  <span>{t.hero.schedulePill}</span>
+                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              )}
             </div>
 
             {/* Headline */}

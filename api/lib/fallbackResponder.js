@@ -175,28 +175,35 @@ ${cases}
 You can also explore all filterable repositories in the **/projects** section.`;
   }
 
-  // 8. Availability, Modality, Contact
-  if (/\b(contact|contacto|email|mail|linkedin|whatsapp|disponib|availab|remoto|remote|hibrido|híbrido|hybrid|idioma|ingles|inglés|english)\b/i.test(q)) {
+  // 8. Availability, Interview Scheduling, Modality, Contact
+  if (/\b(contact|contacto|email|mail|linkedin|whatsapp|disponib|availab|remoto|remote|hibrido|híbrido|hybrid|idioma|ingles|inglés|english|entrevista|interview|reuni[oó]n|meeting|agendar|schedule|horario|calendario|calendar|llamada|call|slot)\b/i.test(q)) {
     const p = professionalData.personal;
+    const avail = liveContext.availability;
     if (isEs) {
+      const slotsSection = avail?.summary?.es
+        ? `\n\n**Próximos horarios libres para entrevistas (Hora Argentina, UTC-3):**\n${avail.summary.es}\n\nPodés reservar directo desde el botón **"Agendar entrevista"** en el inicio o escribiéndole por WhatsApp/Email.`
+        : '\n• **Horario para entrevistas:** Lunes a Viernes, 11:00–17:00 (Hora Argentina, UTC-3).';
       return `**Disponibilidad y contacto directo de Carlos Jesús:**
 
 • **Estado:** ${p.availability.es} (${professionalData.workPreferences.modality}; ${professionalData.workPreferences.maxHybrid}).
+• **Ventana habitual de entrevistas:** Lunes a Viernes, 11:00–17:00 ART (UTC-3).
 • **Idiomas:** Español nativo · Inglés B1 (en formación activa).
 • **LinkedIn:** ${p.linkedin}
-• **GitHub:** ${p.github}
 • **Email:** ${p.email}
-• **WhatsApp:** ${p.whatsappUrl}`;
+• **WhatsApp:** ${p.whatsappUrl}${slotsSection}`;
     }
 
+    const slotsSectionEn = avail?.summary?.en
+      ? `\n\n**Upcoming open interview slots (Argentina Time, UTC-3):**\n${avail.summary.en}\n\nYou can book directly via the **"Schedule Interview"** button on the homepage or reach out on WhatsApp/Email.`
+      : '\n• **Interview window:** Monday–Friday, 11:00–17:00 (Argentina Time, UTC-3).';
     return `**Carlos Jesús's Availability & Direct Contact:**
 
 • **Status:** ${p.availability.en} (${professionalData.workPreferences.modality}; ${professionalData.workPreferences.maxHybrid}).
+• **Standard interview hours:** Monday–Friday, 11:00–17:00 ART (UTC-3).
 • **Languages:** Native Spanish · English B1 (actively improving).
 • **LinkedIn:** ${p.linkedin}
-• **GitHub:** ${p.github}
 • **Email:** ${p.email}
-• **WhatsApp:** ${p.whatsappUrl}`;
+• **WhatsApp:** ${p.whatsappUrl}${slotsSectionEn}`;
   }
 
   // 9. Greeting or generic profile query

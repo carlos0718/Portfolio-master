@@ -18,6 +18,12 @@
     },
     "api/admin/upload.js": {
       "maxDuration": 25
+    },
+    "api/availability.js": {
+      "maxDuration": 15
+    },
+    "api/book.js": {
+      "maxDuration": 20
     }
   },
   "headers": [
