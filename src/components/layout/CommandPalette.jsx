@@ -17,6 +17,7 @@ import {
 import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
+import { useCvList } from '../../hooks/useCvList';
 
 /**
  * Accessible Spotlight / Command Palette (⌘K / Ctrl+K)
@@ -30,6 +31,8 @@ export function CommandPalette({ isOpen, onClose }) {
   const location = useLocation();
   const { lang, toggleLanguage, t } = useLanguage();
   const { openChat, askPrompt } = useChatContext();
+  const { cvs } = useCvList();
+  const primaryCv = cvs[0];
 
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -135,8 +138,8 @@ export function CommandPalette({ isOpen, onClose }) {
         icon: Download,
         action: () => {
           const link = document.createElement('a');
-          link.href = professionalData.personal.cvPath;
-          link.download = 'Carlos-Jesus-CV.pdf';
+          link.href = primaryCv?.url || professionalData.personal.cvPath;
+          link.download = primaryCv?.fileName || 'Carlos-Jesus-CV.pdf';
           link.target = '_blank';
           link.rel = 'noopener noreferrer';
           document.body.appendChild(link);
@@ -207,7 +210,7 @@ export function CommandPalette({ isOpen, onClose }) {
         }
       }
     ],
-    [t, lang, copied, navigate, location.pathname, toggleLanguage, openChat, askPrompt, onClose]
+    [t, lang, copied, primaryCv, navigate, location.pathname, toggleLanguage, openChat, askPrompt, onClose]
   );
 
   const filtered = useMemo(() => {

@@ -20,9 +20,17 @@ export function runViewTransition(updateFn) {
     return;
   }
 
-  document.startViewTransition(() => {
-    flushSync(() => {
-      updateFn();
+  try {
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        updateFn();
+      });
     });
-  });
+    // Prevent unhandled AbortError rejections when rapid clicks skip an in-flight transition
+    transition?.ready?.catch(() => {});
+    transition?.finished?.catch(() => {});
+    transition?.updateCallbackDone?.catch(() => {});
+  } catch {
+    updateFn();
+  }
 }

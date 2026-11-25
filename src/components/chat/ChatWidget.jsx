@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Download, RotateCcw, Send, ShieldCheck, Trash2, X } from 'lucide-react';
 import { useChatContext } from '../../context/ChatContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useCvList } from '../../hooks/useCvList';
 import { AIBotAvatar } from './AIBotAvatar';
 
 /**
@@ -11,7 +12,7 @@ import { AIBotAvatar } from './AIBotAvatar';
  * Supports **bold**, clickable https:// links, inline /Carlos-Jesus-CV.pdf download pill,
  * and clickable internal portfolio paths (/projects, /certificates).
  */
-function renderInlineTokens(text, onNavigate) {
+function renderInlineTokens(text, onNavigate, primaryCv) {
   const tokenRegex =
     /(\*\*[^*]+\*\*|https?:\/\/[^\s)]+|\/Carlos-Jesus-CV\.pdf|\/(?:projects|certificates)\b)/g;
 
@@ -30,14 +31,14 @@ function renderInlineTokens(text, onNavigate) {
       return (
         <a
           key={idx}
-          href={segment}
-          download="Carlos-Jesus-CV.pdf"
+          href={primaryCv?.url || segment}
+          download={primaryCv?.fileName || 'Carlos-Jesus-CV.pdf'}
           target="_blank"
           rel="noopener noreferrer"
           className="mx-1 inline-flex items-center gap-1 rounded-lg border border-cyan-400/40 bg-cyan-400/15 px-2 py-0.5 font-mono text-xs font-medium text-cyan-200 transition-colors hover:bg-cyan-400/25"
         >
           <Download className="h-3 w-3" />
-          <span>Carlos-Jesus-CV.pdf</span>
+          <span>{primaryCv?.label || 'Carlos-Jesus-CV.pdf'}</span>
         </a>
       );
     }
@@ -77,7 +78,7 @@ function renderInlineTokens(text, onNavigate) {
   });
 }
 
-function FormattedMessage({ content, onNavigate }) {
+function FormattedMessage({ content, onNavigate, primaryCv }) {
   const lines = String(content || '').split('\n');
   return (
     <div className="space-y-1.5 text-[13.5px] leading-relaxed">
@@ -89,12 +90,14 @@ function FormattedMessage({ content, onNavigate }) {
           return (
             <div key={i} className="flex items-start gap-2 pl-0.5">
               <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" />
-              <span className="flex-1">{renderInlineTokens(trimmed.slice(2), onNavigate)}</span>
+              <span className="flex-1">
+                {renderInlineTokens(trimmed.slice(2), onNavigate, primaryCv)}
+              </span>
             </div>
           );
         }
 
-        return <p key={i}>{renderInlineTokens(line, onNavigate)}</p>;
+        return <p key={i}>{renderInlineTokens(line, onNavigate, primaryCv)}</p>;
       })}
     </div>
   );
@@ -113,6 +116,8 @@ export function ChatWidget() {
     clearChat
   } = useChatContext();
   const { t } = useLanguage();
+  const { cvs } = useCvList();
+  const primaryCv = cvs[0];
 
   const [input, setInput] = useState('');
   const [launcherHovered, setLauncherHovered] = useState(false);
@@ -286,7 +291,11 @@ export function ChatWidget() {
                       {isUser ? (
                         <p className="text-[13.5px] leading-relaxed">{msg.content}</p>
                       ) : (
-                        <FormattedMessage content={msg.content} onNavigate={closeChat} />
+                        <FormattedMessage
+                          content={msg.content}
+                          onNavigate={closeChat}
+                          primaryCv={primaryCv}
+                        />
                       )}
 
                       {isError && lastFailedPrompt && (
@@ -352,7 +361,9 @@ export function ChatWidget() {
                   }}
                   disabled={isLoading}
                   placeholder={t.chat.placeholder}
-                  className="max-h-24 min-h-[42px] flex-1 resize-none rounded-xl border border-white/10 bg-surface px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition-colors focus:border-cyan-400/50 disabled:opacity-50"
+                  className={`max-h-24 min-h-[42px] flex-1 resize-none rounded-xl border border-white/10 bg-surface px-3.5 py-2.5 text-sm leading-snug text-zinc-100 placeholder-zinc-500 outline-none transition-colors focus:border-cyan-400/50 disabled:opacity-50 ${
+                    input.length < 40 && !input.includes('\n') ? 'overflow-hidden' : 'overflow-y-auto'
+                  }`}
                 />
                 <button
                   type="submit"

@@ -66,9 +66,11 @@ export function ExperienceTimeline() {
               return (
                 <button
                   key={tab.id}
+                  id={`exp-tab-${tab.id}`}
                   type="button"
                   role="tab"
                   aria-selected={active}
+                  aria-controls="experience-tabpanel"
                   onClick={() => setFilter(tab.id)}
                   className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                     active
@@ -84,7 +86,12 @@ export function ExperienceTimeline() {
         </div>
 
         {/* Vertical Timeline */}
-        <div className="relative space-y-5 before:absolute before:bottom-4 before:left-5 before:top-4 before:hidden before:w-px before:bg-gradient-to-b before:from-cyan-400/40 before:via-white/10 before:to-transparent md:before:block">
+        <div
+          id="experience-tabpanel"
+          role="tabpanel"
+          aria-labelledby={`exp-tab-${filter}`}
+          className="relative space-y-5 before:absolute before:bottom-4 before:left-5 before:top-4 before:hidden before:w-px before:bg-gradient-to-b before:from-cyan-400/40 before:via-white/10 before:to-transparent md:before:block"
+        >
           {visibleItems.map((job, idx) => {
             const logoSrc = job.companyKey ? COMPANY_LOGOS[job.companyKey] : null;
             const isExpanded = Boolean(expandedIds[job.id]);
@@ -97,7 +104,7 @@ export function ExperienceTimeline() {
                 key={job.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.15 }}
+                viewport={{ once: true, amount: 0.05 }}
                 transition={{ duration: 0.4, delay: idx * 0.04 }}
                 className="relative md:pl-14"
               >

@@ -252,7 +252,7 @@ export function AdminVaultPage() {
               <div>
                 <h1 className="font-display text-xl font-bold text-white">S3 Admin Vault</h1>
                 <p className="text-xs text-zinc-400">
-                  Acceso protegido con <code className="font-mono text-cyan-300">ADMIN_UPLOAD_SECRET</code>
+                  Acceso restringido · Solo administrador
                 </p>
               </div>
             </div>
@@ -268,7 +268,7 @@ export function AdminVaultPage() {
                     type="password"
                     value={secret}
                     onChange={(e) => setSecret(e.target.value)}
-                    placeholder="Ingresá ADMIN_UPLOAD_SECRET..."
+                    placeholder="Ingresá tu clave privada..."
                     className="w-full rounded-xl border border-white/12 bg-obsidian py-2.5 pl-10 pr-4 text-sm text-white outline-none focus:border-cyan-400/60"
                     autoFocus
                   />
@@ -284,7 +284,7 @@ export function AdminVaultPage() {
               <button
                 type="submit"
                 disabled={loading || !secret.trim()}
-                className="w-full rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-400 py-2.5 text-sm font-semibold text-zinc-950 transition-all hover:brightness-110 disabled:opacity-50"
+                className="w-full rounded-xl bg-gradient-to-r from-cyan-400 to-indigo-400 py-2.5 text-sm font-semibold text-zinc-950 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:bg-none disabled:text-zinc-400"
               >
                 {loading ? 'Verificando...' : 'Desbloquear Vault'}
               </button>

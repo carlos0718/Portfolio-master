@@ -4,11 +4,14 @@ import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
 import { Mail } from 'lucide-react';
 import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useCvList } from '../../hooks/useCvList';
 
 export function Footer() {
   const { t } = useLanguage();
+  const { cvs } = useCvList();
   const year = new Date().getFullYear();
   const { personal } = professionalData;
+  const primaryCv = cvs[0];
 
   const socials = [
     { label: 'GitHub', href: personal.github, icon: FaGithub },
@@ -18,7 +21,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative border-t border-white/[0.07] bg-obsidian/90 py-10">
+    <footer className="relative border-t border-white/[0.07] bg-obsidian/90 pt-10 pb-24 sm:py-10">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row lg:px-8">
         {/* Brand & Subtitle */}
         <div className="text-center md:text-left">
@@ -45,8 +48,8 @@ export function Footer() {
             {t.nav.certificates}
           </Link>
           <a
-            href={personal.cvPath}
-            download="Carlos-Jesus-CV.pdf"
+            href={primaryCv?.url || personal.cvPath}
+            download={primaryCv?.fileName || 'Carlos-Jesus-CV.pdf'}
             target="_blank"
             rel="noopener noreferrer"
             className="transition-colors hover:text-cyan-300"

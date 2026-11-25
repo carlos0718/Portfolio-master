@@ -4,12 +4,13 @@ import { motion } from 'framer-motion';
 import GitHubCalendar from 'react-github-calendar';
 import { ArrowRight, Award, ExternalLink, Github, GraduationCap, Sparkles } from 'lucide-react';
 import { professionalData } from '../../data/professionalData';
-import { certificatesData } from '../../data/certificatesData';
+import { useCertificates } from '../../hooks/useCertificates';
 import { useLanguage } from '../../context/LanguageContext';
 import { SpotlightCard } from '../common/SpotlightCard';
 
 export function FeaturedCases() {
   const { lang, t } = useLanguage();
+  const { certificates } = useCertificates();
 
   return (
     <section className="py-16 sm:py-24">
@@ -44,7 +45,7 @@ export function FeaturedCases() {
               key={project.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: true, amount: 0.05 }}
               transition={{ duration: 0.4, delay: idx * 0.05 }}
             >
               <SpotlightCard className="flex h-full flex-col justify-between p-6">
@@ -199,12 +200,12 @@ export function FeaturedCases() {
                   </div>
                 </div>
                 <span className="rounded-lg border border-indigo-400/30 bg-indigo-500/15 px-2.5 py-1 font-mono text-xs font-semibold text-indigo-200">
-                  {certificatesData.length}
+                  {certificates.length}
                 </span>
               </div>
 
               <ul className="space-y-2.5">
-                {certificatesData.slice(0, 4).map((cert) => (
+                {certificates.slice(0, 4).map((cert) => (
                   <li
                     key={cert.id}
                     className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5"

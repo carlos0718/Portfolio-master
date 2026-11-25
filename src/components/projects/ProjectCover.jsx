@@ -108,14 +108,14 @@ export function ProjectCover({ project, large = false }) {
       <div className="relative flex items-center justify-between gap-2">
         {project.logo ? (
           <div
-            className={`flex items-center justify-center overflow-hidden rounded-xl border bg-obsidian/80 p-1.5 ${theme.border} ${
-              large ? 'h-14 w-14' : 'h-10 w-10'
+            className={`flex items-center justify-center overflow-hidden rounded-xl border bg-obsidian/90 p-1.5 shadow-md ${theme.border} ${
+              large ? 'h-16 w-16' : 'h-12 w-12'
             }`}
           >
             <img
               src={project.logo}
               alt={project.title}
-              className="h-full w-full object-contain"
+              className="h-full w-full rounded-lg object-contain"
               loading="lazy"
             />
           </div>

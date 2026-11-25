@@ -93,7 +93,7 @@ export const translations = {
       subtitle: 'Repositorios destacados de GitHub y proyectos propios construidos explorando arquitectura moderna.',
       featuredTitle: 'Destacados en GitHub',
       allTitle: 'Todos los Repositorios',
-      searchPlaceholder: 'Buscar por nombre, tecnología o descripción...',
+      searchPlaceholder: 'Buscar proyecto o tecnología...',
       allLanguages: 'Todos los lenguajes',
       allYears: 'Todos los años',
       sortRecent: 'Más recientes',
@@ -116,7 +116,7 @@ export const translations = {
       title: 'Certificados y Formación Continua',
       subtitle:
         'Diplomas de bootcamps, cursos especializados y talleres técnicos. Hacé clic en cualquier credencial para inspeccionarla en detalle.',
-      searchPlaceholder: 'Buscar por curso, institución o skill...',
+      searchPlaceholder: 'Buscar curso, emisor o skill...',
       gridView: 'Vista grilla',
       listView: 'Vista lista',
       inspect: 'Inspeccionar',
@@ -140,7 +140,7 @@ export const translations = {
       modeGuarded: 'Alcance Protegido',
       welcome:
         '¡Hola! Soy **CharlyBot**, el asistente de **Carlos Jesús**. Puedo responder consultas sobre su **experiencia laboral**, **stack técnico**, **proyectos**, **expectativas salariales** y su **formación académica pasada y actual** (UTN-FRGP y Tecnicatura en Sistemas orientado a Desarrollo Web en la UK). ¿En qué te ayudo?',
-      placeholder: 'Preguntá sobre su experiencia, estudios (UK/UTN) o stack...',
+      placeholder: 'Preguntá sobre experiencia, estudios o stack...',
       send: 'Enviar',
       clear: 'Limpiar chat',
       close: 'Cerrar',
@@ -277,7 +277,7 @@ export const translations = {
       subtitle: 'Pinned GitHub work and self-directed builds exploring modern full-stack and UI architecture.',
       featuredTitle: 'Featured on GitHub',
       allTitle: 'All Repositories',
-      searchPlaceholder: 'Search by name, technology, or description...',
+      searchPlaceholder: 'Search project or tech...',
       allLanguages: 'All languages',
       allYears: 'All years',
       sortRecent: 'Most recent',
@@ -300,7 +300,7 @@ export const translations = {
       title: 'Certificates & Continuous Learning',
       subtitle:
         'Verified bootcamps, specialized courses, and technical workshops. Click any credential to inspect it in detail.',
-      searchPlaceholder: 'Search by course, institution, or skill...',
+      searchPlaceholder: 'Search course, issuer, or skill...',
       gridView: 'Grid view',
       listView: 'List view',
       inspect: 'Inspect',
@@ -324,7 +324,7 @@ export const translations = {
       modeGuarded: 'Guarded Scope',
       welcome:
         'Hi! I\'m **CharlyBot**, **Carlos Jesús\'s** AI assistant. I can answer questions about his **work experience**, **tech stack**, **projects**, **salary expectations**, and **past & current academic background** (UTN-FRGP graduate & currently studying Systems – Web Development at UK). How can I help?',
-      placeholder: 'Ask about his experience, studies (UK/UTN), or stack...',
+      placeholder: 'Ask about experience, studies, or stack...',
       send: 'Send',
       clear: 'Clear chat',
       close: 'Close',

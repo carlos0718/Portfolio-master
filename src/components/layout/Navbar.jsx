@@ -25,14 +25,24 @@ export function Navbar({ onOpenCommandPalette }) {
   }, []);
 
   useEffect(() => {
+    if (!cvMenuOpen) return;
     const onClickOutside = (e) => {
       if (cvMenuRef.current && !cvMenuRef.current.contains(e.target)) {
         setCvMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', onClickOutside);
-    return () => document.removeEventListener('mousedown', onClickOutside);
-  }, []);
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setCvMenuOpen(false);
+      }
+    };
+    document.addEventListener('click', onClickOutside);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('click', onClickOutside);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [cvMenuOpen]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -74,8 +84,8 @@ export function Navbar({ onOpenCommandPalette }) {
           aria-label="Main navigation"
           className={`flex items-center justify-between rounded-2xl border px-4 py-2.5 transition-all duration-300 ${
             scrolled
-              ? 'border-white/10 bg-obsidian/85 shadow-bento backdrop-blur-xl'
-              : 'border-white/[0.06] bg-obsidian/55 backdrop-blur-md'
+              ? 'border-white/10 bg-obsidian/95 shadow-bento backdrop-blur-xl'
+              : 'border-white/[0.06] bg-obsidian/80 backdrop-blur-lg md:bg-obsidian/60'
           }`}
         >
           {/* Brand */}
@@ -124,7 +134,10 @@ export function Navbar({ onOpenCommandPalette }) {
             {/* Command Palette Trigger */}
             <button
               type="button"
-              onClick={onOpenCommandPalette}
+              onClick={() => {
+                setCvMenuOpen(false);
+                onOpenCommandPalette();
+              }}
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:border-cyan-400/30 hover:text-zinc-100"
               aria-label={t.nav.commandHint}
               title={`${t.nav.commandHint} (Ctrl+K / ⌘K)`}
@@ -279,8 +292,8 @@ export function Navbar({ onOpenCommandPalette }) {
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/10 pt-4">
               <a
-                href={professionalData.personal.cvPath}
-                download="Carlos-Jesus-CV.pdf"
+                href={cvs[0]?.url || professionalData.personal.cvPath}
+                download={cvs[0]?.fileName || 'Carlos-Jesus-CV.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-semibold text-zinc-200"

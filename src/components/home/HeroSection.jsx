@@ -7,6 +7,7 @@ import { professionalData } from '../../data/professionalData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useChatContext } from '../../context/ChatContext';
 import { useGitHubData } from '../../hooks/useGitHubData';
+import { useCvList } from '../../hooks/useCvList';
 import { SpotlightCard } from '../common/SpotlightCard';
 import { AIBotAvatar } from '../chat/AIBotAvatar';
 
@@ -64,9 +65,11 @@ export function HeroSection() {
   const { lang, t } = useLanguage();
   const { openChat, askPrompt } = useChatContext();
   const { profile } = useGitHubData();
+  const { cvs } = useCvList();
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   const { personal, metrics } = professionalData;
+  const primaryCv = cvs[0];
 
   const handleCopyEmail = async () => {
     try {
@@ -146,8 +149,8 @@ export function HeroSection() {
               </Link>
 
               <a
-                href={personal.cvPath}
-                download="Carlos-Jesus-CV.pdf"
+                href={primaryCv?.url || personal.cvPath}
+                download={primaryCv?.fileName || 'Carlos-Jesus-CV.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-transparent px-4 py-3 text-sm font-medium text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.04] hover:text-white"
@@ -220,7 +223,7 @@ export function HeroSection() {
                     <span className="truncate">{personal.location}</span>
                   </p>
                   <p className="mt-2 font-mono text-xs text-indigo-300">
-                    UTN-FRGP · UK (In Progress)
+                    UTN-FRGP · UK ({lang === 'es' ? 'En curso' : 'In Progress'})
                   </p>
 
                   {/* Social Links right below personal info */}
