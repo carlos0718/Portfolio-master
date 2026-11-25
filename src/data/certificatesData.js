@@ -9,6 +9,7 @@
 
 export const certificateCategories = [
   { id: 'all', label: { es: 'Todos', en: 'All' } },
+  { id: 'degree', label: { es: 'Carreras / Títulos', en: 'Degrees' } },
   { id: 'bootcamp', label: { es: 'Bootcamps', en: 'Bootcamps' } },
   { id: 'cloud-ai', label: { es: 'Cloud & IA', en: 'Cloud & AI' } },
   { id: 'fullstack', label: { es: 'Frontend & Full Stack', en: 'Frontend & Full Stack' } },

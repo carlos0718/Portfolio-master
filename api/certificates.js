@@ -96,7 +96,7 @@ export default async function handler(req, res) {
           },
           issuer: m.issuer,
           issuerKey: null,
-          category: ['bootcamp', 'cloud-ai', 'fullstack', 'workshop'].includes(m.category)
+          category: ['degree', 'bootcamp', 'cloud-ai', 'fullstack', 'workshop'].includes(m.category)
             ? m.category
             : 'workshop',
           date: s3Obj.lastModified ? s3Obj.lastModified.slice(0, 7) : '2025-01',

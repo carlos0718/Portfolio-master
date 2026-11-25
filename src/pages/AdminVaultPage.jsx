@@ -287,6 +287,7 @@ export function AdminVaultPage() {
                       onChange={(e) => setCategory(e.target.value)}
                       className="rounded-xl border border-white/10 bg-obsidian px-3.5 py-2 text-xs text-white outline-none focus:border-cyan-400/50"
                     >
+                      <option value="degree">Carrera / Título Universitario</option>
                       <option value="bootcamp">Bootcamp</option>
                       <option value="cloud-ai">Cloud &amp; IA</option>
                       <option value="fullstack">Frontend &amp; Full Stack</option>
@@ -296,8 +297,15 @@ export function AdminVaultPage() {
                       type="text"
                       value={dateLabel}
                       onChange={(e) => setDateLabel(e.target.value)}
-                      placeholder="Fecha (ej. Oct 2025)"
+                      placeholder="Fecha o rango (ej. Mar 2019 – Dic 2023)"
                       className="rounded-xl border border-white/10 bg-obsidian px-3.5 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-cyan-400/50"
+                    />
+                    <input
+                      type="text"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Descripción breve (opcional, ej. Constancia de egreso UTN-FRGP)"
+                      className="rounded-xl border border-white/10 bg-obsidian px-3.5 py-2 text-xs text-white placeholder-zinc-500 outline-none focus:border-cyan-400/50 sm:col-span-2"
                     />
                     <input
                       type="text"
