@@ -42,14 +42,24 @@ export function PdfCanvasPreview({
     }
 
     let cancelled = false;
+    let loadingTask = null;
     setFailed(false);
 
     async function renderFirstPage() {
+      let pdf = null;
+      let page = null;
       try {
         const pdfjs = await getPdfJs();
-        const loadingTask = pdfjs.getDocument({ url: src, withCredentials: false });
-        const pdf = await loadingTask.promise;
-        const page = await pdf.getPage(1);
+        loadingTask = pdfjs.getDocument({
+          url: src,
+          withCredentials: false,
+          verbosity: pdfjs.VerbosityLevel?.ERRORS ?? 0
+        });
+        pdf = await loadingTask.promise;
+        if (cancelled) return;
+
+        page = await pdf.getPage(1);
+        if (cancelled) return;
 
         const baseViewport = page.getViewport({ scale: 1 });
         const targetWidth = highRes ? 1400 : 720;
@@ -67,22 +77,50 @@ export function PdfCanvasPreview({
         await page.render({ canvasContext: ctx, viewport }).promise;
         const url = canvas.toDataURL('image/jpeg', highRes ? 0.92 : 0.86);
 
+        // Release backing bitmap memory once encoded
+        canvas.width = 0;
+        canvas.height = 0;
+
         renderedCache.set(cacheKey, url);
         if (!cancelled) {
           setDataUrl(url);
         }
-
-        page.cleanup();
-        pdf.destroy();
       } catch (err) {
-        console.warn('[PdfCanvasPreview] Failed to render PDF preview:', err?.message);
-        if (!cancelled) setFailed(true);
+        if (!cancelled) {
+          console.warn('[PdfCanvasPreview] Failed to render PDF preview:', err?.message);
+          setFailed(true);
+        }
+      } finally {
+        try {
+          if (page && typeof page.cleanup === 'function') page.cleanup();
+        } catch {
+          // non-fatal cleanup
+        }
+        try {
+          if (pdf && typeof pdf.cleanup === 'function') await pdf.cleanup();
+        } catch {
+          // non-fatal cleanup
+        }
+        try {
+          if (loadingTask && typeof loadingTask.destroy === 'function') {
+            await loadingTask.destroy();
+          }
+        } catch {
+          // non-fatal cleanup
+        }
       }
     }
 
     renderFirstPage();
     return () => {
       cancelled = true;
+      try {
+        if (loadingTask && typeof loadingTask.destroy === 'function') {
+          loadingTask.destroy();
+        }
+      } catch {
+        // non-fatal cleanup
+      }
     };
   }, [src, cacheKey, highRes]);
 

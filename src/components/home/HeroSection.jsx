@@ -79,19 +79,19 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
+    <section className="relative flex min-h-[calc(100svh-1.5rem)] items-center overflow-hidden pt-28 pb-14 sm:pt-32 sm:pb-16">
       {/* Subtle Architectural Grid + Controlled Top Ambient Radial */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-grid-subtle bg-grid-sm [mask-image:radial-gradient(ellipse_75%_60%_at_50%_0%,#000_60%,transparent_100%)]"
+        className="pointer-events-none absolute inset-0 bg-grid-subtle bg-grid-sm [mask-image:radial-gradient(ellipse_75%_65%_at_50%_0%,#000_60%,transparent_100%)]"
       />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[780px] -translate-x-1/2 rounded-full bg-gradient-to-b from-cyan-500/12 via-indigo-500/10 to-transparent blur-3xl"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
+      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
           {/* Left Column: Positioning, CTAs & AI Interactive Triggers */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
@@ -178,48 +178,90 @@ export function HeroSection() {
             </div>
           </motion.div>
 
-          {/* Right Column: Profile Bento Card + 2x2 Impact KPIs */}
+          {/* Right Column: Prominent Portrait Profile Bento Card + Compact Impact KPIs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-4 lg:col-span-5"
+            className="flex flex-col gap-3.5 lg:col-span-5"
           >
-            <SpotlightCard className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="relative h-20 w-20 shrink-0 rounded-2xl bg-gradient-to-br from-cyan-400/40 via-indigo-500/40 to-emerald-400/30 p-[2px]">
-                  <img
-                    src={profile?.avatarUrl || 'https://github.com/carlos0718.png'}
-                    alt={personal.name}
-                    className="h-full w-full rounded-[14px] bg-surface object-cover"
-                    loading="eager"
+            <SpotlightCard className="overflow-hidden p-6">
+              {/* Top Portrait Showcase */}
+              <div className="relative flex flex-col items-center text-center sm:flex-row sm:items-center sm:gap-5 sm:text-left">
+                <div className="relative shrink-0">
+                  {/* Subtle ambient glow behind portrait */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -inset-2 rounded-3xl bg-gradient-to-tr from-cyan-400/25 via-indigo-500/20 to-emerald-400/20 blur-xl"
                   />
-                  <span
-                    className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-surface bg-emerald-400"
-                    title={personal.availability[lang]}
-                  />
+                  <div className="relative h-36 w-36 rounded-2xl bg-gradient-to-br from-cyan-400/60 via-indigo-500/50 to-emerald-400/40 p-[2px] shadow-[0_12px_36px_-10px_rgba(34,211,238,0.35)] sm:h-44 sm:w-44">
+                    <img
+                      src={profile?.avatarUrl || 'https://github.com/carlos0718.png'}
+                      alt={personal.name}
+                      className="h-full w-full rounded-[14px] bg-surface object-cover object-top"
+                      loading="eager"
+                    />
+                    <span
+                      className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-surface bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.75)]"
+                      title={personal.availability[lang]}
+                    />
+                  </div>
                 </div>
 
-                <div className="min-w-0 flex-1">
-                  <h2 className="truncate font-display text-lg font-bold text-white">
+                <div className="mt-4 min-w-0 flex-1 sm:mt-0">
+                  <span className="inline-flex items-center rounded-md border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-cyan-300">
+                    Full Stack &amp; AI
+                  </span>
+                  <h2 className="mt-2 truncate font-display text-2xl font-bold tracking-tight text-white">
                     {personal.name}
                   </h2>
-                  <p className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-400">
-                    <MapPin className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
+                  <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-zinc-300 sm:justify-start">
+                    <MapPin className="h-4 w-4 shrink-0 text-cyan-400" />
                     <span className="truncate">{personal.location}</span>
                   </p>
-                  <p className="mt-1.5 font-mono text-[11px] text-indigo-300">
+                  <p className="mt-2 font-mono text-xs text-indigo-300">
                     UTN-FRGP · UK (In Progress)
                   </p>
+
+                  {/* Social Links right below personal info */}
+                  <div className="mt-3.5 flex items-center justify-center gap-2 sm:justify-start">
+                    <a
+                      href={personal.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
+                    >
+                      <FaGithub className="h-4 w-4" />
+                    </a>
+                    <a
+                      href={personal.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
+                    >
+                      <FaLinkedinIn className="h-4 w-4" />
+                    </a>
+                    <a
+                      href={personal.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="WhatsApp"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-400 transition-colors hover:border-emerald-400/50 hover:bg-emerald-500/20"
+                    >
+                      <FaWhatsapp className="h-4 w-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              {/* Copyable Email + Social Links */}
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.07] pt-4">
+              {/* Copyable Email Footer Strip */}
+              <div className="mt-5 flex items-center justify-between gap-2 border-t border-white/[0.07] pt-4">
                 <button
                   type="button"
                   onClick={handleCopyEmail}
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 font-mono text-xs text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 font-mono text-xs text-zinc-300 transition-colors hover:border-cyan-400/40 hover:bg-white/[0.06] hover:text-white"
                 >
                   {copiedEmail ? (
                     <>
@@ -233,45 +275,15 @@ export function HeroSection() {
                     </>
                   )}
                 </button>
-
-                <div className="flex items-center gap-1.5">
-                  <a
-                    href={personal.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="GitHub"
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
-                  >
-                    <FaGithub className="h-4 w-4" />
-                  </a>
-                  <a
-                    href={personal.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn"
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-cyan-300"
-                  >
-                    <FaLinkedinIn className="h-4 w-4" />
-                  </a>
-                  <a
-                    href={personal.whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="WhatsApp"
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 text-emerald-400 transition-colors hover:border-emerald-400/50 hover:bg-emerald-500/20"
-                  >
-                    <FaWhatsapp className="h-4 w-4" />
-                  </a>
-                </div>
               </div>
             </SpotlightCard>
 
-            {/* 2x2 Impact Metrics Grid */}
-            <div className="grid grid-cols-2 gap-3.5">
+            {/* Compact 2x2 Impact Metrics Grid */}
+            <div className="grid grid-cols-2 gap-3">
               {metrics.map((metric) => (
-                <SpotlightCard key={metric.id} className="p-5">
+                <SpotlightCard key={metric.id} className="px-5 py-4">
                   <div
-                    className={`font-display text-3xl font-bold tracking-tight ${
+                    className={`font-display text-2xl font-bold tracking-tight sm:text-3xl ${
                       ACCENT_MAP[metric.accent] || 'text-white'
                     }`}
                   >
@@ -282,7 +294,7 @@ export function HeroSection() {
                       decimals={metric.decimals || 0}
                     />
                   </div>
-                  <p className="mt-1 font-mono text-[11px] uppercase tracking-wider text-zinc-400">
+                  <p className="mt-0.5 font-mono text-[11px] uppercase tracking-wider text-zinc-400">
                     {metric.label[lang]}
                   </p>
                 </SpotlightCard>
