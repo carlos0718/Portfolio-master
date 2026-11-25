@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { DiplomaFallbackPreview, isPdfFile } from './CertificateCard';
+import { PdfCanvasPreview } from './PdfCanvasPreview';
 
 /**
  * Split-Panel Lightbox Inspector built on native HTML <dialog> (Modern Web Guidance 1.0)
@@ -65,6 +66,7 @@ export function CertificateLightbox({ certificates, activeIndex, onChangeIndex, 
 
   const hasFile = Boolean(cert.file);
   const isPdf = Boolean(cert.isPdf) || isPdfFile(cert.file);
+  const pdfPreviewSrc = cert.previewUrl || cert.file;
 
   const handlePrev = () => onChangeIndex((activeIndex - 1 + certificates.length) % certificates.length);
   const handleNext = () => onChangeIndex((activeIndex + 1) % certificates.length);
@@ -97,7 +99,7 @@ export function CertificateLightbox({ certificates, activeIndex, onChangeIndex, 
               {String(certificates.length).padStart(2, '0')}
             </span>
 
-            {hasFile && !isPdf && (
+            {hasFile && (
               <div className="flex items-center gap-1 rounded-xl border border-white/10 bg-surface/80 p-1">
                 <button
                   type="button"
@@ -140,10 +142,19 @@ export function CertificateLightbox({ certificates, activeIndex, onChangeIndex, 
                 className="max-h-[58dvh] w-auto object-contain transition-transform duration-200"
               />
             ) : hasFile && isPdf ? (
-              <iframe
-                src={cert.file}
-                title={cert.title[lang]}
-                className="h-[58dvh] w-full border-0"
+              <PdfCanvasPreview
+                src={pdfPreviewSrc}
+                alt={cert.title[lang]}
+                highRes
+                style={{ transform: `scale(${zoom})`, transformOrigin: 'center center' }}
+                className="max-h-[58dvh] w-auto object-contain transition-transform duration-200"
+                fallback={
+                  <iframe
+                    src={cert.file}
+                    title={cert.title[lang]}
+                    className="h-[58dvh] w-full border-0"
+                  />
+                }
               />
             ) : (
               <div className="aspect-[16/10] w-full max-w-2xl">

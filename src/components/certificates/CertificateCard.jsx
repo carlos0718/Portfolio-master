@@ -2,6 +2,7 @@ import React from 'react';
 import { Award, CheckCircle2, Eye, FileText } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { SpotlightCard } from '../common/SpotlightCard';
+import { PdfCanvasPreview } from './PdfCanvasPreview';
 import { coderhouse, coursera } from '../../Assets/companies';
 
 const ISSUER_LOGOS = {
@@ -90,6 +91,7 @@ export function CertificateCard({ cert, viewMode = 'grid', onSelect }) {
   const { lang, t } = useLanguage();
   const hasFile = Boolean(cert.file);
   const isPdf = Boolean(cert.isPdf) || isPdfFile(cert.file);
+  const pdfPreviewSrc = cert.previewUrl || cert.file;
 
   if (viewMode === 'list') {
     return (
@@ -115,13 +117,20 @@ export function CertificateCard({ cert, viewMode = 'grid', onSelect }) {
                 loading="lazy"
                 className="h-full w-full object-cover"
               />
+            ) : hasFile && isPdf ? (
+              <PdfCanvasPreview
+                src={pdfPreviewSrc}
+                alt={cert.title[lang]}
+                className="h-full w-full object-cover"
+                fallback={
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500/10 to-indigo-500/15">
+                    <FileText className="h-6 w-6 text-cyan-300" />
+                  </div>
+                }
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-500/10 to-indigo-500/15">
-                {isPdf ? (
-                  <FileText className="h-6 w-6 text-cyan-300" />
-                ) : (
-                  <Award className="h-6 w-6 text-indigo-300" />
-                )}
+                <Award className="h-6 w-6 text-indigo-300" />
               </div>
             )}
           </div>
@@ -177,6 +186,13 @@ export function CertificateCard({ cert, viewMode = 'grid', onSelect }) {
               alt={cert.title[lang]}
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            />
+          ) : hasFile && isPdf ? (
+            <PdfCanvasPreview
+              src={pdfPreviewSrc}
+              alt={cert.title[lang]}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              fallback={<DiplomaFallbackPreview cert={cert} lang={lang} />}
             />
           ) : (
             <DiplomaFallbackPreview cert={cert} lang={lang} />

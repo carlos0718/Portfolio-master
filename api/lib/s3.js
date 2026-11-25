@@ -275,3 +275,36 @@ export async function deleteObjectFromS3(key) {
   invalidateS3Cache();
   return { deleted: key };
 }
+
+/**
+ * Fetches raw bytes of a certificate object from S3 for same-origin PDF preview
+ * (avoids requiring S3 bucket CORS rules for pdf.js rendering).
+ */
+export async function getCertificateObjectFromS3(key) {
+  if (
+    typeof key !== 'string' ||
+    !key.startsWith('certificates/') ||
+    key.includes('..') ||
+    !CERT_EXT_REGEX.test(key)
+  ) {
+    throw new Error('Invalid certificate key');
+  }
+
+  const conn = getS3Client();
+  if (!conn) {
+    throw new Error('AWS S3 is not configured on the server.');
+  }
+
+  const response = await conn.client.send(
+    new GetObjectCommand({
+      Bucket: conn.bucket,
+      Key: key
+    })
+  );
+
+  const bytes = await response.Body.transformToByteArray();
+  return {
+    buffer: Buffer.from(bytes),
+    contentType: response.ContentType || (key.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream')
+  };
+}

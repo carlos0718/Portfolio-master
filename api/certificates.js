@@ -1,4 +1,4 @@
-import { listSignedCertificates } from './lib/s3.js';
+import { getCertificateObjectFromS3, listSignedCertificates } from './lib/s3.js';
 import { certificatesData } from '../src/data/certificatesData.js';
 
 function normalizeSlug(str = '') {
@@ -8,11 +8,19 @@ function normalizeSlug(str = '') {
     .replace(/[^a-z0-9]/g, '');
 }
 
+function getFileQueryParam(req) {
+  if (req.query?.file) return String(req.query.file);
+  if (req.url && req.url.includes('?')) {
+    const parsed = new URL(req.url, 'http://localhost');
+    return parsed.searchParams.get('file') || '';
+  }
+  return '';
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=300');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -21,6 +29,24 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // Same-origin binary proxy for PDF certificate previews (no S3 CORS needed for pdf.js)
+  const requestedFile = getFileQueryParam(req);
+  if (requestedFile) {
+    try {
+      const { buffer, contentType } = await getCertificateObjectFromS3(requestedFile);
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600');
+      res.statusCode = 200;
+      res.end(buffer);
+      return;
+    } catch (error) {
+      console.error('[API /api/certificates?file] Error:', error?.message);
+      return res.status(404).json({ error: 'Certificate file not found' });
+    }
+  }
+
+  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=300');
 
   try {
     const s3Items = await listSignedCertificates();
@@ -48,6 +74,9 @@ export default async function handler(req, res) {
       return {
         ...cert,
         file: match.url,
+        previewUrl: match.isPdf
+          ? `/api/certificates?file=${encodeURIComponent(match.key)}`
+          : match.url,
         fileName: match.fileName,
         isPdf: match.isPdf,
         s3Key: match.key
@@ -81,6 +110,9 @@ export default async function handler(req, res) {
           },
           skills: m.skills.length > 0 ? m.skills : [m.issuer],
           file: s3Obj.url,
+          previewUrl: s3Obj.isPdf
+            ? `/api/certificates?file=${encodeURIComponent(s3Obj.key)}`
+            : s3Obj.url,
           fileName: s3Obj.fileName,
           isPdf: s3Obj.isPdf,
           s3Key: s3Obj.key,
