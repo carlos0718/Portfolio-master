@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import { certificatesData } from '../data/certificatesData';
 
 let cachedCerts = null;
+let forceFreshNextFetch = false;
+
+export function invalidateCertificatesCache() {
+  cachedCerts = null;
+  forceFreshNextFetch = true;
+}
 
 export function useCertificates() {
   const [certificates, setCertificates] = useState(cachedCerts || certificatesData);
@@ -14,7 +20,11 @@ export function useCertificates() {
 
     async function load() {
       try {
-        const res = await fetch('/api/certificates');
+        const url = forceFreshNextFetch
+          ? `/api/certificates?fresh=1&t=${Date.now()}`
+          : '/api/certificates';
+        forceFreshNextFetch = false;
+        const res = await fetch(url);
         if (!res.ok) return;
         const json = await res.json();
         if (Array.isArray(json.certificates) && json.certificates.length > 0) {

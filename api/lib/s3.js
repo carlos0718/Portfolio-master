@@ -1,4 +1,5 @@
 import {
+  CopyObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
@@ -224,7 +225,8 @@ export async function listSignedCertificates() {
                 .map((s) => s.trim())
                 .filter(Boolean)
             : [],
-          credentialUrl: decodeMeta(meta.credentialurl) || ''
+          credentialUrl: decodeMeta(meta.credentialurl) || '',
+          edited: meta.edited === '1'
         }
       };
     })
@@ -234,18 +236,25 @@ export async function listSignedCertificates() {
   return signed;
 }
 
+function encodeS3Metadata(metadata = {}) {
+  const encodedMeta = {};
+  for (const [k, v] of Object.entries(metadata)) {
+    if (v !== undefined && v !== null && String(v).trim() !== '') {
+      const lowerKey = k.toLowerCase();
+      const maxLen = lowerKey === 'description' ? 600 : 300;
+      encodedMeta[lowerKey] = encodeURIComponent(String(v).trim().slice(0, maxLen));
+    }
+  }
+  return encodedMeta;
+}
+
 export async function uploadBufferToS3({ key, buffer, contentType, metadata = {} }) {
   const conn = getS3Client();
   if (!conn) {
     throw new Error('AWS S3 is not configured on the server.');
   }
 
-  const encodedMeta = {};
-  for (const [k, v] of Object.entries(metadata)) {
-    if (v !== undefined && v !== null && String(v).trim() !== '') {
-      encodedMeta[k.toLowerCase()] = encodeURIComponent(String(v).trim().slice(0, 300));
-    }
-  }
+  const encodedMeta = encodeS3Metadata(metadata);
 
   await conn.client.send(
     new PutObjectCommand({
@@ -259,6 +268,62 @@ export async function uploadBufferToS3({ key, buffer, contentType, metadata = {}
 
   invalidateS3Cache();
   return { key };
+}
+
+/**
+ * Updates custom metadata (`x-amz-meta-*`) on an existing S3 certificate object in place
+ * using CopyObject with MetadataDirective=REPLACE so the file does not need to be re-uploaded.
+ */
+export async function updateCertificateMetadataInS3({ key, metadata = {} }) {
+  if (
+    typeof key !== 'string' ||
+    !key.startsWith('certificates/') ||
+    key.includes('..') ||
+    !CERT_EXT_REGEX.test(key)
+  ) {
+    throw new Error('Invalid certificate key');
+  }
+
+  const conn = getS3Client();
+  if (!conn) {
+    throw new Error('AWS S3 is not configured on the server.');
+  }
+
+  const head = await conn.client.send(
+    new HeadObjectCommand({
+      Bucket: conn.bucket,
+      Key: key
+    })
+  );
+
+  const fallbackType = key.toLowerCase().endsWith('.pdf')
+    ? 'application/pdf'
+    : key.toLowerCase().endsWith('.png')
+    ? 'image/png'
+    : key.toLowerCase().endsWith('.webp')
+    ? 'image/webp'
+    : 'image/jpeg';
+
+  const contentType = head?.ContentType || fallbackType;
+  const encodedMeta = encodeS3Metadata({ ...metadata, edited: '1' });
+  const encodedCopySource = `${conn.bucket}/${key
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/')}`;
+
+  await conn.client.send(
+    new CopyObjectCommand({
+      Bucket: conn.bucket,
+      Key: key,
+      CopySource: encodedCopySource,
+      MetadataDirective: 'REPLACE',
+      Metadata: encodedMeta,
+      ContentType: contentType
+    })
+  );
+
+  invalidateS3Cache();
+  return { key, metadata };
 }
 
 export async function deleteObjectFromS3(key) {

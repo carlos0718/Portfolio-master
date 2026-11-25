@@ -48,7 +48,11 @@ export default async function handler(req, res) {
     }
   }
 
-  res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=300');
+  const isFreshRequest = Boolean(req.url && req.url.includes('fresh=1'));
+  res.setHeader(
+    'Cache-Control',
+    isFreshRequest ? 'no-store' : 'public, s-maxage=60, stale-while-revalidate=300'
+  );
 
   try {
     const s3Items = await listSignedCertificates();
@@ -90,8 +94,25 @@ export default async function handler(req, res) {
       if (!match) return publicCert;
       matchedS3Keys.add(match.key);
 
+      const m = match.metadata || {};
+      const validCategories = ['degree', 'bootcamp', 'cloud-ai', 'fullstack', 'workshop'];
+      const hasAdminEdit = Boolean(m.edited);
+
       return {
         ...publicCert,
+        ...(hasAdminEdit
+          ? {
+              title: m.title ? { es: m.title, en: m.title } : publicCert.title,
+              issuer: m.issuer || publicCert.issuer,
+              category: validCategories.includes(m.category) ? m.category : publicCert.category,
+              dateLabel: m.dateLabel ? { es: m.dateLabel, en: m.dateLabel } : publicCert.dateLabel,
+              description: m.description
+                ? { es: m.description, en: m.description }
+                : publicCert.description,
+              skills: Array.isArray(m.skills) && m.skills.length > 0 ? m.skills : publicCert.skills,
+              credentialUrl: m.credentialUrl !== undefined ? m.credentialUrl : publicCert.credentialUrl
+            }
+          : {}),
         file: match.url,
         previewUrl: match.isPdf
           ? `/api/certificates?file=${encodeURIComponent(match.key)}`

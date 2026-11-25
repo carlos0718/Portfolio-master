@@ -1,13 +1,83 @@
 import crypto from 'node:crypto';
 import { checkRateLimit } from '../lib/rateLimit.js';
+import { certificatesData } from '../../src/data/certificatesData.js';
 import {
   deleteObjectFromS3,
   getS3Config,
   listSignedCertificates,
   listSignedCvs,
   sanitizeFilename,
+  updateCertificateMetadataInS3,
   uploadBufferToS3
 } from '../lib/s3.js';
+
+const VALID_CATEGORIES = ['degree', 'bootcamp', 'cloud-ai', 'fullstack', 'workshop'];
+
+function normalizeSlug(str = '') {
+  return String(str)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\.[^.]+$/, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Resolves the effective display metadata for an S3 certificate so the Admin Vault
+ * edit form pre-fills the exact values currently shown on `/certificates`.
+ */
+function enrichS3CertificatesWithCatalog(s3Items = []) {
+  const claimedKeys = new Set();
+  const curatedByKey = new Map();
+
+  for (const cert of certificatesData) {
+    const certSlug = normalizeSlug(cert.id);
+    const aliases = (cert.matchAliases || []).map(normalizeSlug).filter(Boolean);
+    const match = s3Items.find((s3Obj) => {
+      if (claimedKeys.has(s3Obj.key)) return false;
+      const fileSlug = normalizeSlug(s3Obj.fileName);
+      const titleSlug = normalizeSlug(s3Obj.metadata?.title);
+      if (
+        fileSlug === certSlug ||
+        fileSlug.includes(certSlug) ||
+        certSlug.includes(fileSlug)
+      ) {
+        return true;
+      }
+      return aliases.some(
+        (alias) =>
+          fileSlug === alias ||
+          fileSlug.includes(alias) ||
+          (titleSlug && (titleSlug === alias || titleSlug.includes(alias)))
+      );
+    });
+    if (match) {
+      claimedKeys.add(match.key);
+      curatedByKey.set(match.key, cert);
+    }
+  }
+
+  return s3Items.map((item) => {
+    const curated = curatedByKey.get(item.key);
+    if (!curated || item.metadata?.edited) {
+      return item;
+    }
+    return {
+      ...item,
+      isCurated: true,
+      metadata: {
+        title: curated.title?.es || item.metadata?.title || '',
+        issuer: curated.issuer || item.metadata?.issuer || '',
+        category: curated.category || item.metadata?.category || 'workshop',
+        dateLabel: curated.dateLabel?.es || item.metadata?.dateLabel || '',
+        description: curated.description?.es || item.metadata?.description || '',
+        skills: Array.isArray(curated.skills) ? curated.skills : item.metadata?.skills || [],
+        credentialUrl: curated.credentialUrl || item.metadata?.credentialUrl || '',
+        edited: false
+      }
+    };
+  });
+}
 
 const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB safe ceiling for Vercel Serverless
 
@@ -98,11 +168,42 @@ export default async function handler(req, res) {
 
     // List current files in S3 for the admin dashboard
     if (action === 'list') {
-      const [cvs, certificates] = await Promise.all([
+      const [cvs, rawCertificates] = await Promise.all([
         listSignedCvs().catch(() => []),
         listSignedCertificates().catch(() => [])
       ]);
-      return res.status(200).json({ ok: true, cvs: cvs || [], certificates: certificates || [] });
+      const certificates = enrichS3CertificatesWithCatalog(rawCertificates || []);
+      return res.status(200).json({ ok: true, cvs: cvs || [], certificates });
+    }
+
+    // Update metadata of an existing S3 certificate without re-uploading the file
+    if (action === 'updateMetadata') {
+      const { key, metadata = {} } = req.body || {};
+      if (
+        typeof key !== 'string' ||
+        !key.startsWith('certificates/') ||
+        key.includes('..') ||
+        key.startsWith('/')
+      ) {
+        return res.status(400).json({ error: 'Invalid S3 certificate key.' });
+      }
+
+      const safeMetadata = {
+        title: typeof metadata.title === 'string' ? metadata.title.trim() : '',
+        issuer: typeof metadata.issuer === 'string' ? metadata.issuer.trim() : '',
+        category: VALID_CATEGORIES.includes(metadata.category) ? metadata.category : 'workshop',
+        dateLabel: typeof metadata.dateLabel === 'string' ? metadata.dateLabel.trim() : '',
+        description: typeof metadata.description === 'string' ? metadata.description.trim() : '',
+        skills: Array.isArray(metadata.skills)
+          ? metadata.skills.join(', ')
+          : typeof metadata.skills === 'string'
+          ? metadata.skills.trim()
+          : '',
+        credentialUrl: typeof metadata.credentialUrl === 'string' ? metadata.credentialUrl.trim() : ''
+      };
+
+      await updateCertificateMetadataInS3({ key, metadata: safeMetadata });
+      return res.status(200).json({ ok: true, key, metadata: safeMetadata });
     }
 
     // Delete a specific file in S3 (only root/cv PDFs or certificates/*)
