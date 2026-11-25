@@ -18,6 +18,121 @@ export const certificateCategories = [
 
 export const certificatesData = [
   {
+    id: 'mongodb-overview',
+    matchAliases: ['mongodboverview', 'mongodb'],
+    title: {
+      es: 'MongoDB Overview',
+      en: 'MongoDB Overview'
+    },
+    issuer: 'MongoDB',
+    issuerKey: null,
+    category: 'fullstack',
+    date: '2026-09',
+    dateLabel: {
+      es: 'Septiembre 2026',
+      en: 'September 2026'
+    },
+    description: {
+      es: 'Certificación oficial de MongoDB University en modelado de documentos NoSQL, consultas, agregaciones, índices y arquitectura de bases de datos modernas con MongoDB.',
+      en: 'Official MongoDB University certification covering NoSQL document modeling, queries, aggregations, indexing, and modern database architecture with MongoDB.'
+    },
+    skills: ['MongoDB', 'NoSQL', 'Document Modeling', 'Indexes', 'Database Architecture'],
+    file: null,
+    credentialUrl: 'https://learn.mongodb.com/c/NrH24ZIyRwmakHyLPyJ8yA'
+  },
+  {
+    id: 'anthropic-claude-code-in-action',
+    matchAliases: ['claudecodeinaction', 'anthropicclaudecodeinaction'],
+    title: {
+      es: 'Claude Code in Action',
+      en: 'Claude Code in Action'
+    },
+    issuer: 'Anthropic',
+    issuerKey: null,
+    category: 'cloud-ai',
+    date: '2026-04',
+    dateLabel: {
+      es: 'Abril 2026',
+      en: 'April 2026'
+    },
+    description: {
+      es: 'Certificación oficial de Anthropic Academy en ingeniería asistida por agentes con Claude Code: flujos agénticos, automatización de refactoring, testing y context engineering en código productivo.',
+      en: 'Official Anthropic Academy certification in agentic software engineering with Claude Code: autonomous workflows, refactoring automation, testing, and context engineering on production codebases.'
+    },
+    skills: ['Claude Code', 'Agentic Workflows', 'AI Engineering', 'Anthropic'],
+    file: null,
+    credentialUrl: 'https://verify.skilljar.com/c/de2eng6i2ngq'
+  },
+  {
+    id: 'anthropic-intro-mcp',
+    matchAliases: ['intromcp', 'anthropicintromcp', 'modelcontextprotocol'],
+    title: {
+      es: 'Introduction to Model Context Protocol (MCP)',
+      en: 'Introduction to Model Context Protocol (MCP)'
+    },
+    issuer: 'Anthropic',
+    issuerKey: null,
+    category: 'cloud-ai',
+    date: '2026-04',
+    dateLabel: {
+      es: 'Abril 2026',
+      en: 'April 2026'
+    },
+    description: {
+      es: 'Certificación oficial de Anthropic Academy en diseño e implementación de servidores y clientes MCP (Model Context Protocol) para integrar LLMs con herramientas, datos y APIs externas.',
+      en: 'Official Anthropic Academy certification in designing and implementing MCP (Model Context Protocol) servers and clients to integrate LLMs with external tools, data sources, and APIs.'
+    },
+    skills: ['MCP', 'Model Context Protocol', 'Tool Calling', 'AI Agents', 'Anthropic'],
+    file: null,
+    credentialUrl: 'https://verify.skilljar.com/c/ikt856tn87r4'
+  },
+  {
+    id: 'anthropic-building-claude-api',
+    matchAliases: ['buildingclaudeapi', 'anthropicbuildingclaudeapi', 'claudewiththeanthropicapi'],
+    title: {
+      es: 'Building with the Claude API',
+      en: 'Building with the Claude API'
+    },
+    issuer: 'Anthropic',
+    issuerKey: null,
+    category: 'cloud-ai',
+    date: '2026-04',
+    dateLabel: {
+      es: 'Abril 2026',
+      en: 'April 2026'
+    },
+    description: {
+      es: 'Certificación oficial de Anthropic Academy en desarrollo de aplicaciones productivas con la API de Claude: prompt engineering avanzado, tool use, structured outputs, streaming y evaluación.',
+      en: 'Official Anthropic Academy certification in building production AI applications with the Claude API: advanced prompt engineering, tool use, structured outputs, streaming, and evals.'
+    },
+    skills: ['Claude API', 'Tool Use', 'Prompt Engineering', 'LLMs', 'Anthropic'],
+    file: null,
+    credentialUrl: 'https://verify.skilljar.com/c/if5yyw6b8qxa'
+  },
+  {
+    id: 'anthropic-intro-agent-skills',
+    matchAliases: ['introagentskills', 'anthropicintroagentskills', 'agentskills'],
+    title: {
+      es: 'Introduction to Agent Skills',
+      en: 'Introduction to Agent Skills'
+    },
+    issuer: 'Anthropic',
+    issuerKey: null,
+    category: 'cloud-ai',
+    date: '2026-04',
+    dateLabel: {
+      es: 'Abril 2026',
+      en: 'April 2026'
+    },
+    description: {
+      es: 'Certificación oficial de Anthropic Academy en diseño, composición y orquestación de Agent Skills reutilizables para estandarizar capacidades y flujos en agentes de IA.',
+      en: 'Official Anthropic Academy certification in designing, composing, and orchestrating reusable Agent Skills to standardize capabilities and workflows across AI agents.'
+    },
+    skills: ['Agent Skills', 'AI Agents', 'Orchestration', 'Prompt Architecture', 'Anthropic'],
+    file: null,
+    credentialUrl: 'https://verify.skilljar.com/c/opajcjhztxoy'
+  },
+  {
     id: 'nucba-ai-engineer',
     matchAliases: ['aiengineering', 'aiengineer'],
     title: {
@@ -64,24 +179,48 @@ export const certificatesData = [
     credentialUrl: ''
   },
   {
-    id: 'coderhouse-aws-nextjs',
+    id: 'coderhouse-aws',
+    matchAliases: ['aws', 'awscertificado'],
     title: {
-      es: 'AWS Essential & Next.js',
-      en: 'AWS Essential & Next.js'
+      es: 'Cloud Computing (AWS)',
+      en: 'Cloud Computing (AWS)'
     },
     issuer: 'Coderhouse',
     issuerKey: 'coderhouse',
     category: 'cloud-ai',
-    date: '2024-07',
+    date: '2024-04',
     dateLabel: {
-      es: 'Mar 2024 – Jul 2024',
-      en: 'Mar 2024 – Jul 2024'
+      es: 'Abril 2024',
+      en: 'April 2024'
     },
     description: {
-      es: 'Arquitectura cloud en Amazon Web Services (S3, EC2, IAM, despliegue productivo) combinada con desarrollo full-stack y SSR/SSG con Next.js.',
-      en: 'Cloud computing fundamentals on Amazon Web Services paired with modern SSR/SSG full-stack development using Next.js.'
+      es: 'Arquitectura cloud en Amazon Web Services: S3, EC2, IAM, redes, seguridad y despliegue de aplicaciones escalables en producción.',
+      en: 'Cloud computing architecture on Amazon Web Services: S3, EC2, IAM, networking, security, and deploying scalable production applications.'
     },
-    skills: ['AWS', 'Next.js', 'React', 'Cloud Architecture'],
+    skills: ['AWS', 'S3', 'EC2', 'IAM', 'Cloud Architecture'],
+    file: null,
+    credentialUrl: ''
+  },
+  {
+    id: 'coderhouse-nextjs',
+    matchAliases: ['coderhousenextjs', 'certificadonextjs', 'nextjs'],
+    title: {
+      es: 'Next.js — TOP 10',
+      en: 'Next.js — TOP 10'
+    },
+    issuer: 'Coderhouse',
+    issuerKey: 'coderhouse',
+    category: 'fullstack',
+    date: '2024-04',
+    dateLabel: {
+      es: 'Abril 2024',
+      en: 'April 2024'
+    },
+    description: {
+      es: 'Reconocimiento TOP 10 en desarrollo Full Stack con Next.js: App Router, Server Components, SSR/SSG, optimización de rendimiento y arquitectura web moderna con React.',
+      en: 'TOP 10 recognition in Full Stack development with Next.js: App Router, Server Components, SSR/SSG, performance optimization, and modern React web architecture.'
+    },
+    skills: ['Next.js', 'React', 'SSR / SSG', 'App Router', 'TOP 10'],
     file: null,
     credentialUrl: ''
   },
