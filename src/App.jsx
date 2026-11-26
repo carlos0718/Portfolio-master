@@ -101,6 +101,17 @@ function ScrollToTopOnRoute() {
 function AppShell() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [availabilityOpen, setAvailabilityOpen] = useState(false);
+  const [availabilityMode, setAvailabilityMode] = useState('book'); // 'book' | 'view'
+
+  const openAvailabilityBooking = () => {
+    setAvailabilityMode('book');
+    setAvailabilityOpen(true);
+  };
+
+  const openAvailabilityViewer = () => {
+    setAvailabilityMode('view');
+    setAvailabilityOpen(true);
+  };
 
   // Global accessible shortcut: Cmd+K / Ctrl+K
   useEffect(() => {
@@ -119,7 +130,7 @@ function AppShell() {
       <ScrollToTopOnRoute />
       <Navbar
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
-        onOpenAvailability={() => setAvailabilityOpen(true)}
+        onOpenAvailability={openAvailabilityBooking}
       />
 
       <div className="flex-1">
@@ -134,7 +145,7 @@ function AppShell() {
             <Routes>
               <Route
                 path="/"
-                element={<HomePage onOpenAvailability={() => setAvailabilityOpen(true)} />}
+                element={<HomePage onOpenAvailability={openAvailabilityBooking} />}
               />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/project" element={<Navigate to="/projects" replace />} />
@@ -148,14 +159,16 @@ function AppShell() {
       </div>
 
       <Footer />
-      <ChatWidget />
+      <ChatWidget onOpenCalendar={openAvailabilityViewer} />
       <CommandPalette
         isOpen={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
-        onOpenAvailability={() => setAvailabilityOpen(true)}
+        onOpenAvailability={openAvailabilityBooking}
       />
       <AvailabilityModal
         isOpen={availabilityOpen}
+        mode={availabilityMode}
+        onSwitchToBook={() => setAvailabilityMode('book')}
         onClose={() => setAvailabilityOpen(false)}
       />
     </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertCircle,
+  Ban,
   Calendar,
   Check,
   CheckCircle2,
@@ -44,23 +45,69 @@ const INTERVIEW_PRESETS = {
   ]
 };
 
+const WEEKDAY_HEADERS = {
+  es: ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'],
+  en: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+};
+
+const FULL_MONTHS = {
+  es: [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ],
+  en: [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+};
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+function buildMonthGrid(year, monthIndex) {
+  const firstDay = new Date(Date.UTC(year, monthIndex, 1));
+  const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  // Monday-first offset (Mon=0 .. Sun=6)
+  const startOffset = (firstDay.getUTCDay() + 6) % 7;
+
+  const cells = [];
+  for (let i = 0; i < startOffset; i++) {
+    cells.push({ empty: true, key: `pad-start-${i}` });
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dow = new Date(Date.UTC(year, monthIndex, day)).getUTCDay();
+    cells.push({
+      empty: false,
+      day,
+      dow,
+      isWeekend: dow === 0 || dow === 6,
+      dateStr: `${year}-${pad2(monthIndex + 1)}-${pad2(day)}`,
+      key: `${year}-${pad2(monthIndex + 1)}-${pad2(day)}`
+    });
+  }
+  while (cells.length % 7 !== 0) {
+    cells.push({ empty: true, key: `pad-end-${cells.length}` });
+  }
+  return cells;
+}
+
 /**
- * Interactive 15-Day Weekly Calendar ("Semanario") & Interview Booking Modal
- * Built on native HTML <dialog> with:
- * - 2-week (10 business days / ~15 calendar days) Mon–Fri column grid
- * - Automatic ART (UTC-3) + visitor local timezone display
- * - Interview title/role presets + live email typo detector + DNS MX check
- * - Optional 6-digit email OTP verification via Resend before creating the Google Calendar event
- * - Delivery time notice (1–5 min, check email after 5–7 min)
+ * Literal Monthly Grid Calendar + Red Blocked Slots & Interview Booking Modal
+ * Supports two modes:
+ * - `mode="book"`: Full interactive booking flow (Title, Name, Email MX/Typo, Resend 6-digit OTP, Google Meet)
+ * - `mode="view"`: Clean visual calendar overlay opened from CharlyBot (inspect green free vs red blocked slots,
+ *                  then close and reply in chat with chosen date & time)
  */
-export function AvailabilityModal({ isOpen, onClose }) {
+export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClose }) {
   const dialogRef = useRef(null);
   const { lang, t } = useLanguage();
   const av = t.availability;
+  const isViewOnly = mode === 'view';
 
   const [duration, setDuration] = useState(30);
-  const [weekIndex, setWeekIndex] = useState(0); // 0 = Semana 1 (days 0..4), 1 = Semana 2 (days 5..9)
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [activeMonthIdx, setActiveMonthIdx] = useState(0);
+  const [selectedDateStr, setSelectedDateStr] = useState('');
   const [selectedSlot, setSelectedSlot] = useState(null);
 
   // Booking form state
@@ -103,27 +150,64 @@ export function AvailabilityModal({ isOpen, onClose }) {
   }, [isOpen]);
 
   const allDays = availability?.days || [];
-  const weeks = useMemo(() => {
-    if (allDays.length === 0) return [];
-    const chunks = [];
-    for (let i = 0; i < allDays.length; i += 5) {
-      chunks.push(allDays.slice(i, i + 5));
+  const daysByDate = useMemo(() => {
+    const map = new Map();
+    for (const d of allDays) {
+      map.set(d.date, d);
     }
-    return chunks;
+    return map;
   }, [allDays]);
 
-  const visibleWeek = weeks[weekIndex] || weeks[0] || [];
+  // Unique (year, month) pairs covered by the 15-day availability window (e.g. Nov 2026 & Dec 2026)
+  const calendarMonths = useMemo(() => {
+    const seen = new Set();
+    const list = [];
+    for (const d of allDays) {
+      const [yStr, mStr] = d.date.split('-');
+      const key = `${yStr}-${mStr}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        list.push({ year: Number(yStr), monthIndex: Number(mStr) - 1, key });
+      }
+    }
+    if (list.length === 0) {
+      const now = new Date();
+      list.push({ year: now.getFullYear(), monthIndex: now.getMonth(), key: 'current' });
+    }
+    return list;
+  }, [allDays]);
+
+  // Default select the first day with available slots
+  useEffect(() => {
+    if (allDays.length === 0) return;
+    if (!selectedDateStr || !daysByDate.has(selectedDateStr)) {
+      const firstOpen = allDays.find((d) => (d.slots?.length || 0) > 0) || allDays[0];
+      if (firstOpen) {
+        setSelectedDateStr(firstOpen.date);
+        const [yStr, mStr] = firstOpen.date.split('-');
+        const idx = calendarMonths.findIndex((m) => m.key === `${yStr}-${mStr}`);
+        if (idx >= 0) setActiveMonthIdx(idx);
+      }
+    }
+  }, [allDays, daysByDate, selectedDateStr, calendarMonths]);
+
+  const currentMonth = calendarMonths[activeMonthIdx] || calendarMonths[0];
+  const monthGrid = useMemo(
+    () => (currentMonth ? buildMonthGrid(currentMonth.year, currentMonth.monthIndex) : []),
+    [currentMonth]
+  );
+
+  const selectedDay = daysByDate.get(selectedDateStr) || allDays[0] || null;
   const bookingEnabled = Boolean(availability?.bookingEnabled);
   const otpRequired = Boolean(availability?.otpRequired);
 
   useEffect(() => {
     setSelectedSlot(null);
-    setSelectedDay(null);
     setOtpStep(false);
     setOtpToken('');
     setOtpCode('');
     setBookingError('');
-  }, [duration]);
+  }, [duration, selectedDateStr, mode]);
 
   const handleClose = () => {
     if (submitting) return;
@@ -134,8 +218,14 @@ export function AvailabilityModal({ isOpen, onClose }) {
     onClose();
   };
 
-  const handleSelectSlot = (day, slot) => {
-    setSelectedDay(day);
+  const handleSelectDay = (dateStr) => {
+    setSelectedDateStr(dateStr);
+    setSelectedSlot(null);
+    setBookingError('');
+  };
+
+  const handleSelectSlot = (slot) => {
+    if (slot.status !== 'available' || isViewOnly) return;
     setSelectedSlot(slot);
     setOtpStep(false);
     setOtpToken('');
@@ -272,14 +362,7 @@ export function AvailabilityModal({ isOpen, onClose }) {
       : 'Interview Scheduling — Carlos Jesús'
   )}&body=${encodeURIComponent(proposalText)}`;
 
-  const weekRangeLabel =
-    visibleWeek.length > 0
-      ? `${lang === 'es' ? visibleWeek[0].dayLabelEs : visibleWeek[0].dayLabelEn} — ${
-          lang === 'es'
-            ? visibleWeek[visibleWeek.length - 1].dayLabelEs
-            : visibleWeek[visibleWeek.length - 1].dayLabelEn
-        }`
-      : '';
+  const dayAllSlots = selectedDay?.allSlots || selectedDay?.slots?.map((s) => ({ ...s, status: 'available' })) || [];
 
   return (
     <dialog
@@ -292,7 +375,7 @@ export function AvailabilityModal({ isOpen, onClose }) {
         if (e.target === dialogRef.current) handleClose();
       }}
       aria-label={av.title}
-      className="precision-dialog m-auto w-[min(96vw,54rem)]"
+      className="precision-dialog m-auto w-[min(96vw,56rem)]"
     >
       <div className="max-h-[92dvh] overflow-y-auto rounded-2xl border border-white/12 bg-surface/98 text-zinc-100 shadow-2xl backdrop-blur-2xl">
         {/* Header */}
@@ -303,7 +386,7 @@ export function AvailabilityModal({ isOpen, onClose }) {
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 {bookingEnabled ? av.liveSynced : av.standardWindowBadge}
               </span>
-              {otpRequired && (
+              {!isViewOnly && otpRequired && (
                 <span className="inline-flex items-center gap-1 rounded-full border border-cyan-400/25 bg-cyan-400/10 px-2 py-0.5 font-mono text-[10px] text-cyan-200">
                   <ShieldCheck className="h-3 w-3" />
                   <span>{av.otpBadge}</span>
@@ -316,7 +399,9 @@ export function AvailabilityModal({ isOpen, onClose }) {
               </span>
             </div>
             <h2 className="mt-1.5 font-display text-xl font-bold text-white">{av.title}</h2>
-            <p className="mt-0.5 text-xs text-zinc-400">{av.subtitle}</p>
+            <p className="mt-0.5 text-xs text-zinc-400">
+              {isViewOnly ? av.viewOnlySubtitle : av.subtitle}
+            </p>
           </div>
 
           <div className="flex shrink-0 items-center gap-1">
@@ -418,56 +503,24 @@ export function AvailabilityModal({ isOpen, onClose }) {
             </div>
           ) : (
             <div className="space-y-5">
-              {/* Top Controls: Duration + Week Pagination + Timezone */}
+              {/* Top Controls: Duration + Timezone */}
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Duration Toggle */}
-                  <div className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-obsidian p-1">
-                    {[30, 45].map((mins) => (
-                      <button
-                        key={mins}
-                        type="button"
-                        onClick={() => setDuration(mins)}
-                        className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
-                          duration === mins
-                            ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-inset ring-cyan-400/35'
-                            : 'text-zinc-400 hover:text-zinc-200'
-                        }`}
-                      >
-                        <Clock className="h-3.5 w-3.5" />
-                        <span>{mins} min</span>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Week 1 / Week 2 Switcher (15-day Semanario) */}
-                  {weeks.length > 1 && (
-                    <div className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-obsidian p-1">
-                      <button
-                        type="button"
-                        onClick={() => setWeekIndex((w) => Math.max(0, w - 1))}
-                        disabled={weekIndex === 0}
-                        aria-label={av.prevWeek}
-                        className="rounded-lg p-1.5 text-zinc-300 transition-colors hover:bg-white/10 disabled:opacity-30"
-                      >
-                        <ChevronLeft className="h-3.5 w-3.5" />
-                      </button>
-                      <span className="px-2 font-mono text-[11px] font-medium text-zinc-200">
-                        {av.weekLabel
-                          .replace('{n}', String(weekIndex + 1))
-                          .replace('{total}', String(weeks.length))}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setWeekIndex((w) => Math.min(weeks.length - 1, w + 1))}
-                        disabled={weekIndex >= weeks.length - 1}
-                        aria-label={av.nextWeek}
-                        className="rounded-lg p-1.5 text-zinc-300 transition-colors hover:bg-white/10 disabled:opacity-30"
-                      >
-                        <ChevronRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  )}
+                <div className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-obsidian p-1">
+                  {[30, 45].map((mins) => (
+                    <button
+                      key={mins}
+                      type="button"
+                      onClick={() => setDuration(mins)}
+                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs font-medium transition-colors ${
+                        duration === mins
+                          ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-inset ring-cyan-400/35'
+                          : 'text-zinc-400 hover:text-zinc-200'
+                      }`}
+                    >
+                      <Clock className="h-3.5 w-3.5" />
+                      <span>{mins} min</span>
+                    </button>
+                  ))}
                 </div>
 
                 <div className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-400">
@@ -480,92 +533,282 @@ export function AvailabilityModal({ isOpen, onClose }) {
                 </div>
               </div>
 
-              {/* Semanario Weekly 5-Column Grid (up to 15 days / 2 weeks) */}
+              {/* View-only helper bar when opened from CharlyBot */}
+              {isViewOnly && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-400/25 bg-indigo-500/10 px-4 py-3 text-xs text-indigo-100">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 shrink-0 text-indigo-300" />
+                    <span>{av.viewOnlyHint}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {onSwitchToBook && bookingEnabled && (
+                      <button
+                        type="button"
+                        onClick={onSwitchToBook}
+                        className="rounded-lg border border-cyan-400/35 bg-cyan-400/15 px-3 py-1 font-mono text-[11px] font-semibold text-cyan-200 hover:bg-cyan-400/25"
+                      >
+                        {av.bookHereInstead}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleClose}
+                      className="rounded-lg bg-indigo-400 px-3 py-1 font-semibold text-zinc-950 hover:brightness-110"
+                    >
+                      {av.backToChat}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Literal Monthly Calendar Grid + Day Slots Side-by-Side */}
               {loading && allDays.length === 0 ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-14">
                   <div className="h-7 w-7 animate-spin rounded-full border-2 border-cyan-400/30 border-t-cyan-400" />
                 </div>
               ) : (
                 <>
-                  <div>
-                    <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-mono text-[11px] uppercase tracking-wider text-zinc-400">
-                        <Calendar className="mr-1.5 inline h-3.5 w-3.5 text-cyan-400" />
-                        {av.pickSlotLabel}
-                      </span>
-                      {weekRangeLabel && (
-                        <span className="font-mono text-[11px] text-cyan-300/90">
-                          {weekRangeLabel}
+                  <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+                    {/* LEFT: Real Monthly Grid Calendar */}
+                    <div className="rounded-2xl border border-white/10 bg-obsidian/80 p-4 lg:col-span-6">
+                      {/* Month Navigation Header */}
+                      <div className="mb-3 flex items-center justify-between">
+                        <h3 className="font-display text-sm font-bold text-white">
+                          {currentMonth
+                            ? `${FULL_MONTHS[lang][currentMonth.monthIndex]} ${currentMonth.year}`
+                            : ''}
+                        </h3>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setActiveMonthIdx((i) => Math.max(0, i - 1))}
+                            disabled={activeMonthIdx === 0}
+                            aria-label={av.prevMonth}
+                            className="rounded-lg border border-white/10 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveMonthIdx((i) => Math.min(calendarMonths.length - 1, i + 1))
+                            }
+                            disabled={activeMonthIdx >= calendarMonths.length - 1}
+                            aria-label={av.nextMonth}
+                            className="rounded-lg border border-white/10 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Weekday Column Headers (Lu..Do) */}
+                      <div className="mb-1.5 grid grid-cols-7 gap-1 text-center">
+                        {WEEKDAY_HEADERS[lang].map((wd) => (
+                          <div
+                            key={wd}
+                            className="py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-zinc-500"
+                          >
+                            {wd}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Calendar Day Cells Grid */}
+                      <div className="grid grid-cols-7 gap-1">
+                        {monthGrid.map((cell) => {
+                          if (cell.empty) {
+                            return <div key={cell.key} className="aspect-square" />;
+                          }
+
+                          const dayData = daysByDate.get(cell.dateStr);
+                          const isSelected = cell.dateStr === selectedDay?.date;
+                          const hasSlots = Boolean(dayData && (dayData.slots?.length || 0) > 0);
+                          const hasBlocked = Boolean(dayData && (dayData.blockedCount || 0) > 0);
+                          const isFullyBlocked = Boolean(dayData?.isFullyBlocked);
+                          const isInteractive = Boolean(dayData && (hasSlots || hasBlocked));
+
+                          let cellStyle =
+                            'border-transparent bg-transparent text-zinc-600/70 cursor-default';
+                          if (isSelected) {
+                            cellStyle =
+                              'border-cyan-300 bg-gradient-to-br from-cyan-400/25 to-indigo-500/25 text-white ring-1 ring-cyan-300/70 shadow-sm cursor-pointer';
+                          } else if (isFullyBlocked) {
+                            cellStyle =
+                              'border-rose-500/35 bg-rose-500/15 text-rose-300 cursor-pointer hover:border-rose-400/60';
+                          } else if (hasSlots) {
+                            cellStyle =
+                              'border-white/[0.08] bg-surface/90 text-zinc-100 hover:border-cyan-400/50 hover:bg-cyan-400/10 cursor-pointer';
+                          } else if (cell.isWeekend) {
+                            cellStyle =
+                              'border-transparent bg-white/[0.015] text-zinc-600/60 cursor-default';
+                          }
+
+                          return (
+                            <button
+                              key={cell.key}
+                              type="button"
+                              disabled={!isInteractive}
+                              onClick={() => isInteractive && handleSelectDay(cell.dateStr)}
+                              title={
+                                isFullyBlocked
+                                  ? av.blockedLabel
+                                  : hasSlots
+                                  ? `${dayData.slots.length} ${av.slotsWord}`
+                                  : ''
+                              }
+                              className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border font-mono text-xs font-semibold transition-all ${cellStyle}`}
+                            >
+                              <span>{cell.day}</span>
+                              {(hasSlots || hasBlocked) && (
+                                <span className="mt-0.5 flex items-center gap-0.5">
+                                  {hasSlots && (
+                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                  )}
+                                  {hasBlocked && (
+                                    <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                                  )}
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Calendar Color Legend */}
+                      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-white/[0.07] pt-3 font-mono text-[10px] text-zinc-400">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                          <span>{av.legendAvailable}</span>
                         </span>
-                      )}
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-rose-400" />
+                          <span>{av.legendBlocked}</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-2 w-2 rounded-full bg-zinc-600" />
+                          <span>{av.legendUnavailable}</span>
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-5">
-                      {visibleWeek.map((day) => {
-                        const slots = day.slots || [];
-                        return (
-                          <div
-                            key={day.date}
-                            className="flex flex-col overflow-hidden rounded-xl border border-white/[0.08] bg-obsidian/75"
-                          >
-                            {/* Column Day Header */}
-                            <div className="border-b border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-center">
-                              <p className="font-display text-xs font-bold text-white">
-                                {lang === 'es' ? day.dayLabelEs : day.dayLabelEn}
-                              </p>
-                              <p
-                                className={`mt-0.5 font-mono text-[10px] ${
-                                  slots.length > 0 ? 'text-emerald-300' : 'text-zinc-500'
+                    {/* RIGHT: Selected Day Schedule (Green Available + Red Blocked Slots) */}
+                    <div className="flex flex-col rounded-2xl border border-white/10 bg-obsidian/80 p-4 lg:col-span-6">
+                      <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/[0.07] pb-3">
+                        <div>
+                          <span className="font-mono text-[10px] uppercase tracking-wider text-cyan-400">
+                            <Calendar className="mr-1 inline h-3 w-3" />
+                            {av.selectedDayHeading}
+                          </span>
+                          <h3 className="mt-0.5 font-display text-base font-bold text-white">
+                            {selectedDay
+                              ? lang === 'es'
+                                ? selectedDay.dayLabelEs
+                                : selectedDay.dayLabelEn
+                              : '—'}
+                          </h3>
+                        </div>
+                        {selectedDay && (
+                          <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+                            <span className="rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-emerald-300">
+                              {selectedDay.slots?.length || 0} {av.legendAvailable.toLowerCase()}
+                            </span>
+                            {(selectedDay.blockedCount || 0) > 0 && (
+                              <span className="rounded-md border border-rose-500/35 bg-rose-500/15 px-2 py-0.5 text-rose-300">
+                                {selectedDay.blockedCount} {av.blockedLabel.toLowerCase()}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {dayAllSlots.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                          {dayAllSlots.map((slot) => {
+                            const isBlocked = slot.status === 'blocked';
+                            const isPast = slot.status === 'past';
+                            const isAvailable = slot.status === 'available';
+                            const isChosen = selectedSlot?.start === slot.start;
+                            const localFormatted = showVisitorTz
+                              ? formatSlotInTimezone(slot.start, visitorTz)
+                              : null;
+
+                            if (isBlocked) {
+                              return (
+                                <div
+                                  key={slot.start}
+                                  aria-disabled="true"
+                                  title={av.blockedLabel}
+                                  className="flex cursor-not-allowed flex-col items-center justify-center rounded-xl border border-rose-500/35 bg-rose-500/12 px-2.5 py-2 font-mono text-rose-300/90"
+                                >
+                                  <span className="flex items-center gap-1 text-xs font-semibold line-through decoration-rose-400/70">
+                                    <Ban className="h-3 w-3 text-rose-400" />
+                                    {slot.labelArt}
+                                  </span>
+                                  <span className="text-[9px] uppercase tracking-wider text-rose-300/80">
+                                    {av.blockedLabel}
+                                  </span>
+                                </div>
+                              );
+                            }
+
+                            if (isPast) {
+                              return (
+                                <div
+                                  key={slot.start}
+                                  aria-disabled="true"
+                                  className="flex cursor-not-allowed flex-col items-center justify-center rounded-xl border border-white/[0.05] bg-white/[0.02] px-2.5 py-2 font-mono text-zinc-600"
+                                >
+                                  <span className="text-xs line-through">{slot.labelArt}</span>
+                                  <span className="text-[9px] uppercase">{av.pastSlotLabel}</span>
+                                </div>
+                              );
+                            }
+
+                            return (
+                              <button
+                                key={slot.start}
+                                type="button"
+                                disabled={!isAvailable}
+                                onClick={() => handleSelectSlot(slot)}
+                                className={`flex flex-col items-center justify-center rounded-xl border px-2.5 py-2 font-mono transition-all ${
+                                  isChosen
+                                    ? 'border-cyan-300 bg-gradient-to-br from-cyan-400/25 to-indigo-500/25 text-white ring-1 ring-cyan-300/70'
+                                    : isViewOnly
+                                    ? 'cursor-default border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+                                    : 'cursor-pointer border-emerald-400/25 bg-emerald-500/[0.08] text-emerald-100 hover:border-cyan-400/60 hover:bg-cyan-400/15 hover:text-white'
                                 }`}
                               >
-                                {slots.length > 0 ? `${slots.length} ${av.slotsWord}` : av.noSlotsDay}
-                              </p>
-                            </div>
+                                <span className="text-xs font-semibold">{slot.labelArt} ART</span>
+                                {localFormatted ? (
+                                  <span className="text-[9px] text-zinc-300">
+                                    {localFormatted} local
+                                  </span>
+                                ) : (
+                                  <span className="text-[9px] text-emerald-300/80">
+                                    {av.legendAvailable}
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="my-auto py-8 text-center text-xs text-zinc-400">
+                          {av.noSlotsSelectedDay}
+                        </div>
+                      )}
 
-                            {/* Day's Time Slots Stack */}
-                            <div className="grid max-h-56 grid-cols-3 gap-1.5 overflow-y-auto p-2 sm:grid-cols-1">
-                              {slots.length > 0 ? (
-                                slots.map((slot) => {
-                                  const isChosen = selectedSlot?.start === slot.start;
-                                  const localFormatted = showVisitorTz
-                                    ? formatSlotInTimezone(slot.start, visitorTz)
-                                    : null;
-                                  return (
-                                    <button
-                                      key={slot.start}
-                                      type="button"
-                                      onClick={() => handleSelectSlot(day, slot)}
-                                      className={`flex flex-col items-center justify-center rounded-lg border px-2 py-1.5 font-mono transition-all ${
-                                        isChosen
-                                          ? 'border-cyan-300 bg-gradient-to-r from-cyan-400/25 to-indigo-500/25 text-white ring-1 ring-cyan-300/60'
-                                          : 'border-white/[0.08] bg-surface/80 text-zinc-200 hover:border-cyan-400/45 hover:bg-cyan-400/10'
-                                      }`}
-                                    >
-                                      <span className="text-[11px] font-semibold">
-                                        {slot.labelArt}
-                                      </span>
-                                      {localFormatted && (
-                                        <span className="text-[9px] text-zinc-400">
-                                          {localFormatted} loc
-                                        </span>
-                                      )}
-                                    </button>
-                                  );
-                                })
-                              ) : (
-                                <p className="col-span-3 py-4 text-center text-[11px] text-zinc-500 sm:col-span-1">
-                                  {av.noSlotsDay}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
+                      {!isViewOnly && (
+                        <p className="mt-auto pt-4 text-center font-mono text-[10px] text-zinc-500">
+                          {av.clickGreenSlotHint}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Booking / OTP Form (visible once a slot is selected) */}
-                  {selectedSlot && selectedDay && (
+                  {/* Booking / OTP Form (visible in book mode once a green slot is selected) */}
+                  {!isViewOnly && selectedSlot && selectedDay && (
                     <div className="rounded-2xl border border-cyan-400/25 bg-obsidian/90 p-4 sm:p-5">
                       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
                         <div className="text-xs">
@@ -682,7 +925,6 @@ export function AvailabilityModal({ isOpen, onClose }) {
                             onSubmit={otpRequired ? handleRequestOtp : handleConfirmBooking}
                             className="space-y-3.5"
                           >
-                            {/* Hidden anti-bot honeypot */}
                             <input
                               type="text"
                               tabIndex={-1}
@@ -693,7 +935,6 @@ export function AvailabilityModal({ isOpen, onClose }) {
                               aria-hidden="true"
                             />
 
-                            {/* Interview Title / Role Presets + Input */}
                             <div>
                               <label className="mb-1.5 block font-mono text-[11px] text-zinc-400">
                                 {av.interviewTitleLabel} *

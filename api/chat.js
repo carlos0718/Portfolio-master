@@ -248,6 +248,14 @@ export default async function handler(req, res) {
         // 4. Layer 3 Security Guard: Output leakage check
         const validatedText = validateAssistantOutput(finalText, lang);
 
+        const showCalendar =
+          !bookedInterview &&
+          !otpPending &&
+          (toolsUsed.includes('check_availability') ||
+            /\b(disponib|availab|horario|calendario|calendar|agenda|agendar|entrevista|interview|coordinar)\b/i.test(
+              sanitizedText
+            ));
+
         return res.status(200).json({
           response: validatedText,
           mode: 'ai',
@@ -255,6 +263,7 @@ export default async function handler(req, res) {
           ...(toolsUsed.length > 0 ? { toolsUsed } : {}),
           ...(bookedInterview ? { booking: bookedInterview } : {}),
           ...(otpPending ? { otpPending } : {}),
+          ...(showCalendar ? { showCalendar: true } : {}),
           conversationId: Date.now()
         });
       } catch (modelError) {

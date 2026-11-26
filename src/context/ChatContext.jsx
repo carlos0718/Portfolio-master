@@ -149,6 +149,7 @@ export function ChatProvider({ children }) {
         mode: data.mode || 'ai',
         content: data.response,
         ...(data.booking ? { booking: data.booking } : {}),
+        ...(data.showCalendar ? { showCalendar: true } : {}),
         timestamp: new Date().toISOString()
       };
 

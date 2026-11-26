@@ -382,10 +382,35 @@ export function computeAvailabilityFromEvents(
       effectiveStartMs = Math.ceil(minBookableMs / stepMs) * stepMs;
     }
 
-    if (effectiveStartMs + slotMs > winEndMs) continue;
+    // Build complete 11:00..17:00 schedule marking every 30-min slot as available | blocked | past
+    // (Strictly anonymous: never reveals why a slot is blocked)
+    const allSlots = [];
+    for (let cursor = winStartMs; cursor + slotMs <= winEndMs; cursor += stepMs) {
+      const slotEnd = cursor + slotMs;
+      const sParts = toArtParts(new Date(cursor));
+      const eParts = toArtParts(new Date(slotEnd));
 
-    // Subtract merged busy intervals from [effectiveStartMs, winEndMs]
-    let freeRanges = [{ start: effectiveStartMs, end: winEndMs }];
+      const overlapsBusy = mergedBusy.some((b) => cursor < b.end && slotEnd > b.start);
+      let status = 'available';
+      if (overlapsBusy) {
+        status = 'blocked';
+      } else if (cursor < effectiveStartMs) {
+        status = 'past';
+      }
+
+      allSlots.push({
+        start: makeArtIso(sParts.year, sParts.month, sParts.day, sParts.hour, sParts.minute),
+        end: makeArtIso(eParts.year, eParts.month, eParts.day, eParts.hour, eParts.minute),
+        labelArt: `${pad2(sParts.hour)}:${pad2(sParts.minute)}`,
+        status
+      });
+    }
+
+    // Subtract merged busy intervals from [effectiveStartMs, winEndMs] for concise text windows
+    let freeRanges =
+      effectiveStartMs + slotMs <= winEndMs
+        ? [{ start: effectiveStartMs, end: winEndMs }]
+        : [];
     for (const busy of mergedBusy) {
       if (busy.end <= effectiveStartMs || busy.start >= winEndMs) continue;
       const nextRanges = [];
@@ -407,21 +432,8 @@ export function computeAvailabilityFromEvents(
     // Keep only windows long enough for at least one slot
     const usableWindows = freeRanges.filter((r) => r.end - r.start >= slotMs);
 
-    // Build clean 30-minute-aligned bookable slots
-    const slots = [];
-    for (const w of usableWindows) {
-      let cursor = Math.ceil(w.start / stepMs) * stepMs;
-      while (cursor + slotMs <= w.end) {
-        const sParts = toArtParts(new Date(cursor));
-        const eParts = toArtParts(new Date(cursor + slotMs));
-        slots.push({
-          start: makeArtIso(sParts.year, sParts.month, sParts.day, sParts.hour, sParts.minute),
-          end: makeArtIso(eParts.year, eParts.month, eParts.day, eParts.hour, eParts.minute),
-          labelArt: `${pad2(sParts.hour)}:${pad2(sParts.minute)}`
-        });
-        cursor += stepMs;
-      }
-    }
+    const slots = allSlots.filter((s) => s.status === 'available');
+    const blockedCount = allSlots.filter((s) => s.status === 'blocked').length;
 
     const freeWindows = usableWindows.map((w) => {
       const sParts = toArtParts(new Date(w.start));
@@ -438,7 +450,10 @@ export function computeAvailabilityFromEvents(
       dayLabelEs: `${DAY_NAMES_ES[d.dayOfWeek]} ${d.day} ${MONTH_NAMES_ES[d.month - 1]}`,
       dayLabelEn: `${DAY_NAMES_EN[d.dayOfWeek]}, ${MONTH_NAMES_EN[d.month - 1]} ${d.day}`,
       freeWindows,
-      slots
+      slots,
+      allSlots,
+      blockedCount,
+      isFullyBlocked: slots.length === 0 && blockedCount > 0
     });
   }
 

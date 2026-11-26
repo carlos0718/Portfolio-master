@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  Calendar,
   CheckCircle2,
   Download,
   ExternalLink,
+  Maximize2,
   RotateCcw,
   Send,
   ShieldCheck,
@@ -113,7 +115,7 @@ function FormattedMessage({ content, onNavigate, primaryCv }) {
   );
 }
 
-export function ChatWidget() {
+export function ChatWidget({ onOpenCalendar }) {
   const {
     isOpen,
     toggleChat,
@@ -248,6 +250,17 @@ export function ChatWidget() {
               </div>
 
               <div className="flex items-center gap-1">
+                {onOpenCalendar && (
+                  <button
+                    type="button"
+                    onClick={onOpenCalendar}
+                    title={t.availability.openCalendarBtn}
+                    aria-label={t.availability.openCalendarBtn}
+                    className="rounded-lg p-1.5 text-cyan-300 transition-colors hover:bg-cyan-400/15 hover:text-cyan-200"
+                  >
+                    <Calendar className="h-4 w-4" />
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={clearChat}
@@ -307,6 +320,29 @@ export function ChatWidget() {
                             onNavigate={closeChat}
                             primaryCv={primaryCv}
                           />
+                          {msg.showCalendar && !msg.booking && onOpenCalendar && (
+                            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-cyan-400/25 bg-cyan-400/[0.08] px-3 py-2">
+                              <div className="flex items-center gap-2 font-mono text-[10px] text-zinc-300">
+                                <span className="inline-flex items-center gap-1">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                  {t.availability.legendAvailable}
+                                </span>
+                                <span className="inline-flex items-center gap-1">
+                                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                                  {t.availability.blockedLabel}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={onOpenCalendar}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/40 bg-cyan-400/15 px-2.5 py-1 font-mono text-[11px] font-semibold text-cyan-100 transition-colors hover:bg-cyan-400/25"
+                              >
+                                <Calendar className="h-3.5 w-3.5 text-cyan-300" />
+                                <span>{t.availability.openCalendarBtn}</span>
+                                <Maximize2 className="h-3 w-3 text-cyan-300" />
+                              </button>
+                            </div>
+                          )}
                           {msg.booking && (
                             <div className="mt-3 space-y-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-xs">
                               <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
