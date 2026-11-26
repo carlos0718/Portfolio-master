@@ -98,7 +98,7 @@ export function ChatProvider({ children }) {
     // Build clean history strictly excluding welcome & error turns BEFORE appending the new user turn
     const historyPayload = messagesRef.current
       .filter((m) => !m.isWelcome && (m.role === 'user' || m.role === 'assistant'))
-      .slice(-8)
+      .slice(-14)
       .map((m) => ({
         role: m.role,
         content: m.content

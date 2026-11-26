@@ -9,7 +9,7 @@
  */
 
 export const MAX_MESSAGE_LENGTH = 600;
-export const MAX_HISTORY_TURNS = 8;
+export const MAX_HISTORY_TURNS = 14;
 
 const SPANISH_HINT_REGEX =
   /[áéíóúñ¿¡]|\b(hola|que|qué|como|cómo|donde|dónde|cual|cuál|cuanto|cuánto|experiencia|estudios|estudiando|universidad|carrera|certificados|cursos|tecnologias|tecnologías|sueldo|salario|pretension|pretensión|disponibilidad|remoto|contacto|proyectos|trabajo|trabaja|trabajó|habilidades|sobre|carlos|cv|curriculum|currículum|entrevista|reunion|reunión|agendar|horario|calendario|llamada|confirmar|correo|ignora|instrucciones|actua|actúa|dame|escribe|escribeme|escríbeme)\b/i;
