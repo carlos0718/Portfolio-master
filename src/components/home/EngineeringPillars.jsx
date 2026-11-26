@@ -33,16 +33,14 @@ export function EngineeringPillars() {
           </p>
         </div>
 
-        {/* Asymmetric 6-column Bento Grid (Top row: 4 + 2, Bottom row: 2 + 2 + 2) */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-6">
+        {/* Asymmetric Bento Grid: 1 col mobile, 2 cols tablet (md), 6-col 4+2 / 2+2+2 desktop (lg) */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
           {pillars.map((pillar, index) => {
             const Icon = PILLAR_ICONS[pillar.id] || Cpu;
             const colSpanClass =
               index === 0
-                ? 'md:col-span-4'
-                : index === 1
-                ? 'md:col-span-2'
-                : 'md:col-span-2';
+                ? 'md:col-span-2 lg:col-span-4'
+                : 'md:col-span-1 lg:col-span-2';
 
             const isAI = pillar.id === 'ai-engineering';
 

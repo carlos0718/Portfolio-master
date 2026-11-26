@@ -91,7 +91,7 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
           {/* Brand */}
           <Link
             to="/"
-            className="group flex items-center gap-2.5 text-zinc-100 no-underline"
+            className="group flex shrink-0 items-center gap-2.5 text-zinc-100 no-underline"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/30 bg-gradient-to-br from-cyan-500/20 via-indigo-500/20 to-transparent font-display text-sm font-bold tracking-tight text-cyan-300 transition-transform duration-200 group-hover:scale-105">
               {professionalData.personal.shortName}
@@ -101,14 +101,14 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-1 md:flex">
+          {/* Desktop Navigation (activates at lg >= 1024px with compact lg spacing and spacious xl spacing) */}
+          <div className="hidden items-center gap-0.5 lg:flex xl:gap-1">
             {navItems.map((item) =>
               item.type === 'route' ? (
                 <Link
                   key={item.label}
                   to={item.to}
-                  className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+                  className={`whitespace-nowrap rounded-lg px-2 py-2 text-[13px] font-medium transition-colors xl:px-3.5 xl:text-sm ${
                     isRouteActive(item.to)
                       ? 'bg-white/[0.08] text-white'
                       : 'text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100'
@@ -121,7 +121,7 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
                   key={item.label}
                   type="button"
                   onClick={() => handleAnchorClick(item.hash)}
-                  className="rounded-lg px-3.5 py-2 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-zinc-100"
+                  className="whitespace-nowrap rounded-lg px-2 py-2 text-[13px] font-medium text-zinc-400 transition-colors hover:bg-white/[0.04] hover:text-zinc-100 xl:px-3.5 xl:text-sm"
                 >
                   {item.label}
                 </button>
@@ -129,8 +129,8 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
             )}
           </div>
 
-          {/* Right Controls */}
-          <div className="hidden items-center gap-2 md:flex">
+          {/* Right Controls (Desktop >= 1024px) */}
+          <div className="hidden shrink-0 items-center gap-1.5 lg:flex xl:gap-2">
             {/* Command Palette Trigger */}
             <button
               type="button"
@@ -138,22 +138,22 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
                 setCvMenuOpen(false);
                 onOpenCommandPalette();
               }}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:border-cyan-400/30 hover:text-zinc-100"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-2 py-1.5 text-xs font-medium text-zinc-400 transition-colors hover:border-cyan-400/30 hover:text-zinc-100 xl:gap-2 xl:px-3"
               aria-label={t.nav.commandHint}
               title={`${t.nav.commandHint} (Ctrl+K / ⌘K)`}
             >
               <Search className="h-3.5 w-3.5 text-cyan-400" />
-              <kbd className="font-mono text-[11px] text-zinc-400">⌘K</kbd>
+              <kbd className="hidden font-mono text-[11px] text-zinc-400 xl:inline">⌘K</kbd>
             </button>
 
             {/* Language Switcher */}
             <button
               type="button"
               onClick={toggleLanguage}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-1.5 font-mono text-xs font-medium text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.06]"
+              className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/[0.03] px-2 py-1.5 font-mono text-xs font-medium text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/[0.06] xl:gap-1.5 xl:px-2.5"
               aria-label="Toggle language ES/EN"
             >
-              <Globe className="h-3.5 w-3.5 text-zinc-400" />
+              <Globe className="hidden h-3.5 w-3.5 text-zinc-400 xl:block" />
               <span className={lang === 'es' ? 'text-cyan-300' : 'text-zinc-500'}>ES</span>
               <span className="text-zinc-600">/</span>
               <span className={lang === 'en' ? 'text-cyan-300' : 'text-zinc-500'}>EN</span>
@@ -163,9 +163,9 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
             <button
               type="button"
               onClick={openChat}
-              className="inline-flex items-center gap-2 rounded-xl border border-indigo-400/30 bg-indigo-500/10 px-3 py-1.5 text-xs font-semibold text-indigo-200 transition-all hover:border-indigo-400/60 hover:bg-indigo-500/20"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-400/30 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-semibold text-indigo-200 transition-all hover:border-indigo-400/60 hover:bg-indigo-500/20 xl:gap-2 xl:px-3"
             >
-              <AIBotAvatar size={20} />
+              <AIBotAvatar size={19} />
               <span>{t.nav.aiAssistant}</span>
             </button>
 
@@ -176,7 +176,7 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
                   type="button"
                   onClick={() => setCvMenuOpen((prev) => !prev)}
                   aria-expanded={cvMenuOpen}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:bg-white/[0.08]"
+                  className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-2 py-1.5 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:bg-white/[0.08] xl:gap-1.5 xl:px-3"
                 >
                   <Download className="h-3.5 w-3.5 text-cyan-400" />
                   <span>CV</span>
@@ -212,7 +212,7 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
                 download={cvs[0]?.fileName || 'Carlos-Jesus-CV.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:bg-white/[0.08]"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-1.5 text-xs font-semibold text-zinc-200 transition-colors hover:border-white/25 hover:bg-white/[0.08] xl:px-3"
               >
                 <Download className="h-3.5 w-3.5 text-cyan-400" />
                 <span>CV</span>
@@ -224,15 +224,23 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
               href={professionalData.personal.whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-xl bg-zinc-100 px-3.5 py-1.5 text-xs font-semibold text-zinc-950 transition-all hover:bg-cyan-300"
+              className="inline-flex items-center gap-1 whitespace-nowrap rounded-xl bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-950 transition-all hover:bg-cyan-300 xl:px-3.5"
             >
               <span>{t.nav.contact}</span>
               <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
           </div>
 
-          {/* Mobile Controls */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile & Tablet Controls (< 1024px) */}
+          <div className="flex shrink-0 items-center gap-2 lg:hidden">
+            <button
+              type="button"
+              onClick={openChat}
+              className="hidden items-center gap-1.5 rounded-xl border border-indigo-400/30 bg-indigo-500/10 px-2.5 py-1.5 text-xs font-semibold text-indigo-200 sm:inline-flex"
+            >
+              <AIBotAvatar size={18} />
+              <span>{t.nav.aiAssistant}</span>
+            </button>
             <button
               type="button"
               onClick={onOpenCommandPalette}
@@ -261,9 +269,9 @@ export function Navbar({ onOpenCommandPalette, onOpenAvailability }) {
           </div>
         </nav>
 
-        {/* Mobile Menu Drawer */}
+        {/* Mobile & Tablet Menu Drawer (< 1024px) */}
         {mobileOpen && (
-          <div className="mt-2 rounded-2xl border border-white/10 bg-surface/95 p-4 shadow-bento backdrop-blur-xl md:hidden">
+          <div className="mt-2 rounded-2xl border border-white/10 bg-surface/95 p-4 shadow-bento backdrop-blur-xl lg:hidden">
             <div className="flex flex-col gap-1">
               {navItems.map((item) =>
                 item.type === 'route' ? (
