@@ -9,13 +9,15 @@
  * interview events with Google Meet + email invitations (`sendUpdates=all`).
  */
 
+import { isOtpEnabled, verifyEmailDomainMx } from './emailVerification.js';
+
 const CALENDAR_TIMEZONE = 'America/Argentina/Buenos_Aires';
 const ART_OFFSET = '-03:00'; // Argentina has no DST (permanent UTC-3)
 const WINDOW_START_HOUR = Number(process.env.AVAILABILITY_START_HOUR) || 11;
 const WINDOW_END_HOUR = Number(process.env.AVAILABILITY_END_HOUR) || 17;
 const DEFAULT_BUFFER_MINUTES = Number(process.env.CALENDAR_BUFFER_MINUTES) || 15;
 const MIN_LEAD_TIME_MINUTES = 120; // At least 2h notice for same-day interviews
-const MAX_ADVANCE_DAYS = 14;
+const MAX_ADVANCE_DAYS = 16;
 const AVAILABILITY_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes fresh cache
 
 const MEDICAL_KEYWORDS = [
@@ -287,7 +289,7 @@ function getUpcomingBusinessDates(now, count = 5) {
   let cursorUtcNoon = Date.UTC(baseArt.year, baseArt.month - 1, baseArt.day, 12, 0, 0);
 
   let guard = 0;
-  while (result.length < count && guard < 20) {
+  while (result.length < count && guard < 35) {
     guard++;
     const d = new Date(cursorUtcNoon);
     const dow = d.getUTCDay();
@@ -453,6 +455,7 @@ export function computeAvailabilityFromEvents(
   return {
     source,
     bookingEnabled: source === 'google_calendar',
+    otpRequired: isOtpEnabled(),
     timezone: CALENDAR_TIMEZONE,
     utcOffset: ART_OFFSET,
     window: {
@@ -542,7 +545,7 @@ export async function getLiveAvailability({
 
   try {
     const rawEvents = await fetchUpcomingCalendarEvents({
-      daysAhead: Math.max(10, businessDays * 2),
+      daysAhead: Math.max(16, businessDays * 2 + 4),
       bypassCache
     });
     return computeAvailabilityFromEvents(rawEvents || [], {
@@ -565,6 +568,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export function validateBookingRequest({
   startIso,
   durationMinutes = 30,
+  interviewTitle = '',
   recruiterName = '',
   recruiterEmail = '',
   company = '',
@@ -574,6 +578,8 @@ export function validateBookingRequest({
   if (![30, 45].includes(safeDuration)) {
     return { ok: false, error: 'La duración permitida para entrevistas es 30 o 45 minutos.' };
   }
+
+  const cleanTitle = String(interviewTitle || '').trim().slice(0, 100) || 'Entrevista laboral';
 
   const cleanName = String(recruiterName || '').trim().slice(0, 100);
   if (cleanName.length < 2) {
@@ -649,6 +655,7 @@ export function validateBookingRequest({
       ),
       endIso: makeArtIso(endArt.year, endArt.month, endArt.day, endArt.hour, endArt.minute),
       durationMinutes: safeDuration,
+      interviewTitle: cleanTitle,
       recruiterName: cleanName,
       recruiterEmail: cleanEmail,
       company: String(company || '').trim().slice(0, 100),
@@ -684,14 +691,27 @@ export async function createInterviewEvent(payload) {
     startIso,
     endIso,
     durationMinutes,
+    interviewTitle,
     recruiterName,
     recruiterEmail,
     company,
     notes
   } = validation.data;
 
+  // Real DNS MX + typo check on recipient email before creating a calendar event
+  const mxCheck = await verifyEmailDomainMx(recruiterEmail);
+  if (!mxCheck.valid) {
+    return {
+      ok: false,
+      statusCode: 400,
+      code: mxCheck.reason || 'invalid_email_domain',
+      suggestion: mxCheck.suggestion || null,
+      error: mxCheck.error
+    };
+  }
+
   // Live double-check against Google Calendar (bypass cache to prevent double-booking)
-  const rawEvents = await fetchUpcomingCalendarEvents({ daysAhead: MAX_ADVANCE_DAYS, bypassCache: true });
+  const rawEvents = await fetchUpcomingCalendarEvents({ daysAhead: MAX_ADVANCE_DAYS + 2, bypassCache: true });
   const bufferMs = DEFAULT_BUFFER_MINUTES * 60 * 1000;
   const hasConflict = (rawEvents || []).some((ev) => {
     if (!isBlockingEvent(ev)) return false;
@@ -712,11 +732,12 @@ export async function createInterviewEvent(payload) {
 
   const accessToken = await getAccessToken();
   const titleCompany = company ? ` (${company})` : '';
-  const summary = `Entrevista laboral — ${recruiterName}${titleCompany} × Carlos Jesús`;
+  const summary = `${interviewTitle} — ${recruiterName}${titleCompany} × Carlos Jesús`;
   const descriptionLines = [
     'Entrevista agendada desde el portfolio de Carlos Jesús (carlos.dev).',
+    `Motivo / Rol: ${interviewTitle}`,
     `Recruiter / Contacto: ${recruiterName} (${recruiterEmail})`,
-    company ? `Empresa / Rol: ${company}` : null,
+    company ? `Empresa: ${company}` : null,
     notes ? `Notas: ${notes}` : null
   ].filter(Boolean);
 

@@ -1,4 +1,5 @@
-import { createInterviewEvent, getLiveAvailability } from './calendar.js';
+import { createInterviewEvent, getLiveAvailability, validateBookingRequest } from './calendar.js';
+import { isOtpEnabled, sendBookingOtp, verifyBookingOtp } from './emailVerification.js';
 
 /**
  * Strict anti-spam booking rate limiter (separate from general chat rate limit):
@@ -49,13 +50,13 @@ export const CALENDAR_TOOL_DECLARATIONS = [
   {
     name: 'check_availability',
     description:
-      'Checks Carlos Jesús real-time open interview slots for the upcoming business days (Mon–Fri, 11:00–17:00 Argentina Time UTC-3). Returns ONLY anonymous free windows and 30/45-min slots; never returns private calendar event names.',
+      'Checks Carlos Jesús real-time open interview slots for the upcoming business days (up to 10 business days / ~15 calendar days, Mon–Fri, 11:00–17:00 Argentina Time UTC-3). Returns ONLY anonymous free windows and exact day labels; never returns private calendar event names.',
     parameters: {
       type: 'OBJECT',
       properties: {
         businessDays: {
           type: 'INTEGER',
-          description: 'Number of upcoming business days to check (1 to 7, default 5).'
+          description: 'Number of upcoming business days to check (1 to 10, default 10 for 2 weeks).'
         },
         durationMinutes: {
           type: 'INTEGER',
@@ -65,20 +66,56 @@ export const CALENDAR_TOOL_DECLARATIONS = [
     }
   },
   {
+    name: 'send_verification_code',
+    description:
+      'Sends a 6-digit email verification OTP code to the recruiter email before creating the Google Calendar event (required when OTP verification is active). Call this once you have the chosen slot, interviewTitle, recruiterName, and recruiterEmail.',
+    parameters: {
+      type: 'OBJECT',
+      properties: {
+        startIso: {
+          type: 'STRING',
+          description: 'Exact start timestamp in ISO-8601 Argentina offset (-03:00), e.g. "2026-12-01T12:00:00-03:00".'
+        },
+        durationMinutes: {
+          type: 'INTEGER',
+          description: 'Interview duration: 30 or 45 minutes (default 30).'
+        },
+        interviewTitle: {
+          type: 'STRING',
+          description: 'Interview title/role, e.g. "Entrevista Full Stack", "Entrevista Frontend", "Entrevista AI Engineer".'
+        },
+        recruiterName: {
+          type: 'STRING',
+          description: 'Full name of the recruiter or interviewer.'
+        },
+        recruiterEmail: {
+          type: 'STRING',
+          description: 'Email address of the recruiter to verify.'
+        }
+      },
+      required: ['startIso', 'interviewTitle', 'recruiterName', 'recruiterEmail']
+    }
+  },
+  {
     name: 'book_interview',
     description:
-      'Books a confirmed job interview on Carlos Jesús Google Calendar with an automatic Google Meet link and sends official calendar email invitations to both the recruiter and Carlos. ONLY call this tool AFTER the recruiter has explicitly chosen a free slot AND provided their name and email address AND confirmed they want to book.',
+      'Books a confirmed job interview on Carlos Jesús Google Calendar with an automatic Google Meet link and sends official calendar email invitations to both the recruiter and Carlos. NEVER pretend to book without calling this tool and receiving ok=true. If OTP verification is active, you MUST include the 6-digit otpCode the recruiter received via send_verification_code.',
     parameters: {
       type: 'OBJECT',
       properties: {
         startIso: {
           type: 'STRING',
           description:
-            'Exact start timestamp in ISO-8601 Argentina offset (-03:00), e.g. "2026-11-26T15:00:00-03:00", taken from check_availability.'
+            'Exact start timestamp in ISO-8601 Argentina offset (-03:00), e.g. "2026-12-01T12:00:00-03:00", taken from check_availability.'
         },
         durationMinutes: {
           type: 'INTEGER',
           description: 'Interview duration: 30 or 45 minutes (default 30).'
+        },
+        interviewTitle: {
+          type: 'STRING',
+          description:
+            'Title or role for the calendar invite, e.g. "Entrevista Full Stack", "Entrevista Frontend", "Entrevista AI Engineer".'
         },
         recruiterName: {
           type: 'STRING',
@@ -88,31 +125,42 @@ export const CALENDAR_TOOL_DECLARATIONS = [
           type: 'STRING',
           description: 'Valid email address of the recruiter to receive the Google Calendar invitation.'
         },
+        otpCode: {
+          type: 'STRING',
+          description: '6-digit verification code provided by the recruiter (required when OTP is enabled).'
+        },
         company: {
           type: 'STRING',
-          description: 'Optional company name or role being discussed.'
+          description: 'Optional company name.'
         },
         notes: {
           type: 'STRING',
           description: 'Optional short note about the interview topic.'
         }
       },
-      required: ['startIso', 'recruiterName', 'recruiterEmail']
+      required: ['startIso', 'interviewTitle', 'recruiterName', 'recruiterEmail']
     }
   }
 ];
 
 /**
- * Executes a Gemini calendar tool call with strict server-side validation & rate limiting.
+ * Executes a Gemini calendar tool call with strict server-side validation,
+ * DNS MX checks, optional Resend OTP verification, & rate limiting.
  */
-export async function executeCalendarTool(toolName, args = {}, clientIp = 'unknown') {
+export async function executeCalendarTool(
+  toolName,
+  args = {},
+  clientIp = 'unknown',
+  sessionContext = {}
+) {
   if (toolName === 'check_availability') {
-    const businessDays = Math.min(7, Math.max(1, Number(args?.businessDays) || 5));
+    const businessDays = Math.min(10, Math.max(1, Number(args?.businessDays) || 10));
     const durationMinutes = Number(args?.durationMinutes) === 45 ? 45 : 30;
     const avail = await getLiveAvailability({ businessDays, durationMinutes });
     return {
       source: avail.source,
       bookingEnabled: avail.bookingEnabled,
+      otpRequired: avail.otpRequired,
       timezone: avail.timezone,
       window: avail.window.labelEs,
       durationMinutes: avail.durationMinutes,
@@ -121,8 +169,54 @@ export async function executeCalendarTool(toolName, args = {}, clientIp = 'unkno
         dayLabelEs: d.dayLabelEs,
         dayLabelEn: d.dayLabelEn,
         freeWindows: d.freeWindows.map((w) => w.labelArt),
-        sampleSlotsIso: d.slots.slice(0, 8).map((s) => s.start)
+        sampleSlotsIso: d.slots.slice(0, 10).map((s) => s.start)
       }))
+    };
+  }
+
+  if (toolName === 'send_verification_code') {
+    if (!isOtpEnabled()) {
+      return {
+        ok: true,
+        otpRequired: false,
+        message: 'La verificación OTP no es necesaria en este entorno. Podés llamar directamente a book_interview ahora.'
+      };
+    }
+
+    const preCheck = validateBookingRequest({
+      startIso: args?.startIso,
+      durationMinutes: Number(args?.durationMinutes) === 45 ? 45 : 30,
+      interviewTitle: args?.interviewTitle,
+      recruiterName: args?.recruiterName,
+      recruiterEmail: args?.recruiterEmail
+    });
+    if (!preCheck.ok) {
+      return { ok: false, error: preCheck.error };
+    }
+
+    const slotLabel = `${preCheck.data.startIso.slice(0, 10)} · ${preCheck.data.startIso.slice(11, 16)}–${preCheck.data.endIso.slice(11, 16)} ART`;
+    const otpRes = await sendBookingOtp({
+      email: preCheck.data.recruiterEmail,
+      recruiterName: preCheck.data.recruiterName,
+      interviewTitle: preCheck.data.interviewTitle,
+      slotLabel,
+      clientIp
+    });
+
+    if (!otpRes.ok) {
+      return {
+        ok: false,
+        code: otpRes.code,
+        suggestion: otpRes.suggestion || null,
+        error: otpRes.error
+      };
+    }
+
+    return {
+      ok: true,
+      otpRequired: true,
+      _otpPending: { otpToken: otpRes.otpToken, email: otpRes.email },
+      message: `Se envió un código de verificación de 6 dígitos a ${otpRes.email} (válido por 10 min). Pedile al usuario ese código para finalizar la reserva en Google Calendar.`
     };
   }
 
@@ -132,9 +226,31 @@ export async function executeCalendarTool(toolName, args = {}, clientIp = 'unkno
       return { ok: false, error: rl.error };
     }
 
+    if (isOtpEnabled()) {
+      const otpCode = String(args?.otpCode || '').trim();
+      const otpToken = sessionContext?.otpToken || '';
+      if (!otpCode || !otpToken) {
+        return {
+          ok: false,
+          code: 'otp_required',
+          error:
+            'Antes de agendar, debés verificar el correo del usuario llamando primero a send_verification_code y pidiéndole el código de 6 dígitos que recibió en su email.'
+        };
+      }
+      const otpCheck = verifyBookingOtp({
+        email: args?.recruiterEmail,
+        code: otpCode,
+        otpToken
+      });
+      if (!otpCheck.ok) {
+        return { ok: false, code: 'invalid_otp', error: otpCheck.error };
+      }
+    }
+
     const result = await createInterviewEvent({
       startIso: args?.startIso,
       durationMinutes: Number(args?.durationMinutes) === 45 ? 45 : 30,
+      interviewTitle: args?.interviewTitle || 'Entrevista laboral',
       recruiterName: args?.recruiterName,
       recruiterEmail: args?.recruiterEmail,
       company: args?.company || '',
@@ -145,8 +261,10 @@ export async function executeCalendarTool(toolName, args = {}, clientIp = 'unkno
       recordBookingAttempt(clientIp, args?.recruiterEmail);
       return {
         ok: true,
-        message: 'Entrevista agendada con éxito. Se envió la invitación por email con enlace de Google Meet a ambos correos.',
+        message:
+          'Entrevista agendada con éxito en Google Calendar con enlace de Google Meet. La invitación oficial suele llegar en 1 a 5 minutos (revisar Spam/Promociones). Si tras 5–7 minutos no llega, verificar el correo ingresado.',
         booking: {
+          summary: result.booking.summary,
           startIso: result.booking.startIso,
           endIso: result.booking.endIso,
           durationMinutes: result.booking.durationMinutes,
@@ -160,6 +278,7 @@ export async function executeCalendarTool(toolName, args = {}, clientIp = 'unkno
     return {
       ok: false,
       code: result.code || 'booking_failed',
+      suggestion: result.suggestion || null,
       error: result.error
     };
   }

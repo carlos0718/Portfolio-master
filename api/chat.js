@@ -13,14 +13,31 @@ import {
 
 const DEFAULT_MODEL_CASCADE = [
   'gemini-2.5-flash-lite',
-  'gemini-2.5-flash',
+  'gemini-3.8-flash',
   'gemini-3.5-flash-lite'
 ];
 
-function getModelCascade() {
+// Stronger non-lite model prioritized whenever scheduling / tool calling is active
+const SCHEDULING_MODEL_CASCADE = [
+  'gemini-3.8-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-3.5-flash-lite'
+];
+
+const SCHEDULING_INTENT_REGEX =
+  /\b(entrevista|interview|agendar|schedule|disponib|availab|calendario|calendar|horario|reservar|book|reuni[oó]n|meeting|llamada|call|confirmo|c[oó]digo|otp|\d{6})\b|@/i;
+
+const FAKE_BOOKING_CLAIM_REGEX =
+  /(?:ha sido|fue|qued[oó]|est[aá])\s+(?:agendada|reservada|confirmada|programada)|invitaci[oó]n\s+(?:enviada|fue enviada|ha sido enviada)|has been (?:booked|scheduled|confirmed)|calendar invite (?:has been )?sent/i;
+
+function getModelCascade(preferStrongTools = false) {
   const configured = process.env.GEMINI_MODEL?.trim();
-  if (!configured) return DEFAULT_MODEL_CASCADE;
-  return [configured, ...DEFAULT_MODEL_CASCADE.filter((m) => m !== configured)];
+  const base = preferStrongTools ? SCHEDULING_MODEL_CASCADE : DEFAULT_MODEL_CASCADE;
+  if (!configured) return base;
+  if (preferStrongTools) {
+    return ['gemini-3.8-flash', configured, ...base.filter((m) => m !== configured && m !== 'gemini-3.8-flash')];
+  }
+  return [configured, ...base.filter((m) => m !== configured)];
 }
 
 function classifyGeminiError(error) {
@@ -77,7 +94,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const { message, conversationHistory = [] } = req.body || {};
+    const { message, conversationHistory = [], otpToken = '' } = req.body || {};
 
     // 2. Layer 1 Security Guard: Input validation, Prompt Injection & Off-topic check
     const inspection = inspectUserInput(message);
@@ -122,8 +139,13 @@ export default async function handler(req, res) {
       }
     ];
 
+    const hasSchedulingContext =
+      Boolean(otpToken) ||
+      SCHEDULING_INTENT_REGEX.test(sanitizedText) ||
+      safeHistory.some((h) => SCHEDULING_INTENT_REGEX.test(h.parts?.[0]?.text || ''));
+
     const ai = new GoogleGenAI({ apiKey });
-    const models = getModelCascade();
+    const models = getModelCascade(hasSchedulingContext);
     let lastErrorReason = 'provider_error';
 
     for (const modelName of models) {
@@ -131,44 +153,91 @@ export default async function handler(req, res) {
         const turnContents = [...contents];
         const toolsUsed = [];
         let bookedInterview = null;
+        let otpPending = null;
+        let activeOtpToken = String(otpToken || '').trim();
         let finalText = '';
+        let hallucinationRetryCount = 0;
 
-        // Bounded tool-calling loop (max 2 tool rounds per user turn)
-        for (let round = 0; round < 3; round++) {
+        // Bounded tool-calling loop (max 3 tool rounds per user turn)
+        for (let round = 0; round < 4; round++) {
           const result = await ai.models.generateContent({
             model: modelName,
             contents: turnContents,
             config: {
               systemInstruction,
-              temperature: 0.35,
+              temperature: hasSchedulingContext ? 0.15 : 0.35,
               topP: 0.85,
-              maxOutputTokens: 700,
+              maxOutputTokens: 750,
               tools: [{ functionDeclarations: CALENDAR_TOOL_DECLARATIONS }]
             }
           });
 
           const calls = result?.functionCalls;
           if (!Array.isArray(calls) || calls.length === 0) {
-            finalText = result?.text || '';
+            const candidateText = result?.text || '';
+
+            // Anti-hallucination guardrail: NEVER allow claiming a booking succeeded if book_interview didn't succeed!
+            if (
+              !bookedInterview &&
+              FAKE_BOOKING_CLAIM_REGEX.test(candidateText) &&
+              hallucinationRetryCount < 1
+            ) {
+              hallucinationRetryCount++;
+              turnContents.push({ role: 'model', parts: [{ text: candidateText }] });
+              turnContents.push({
+                role: 'user',
+                parts: [
+                  {
+                    text: '[SYSTEM_CORRECTION]: You did NOT call book_interview successfully yet, so NO Google Calendar event was created. Either call the required tool right now (send_verification_code or book_interview) with the details the user provided, OR honestly tell the user what exact information is still missing (interview title/role, full name, email, or 6-digit verification code). Never claim an event is booked unless book_interview returned ok:true.'
+                  }
+                ]
+              });
+              continue;
+            }
+
+            // Hard fallback if it STILL claims booking without executing book_interview
+            if (!bookedInterview && FAKE_BOOKING_CLAIM_REGEX.test(candidateText)) {
+              finalText =
+                lang === 'en'
+                  ? 'I still need to complete the booking in Google Calendar. Please share (or confirm) your **interview title/role**, **full name**, **email**, and **chosen time**, or use the **"Schedule Interview"** button at the top of the page for instant confirmation.'
+                  : 'Todavía no se registró el evento en Google Calendar. Por favor confirmame el **motivo/rol de la entrevista**, tu **nombre completo**, **correo** y **horario** (o usá el botón **"Agendar entrevista"** en el inicio para reservar al instante).';
+              break;
+            }
+
+            finalText = candidateText;
             break;
           }
 
           // Preserve model's functionCall turn
-          const modelParts = result?.candidates?.[0]?.content?.parts || calls.map((c) => ({ functionCall: c }));
+          const modelParts =
+            result?.candidates?.[0]?.content?.parts || calls.map((c) => ({ functionCall: c }));
           turnContents.push({ role: 'model', parts: modelParts });
 
           // Execute each requested calendar tool safely server-side
           const responseParts = [];
           for (const call of calls.slice(0, 2)) {
             toolsUsed.push(call.name);
-            const toolOutput = await executeCalendarTool(call.name, call.args || {}, clientIp);
+            const toolOutput = await executeCalendarTool(call.name, call.args || {}, clientIp, {
+              otpToken: activeOtpToken
+            });
+
+            if (toolOutput?._otpPending) {
+              otpPending = toolOutput._otpPending;
+              activeOtpToken = toolOutput._otpPending.otpToken;
+            }
             if (call.name === 'book_interview' && toolOutput?.ok && toolOutput?.booking) {
               bookedInterview = toolOutput.booking;
+              otpPending = null;
             }
+
+            // Strip internal token before returning tool output to Gemini
+            const safeToolOutput = { ...toolOutput };
+            delete safeToolOutput._otpPending;
+
             responseParts.push({
               functionResponse: {
                 name: call.name,
-                response: toolOutput
+                response: safeToolOutput
               }
             });
           }
@@ -185,6 +254,7 @@ export default async function handler(req, res) {
           model: modelName,
           ...(toolsUsed.length > 0 ? { toolsUsed } : {}),
           ...(bookedInterview ? { booking: bookedInterview } : {}),
+          ...(otpPending ? { otpPending } : {}),
           conversationId: Date.now()
         });
       } catch (modelError) {

@@ -1,7 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Download, RotateCcw, Send, ShieldCheck, Trash2, X } from 'lucide-react';
+import {
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  RotateCcw,
+  Send,
+  ShieldCheck,
+  Trash2,
+  Video,
+  X
+} from 'lucide-react';
 import { useChatContext } from '../../context/ChatContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useCvList } from '../../hooks/useCvList';
@@ -291,11 +301,52 @@ export function ChatWidget() {
                       {isUser ? (
                         <p className="text-[13.5px] leading-relaxed">{msg.content}</p>
                       ) : (
-                        <FormattedMessage
-                          content={msg.content}
-                          onNavigate={closeChat}
-                          primaryCv={primaryCv}
-                        />
+                        <>
+                          <FormattedMessage
+                            content={msg.content}
+                            onNavigate={closeChat}
+                            primaryCv={primaryCv}
+                          />
+                          {msg.booking && (
+                            <div className="mt-3 space-y-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-xs">
+                              <div className="flex items-center gap-1.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                <span>{t.availability.verifiedInCalendar}</span>
+                              </div>
+                              {msg.booking.summary && (
+                                <p className="font-display font-bold text-white">
+                                  {msg.booking.summary}
+                                </p>
+                              )}
+                              <p className="font-mono text-[11px] text-zinc-200">
+                                {msg.booking.startIso?.slice(0, 10)} ·{' '}
+                                {msg.booking.startIso?.slice(11, 16)}–
+                                {msg.booking.endIso?.slice(11, 16)} ART
+                              </p>
+                              <p className="font-mono text-[10px] text-zinc-400">
+                                {msg.booking.recruiterEmail}
+                              </p>
+                              {msg.booking.meetLink && (
+                                <a
+                                  href={msg.booking.meetLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-cyan-400 to-indigo-400 px-3 py-1.5 font-semibold text-zinc-950 transition-all hover:brightness-110"
+                                >
+                                  <Video className="h-3.5 w-3.5" />
+                                  <span>{t.availability.openMeetLink}</span>
+                                  <ExternalLink className="h-3 w-3" />
+                                </a>
+                              )}
+                              <p className="text-[10px] leading-relaxed text-amber-200/90">
+                                {t.availability.deliveryNotice.replace(
+                                  '{email}',
+                                  msg.booking.recruiterEmail
+                                )}
+                              </p>
+                            </div>
+                          )}
+                        </>
                       )}
 
                       {isError && lastFailedPrompt && (

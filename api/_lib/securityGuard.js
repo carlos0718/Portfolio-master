@@ -48,7 +48,7 @@ const INJECTION_PATTERNS = [
   // System prompt / secret extraction
   /\b(reveal|show|print|output|dump|repeat|leak|expose|tell me|give me)\b.{0,35}\b(system\s*prompt|hidden\s*prompt|initial\s*prompt|internal\s*instructions?|your\s*instructions?|your\s*rules?|api\s*key|env|secrets?)\b/i,
   /\b(muestra|mostrá|muéstrame|mostrame|revela|revelá|dime|decime|imprime|imprimí|repite|repetí|copia|copiá)\b.{0,35}\b(system\s*prompt|prompt\s*(del\s*sistema|inicial|oculto)|tus\s*instrucciones|tus\s*reglas|clave\s*api|api\s*key|variables\s*de\s*entorno)\b/i,
-  /\b(GEMINI_API_KEY|GITHUB_TOKEN|GOOGLE_CLIENT_SECRET|GOOGLE_REFRESH_TOKEN|ADMIN_UPLOAD_SECRET|REACT_APP_|process\.env)\b/i,
+  /\b(GEMINI_API_KEY|GITHUB_TOKEN|GOOGLE_CLIENT_SECRET|GOOGLE_REFRESH_TOKEN|RESEND_API_KEY|ADMIN_UPLOAD_SECRET|REACT_APP_|process\.env)\b/i,
 
   // Delimiter / fake role injection
   /(<\|im_start\|>|<\|im_end\|>|<\|system\|>|<\|assistant\|>|<\/?user_query>|<\/?system>|<\/?instructions?>)/i,
@@ -241,6 +241,7 @@ const OUTPUT_LEAK_PATTERNS = [
   /GITHUB_TOKEN/i,
   /GOOGLE_CLIENT_SECRET/i,
   /GOOGLE_REFRESH_TOKEN/i,
+  /RESEND_API_KEY/i,
   /ADMIN_UPLOAD_SECRET/i,
   /AIza[0-9A-Za-z_-]{20,}/
 ];

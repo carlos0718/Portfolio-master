@@ -1,5 +1,6 @@
-import { createInterviewEvent } from './_lib/calendar.js';
+import { createInterviewEvent, validateBookingRequest } from './_lib/calendar.js';
 import { checkBookingRateLimit, recordBookingAttempt } from './_lib/calendarTools.js';
+import { isOtpEnabled, sendBookingOtp, verifyBookingOtp } from './_lib/emailVerification.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,12 +17,16 @@ export default async function handler(req, res) {
 
   try {
     const {
+      action = 'book',
       startIso,
       durationMinutes = 30,
+      interviewTitle = '',
       recruiterName,
       recruiterEmail,
       company = '',
       notes = '',
+      otpCode = '',
+      otpToken = '',
       website = '' // anti-bot honeypot (must stay empty)
     } = req.body || {};
 
@@ -36,14 +41,72 @@ export default async function handler(req, res) {
       req.socket?.remoteAddress ||
       'unknown';
 
+    // Step 1: Send 6-digit email verification OTP via Resend
+    if (action === 'sendOtp') {
+      const preCheck = validateBookingRequest({
+        startIso,
+        durationMinutes,
+        interviewTitle,
+        recruiterName,
+        recruiterEmail,
+        company,
+        notes
+      });
+      if (!preCheck.ok) {
+        return res.status(400).json({ ok: false, error: preCheck.error });
+      }
+
+      const slotLabel = `${preCheck.data.startIso.slice(0, 10)} · ${preCheck.data.startIso.slice(11, 16)}–${preCheck.data.endIso.slice(11, 16)} ART`;
+      const otpRes = await sendBookingOtp({
+        email: preCheck.data.recruiterEmail,
+        recruiterName: preCheck.data.recruiterName,
+        interviewTitle: preCheck.data.interviewTitle,
+        slotLabel,
+        clientIp
+      });
+
+      if (!otpRes.ok) {
+        return res.status(otpRes.statusCode || 400).json({
+          ok: false,
+          code: otpRes.code,
+          suggestion: otpRes.suggestion || null,
+          error: otpRes.error
+        });
+      }
+
+      return res.status(200).json({
+        ok: true,
+        otpToken: otpRes.otpToken,
+        expiresInMinutes: otpRes.expiresInMinutes,
+        email: otpRes.email
+      });
+    }
+
+    // Step 2: Confirm & create Google Calendar event
     const rl = checkBookingRateLimit(clientIp, recruiterEmail);
     if (!rl.allowed) {
       return res.status(429).json({ error: rl.error });
     }
 
+    if (isOtpEnabled()) {
+      const otpCheck = verifyBookingOtp({
+        email: recruiterEmail,
+        code: otpCode,
+        otpToken
+      });
+      if (!otpCheck.ok) {
+        return res.status(400).json({
+          ok: false,
+          code: 'invalid_otp',
+          error: otpCheck.error
+        });
+      }
+    }
+
     const result = await createInterviewEvent({
       startIso,
       durationMinutes,
+      interviewTitle,
       recruiterName,
       recruiterEmail,
       company,
@@ -54,6 +117,7 @@ export default async function handler(req, res) {
       return res.status(result.statusCode || 400).json({
         ok: false,
         code: result.code,
+        suggestion: result.suggestion || null,
         error: result.error
       });
     }

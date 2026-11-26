@@ -54,6 +54,7 @@ export function ChatProvider({ children }) {
 
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
+  const otpTokenRef = useRef('');
 
   // Keep the welcome message synced with language changes when no conversation has started
   useEffect(() => {
@@ -116,7 +117,8 @@ export function ChatProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text,
-          conversationHistory: historyPayload
+          conversationHistory: historyPayload,
+          ...(otpTokenRef.current ? { otpToken: otpTokenRef.current } : {})
         }),
         signal: controller.signal
       });
@@ -135,11 +137,18 @@ export function ChatProvider({ children }) {
         setChatMode(data.mode);
       }
 
+      if (data.otpPending?.otpToken) {
+        otpTokenRef.current = data.otpPending.otpToken;
+      } else if (data.booking) {
+        otpTokenRef.current = '';
+      }
+
       const assistantMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
         mode: data.mode || 'ai',
         content: data.response,
+        ...(data.booking ? { booking: data.booking } : {}),
         timestamp: new Date().toISOString()
       };
 
@@ -185,6 +194,7 @@ export function ChatProvider({ children }) {
       // ignore
     }
     setLastFailedPrompt(null);
+    otpTokenRef.current = '';
     setChatMode('ai');
     setMessages([createWelcomeMessage(t.chat.welcome)]);
   }, [t.chat.welcome]);

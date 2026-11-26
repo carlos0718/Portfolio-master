@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   }
 
   const durationParam = Number(getQueryParam(req, 'duration')) || 30;
-  const daysParam = Math.min(7, Math.max(1, Number(getQueryParam(req, 'days')) || 5));
+  const daysParam = Math.min(10, Math.max(1, Number(getQueryParam(req, 'days')) || 10));
   const fresh = getQueryParam(req, 'fresh') === '1';
 
   res.setHeader(
