@@ -43,8 +43,8 @@ export function ExperienceTimeline() {
     <section id="experience" className="scroll-mt-24 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header + Filter Pills */}
-        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div className="max-w-2xl">
+        <div className="mb-10 flex flex-col items-center gap-6 text-center">
+          <div className="mx-auto max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.07] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-emerald-300">
               {t.experience.badge}
             </span>
@@ -59,7 +59,7 @@ export function ExperienceTimeline() {
           <div
             role="tablist"
             aria-label="Experience filter"
-            className="inline-flex w-fit items-center gap-1 rounded-xl border border-white/10 bg-surface/80 p-1"
+            className="inline-flex max-w-full flex-wrap items-center justify-center gap-1 rounded-xl border border-white/10 bg-surface/80 p-1"
           >
             {filterTabs.map((tab) => {
               const active = filter === tab.id;
@@ -72,7 +72,7 @@ export function ExperienceTimeline() {
                   aria-selected={active}
                   aria-controls="experience-tabpanel"
                   onClick={() => setFilter(tab.id)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  className={`whitespace-nowrap rounded-lg px-3.5 py-2 text-xs font-medium transition-colors sm:px-4 sm:text-sm ${
                     active
                       ? 'bg-cyan-400/15 text-cyan-200 ring-1 ring-inset ring-cyan-400/35'
                       : 'text-zinc-400 hover:bg-white/[0.05] hover:text-zinc-100'

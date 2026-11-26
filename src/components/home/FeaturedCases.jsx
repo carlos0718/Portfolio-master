@@ -16,8 +16,8 @@ export function FeaturedCases() {
     <section className="py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div className="max-w-2xl">
+        <div className="mb-10 flex flex-col items-center gap-6 text-center">
+          <div className="mx-auto max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.07] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-cyan-300">
               {t.cases.badge}
             </span>
@@ -31,7 +31,7 @@ export function FeaturedCases() {
 
           <Link
             to="/projects"
-            className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-zinc-100 transition-all hover:border-cyan-400/40 hover:bg-white/[0.08]"
+            className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-5 py-2.5 text-sm font-semibold text-zinc-100 transition-all hover:border-cyan-400/40 hover:bg-white/[0.08]"
           >
             <span>{t.cases.allProjectsBtn}</span>
             <ArrowRight className="h-4 w-4 text-cyan-400" />

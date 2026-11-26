@@ -21,7 +21,7 @@ export function EngineeringPillars() {
     <section id="pillars" className="scroll-mt-24 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="mb-10 max-w-2xl">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/[0.07] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-cyan-300">
             {t.pillars.badge}
           </span>

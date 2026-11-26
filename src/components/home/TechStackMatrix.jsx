@@ -25,7 +25,7 @@ export function TechStackMatrix() {
   return (
     <section className="py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-10 max-w-2xl">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/25 bg-indigo-500/[0.08] px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-indigo-300">
             {t.stack.badge}
           </span>
