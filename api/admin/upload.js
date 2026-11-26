@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { checkRateLimit } from '../lib/rateLimit.js';
+import { checkRateLimit } from '../_lib/rateLimit.js';
 import { certificatesData } from '../../src/data/certificatesData.js';
 import {
   deleteObjectFromS3,
@@ -9,7 +9,7 @@ import {
   sanitizeFilename,
   updateCertificateMetadataInS3,
   uploadBufferToS3
-} from '../lib/s3.js';
+} from '../_lib/s3.js';
 
 const VALID_CATEGORIES = ['degree', 'bootcamp', 'cloud-ai', 'fullstack', 'workshop'];
 

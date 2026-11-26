@@ -1,4 +1,4 @@
-import { getCachedGitHubData } from './lib/cache.js';
+import { getCachedGitHubData } from './_lib/cache.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,4 +1,4 @@
-import { getCertificateObjectFromS3, listSignedCertificates } from './lib/s3.js';
+import { getCertificateObjectFromS3, listSignedCertificates } from './_lib/s3.js';
 import { certificatesData } from '../src/data/certificatesData.js';
 
 function normalizeSlug(str = '') {

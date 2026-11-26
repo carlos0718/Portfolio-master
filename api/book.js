@@ -1,5 +1,5 @@
-import { createInterviewEvent } from './lib/calendar.js';
-import { checkBookingRateLimit, recordBookingAttempt } from './lib/calendarTools.js';
+import { createInterviewEvent } from './_lib/calendar.js';
+import { checkBookingRateLimit, recordBookingAttempt } from './_lib/calendarTools.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

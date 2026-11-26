@@ -1,15 +1,15 @@
 // Vercel Serverless Function for Guardrailed AI Portfolio Assistant
 import { GoogleGenAI } from '@google/genai';
-import { buildLiveContext, buildSystemPrompt } from './lib/promptBuilder.js';
-import { buildFallbackResponse } from './lib/fallbackResponder.js';
-import { checkRateLimit } from './lib/rateLimit.js';
-import { CALENDAR_TOOL_DECLARATIONS, executeCalendarTool } from './lib/calendarTools.js';
+import { buildLiveContext, buildSystemPrompt } from './_lib/promptBuilder.js';
+import { buildFallbackResponse } from './_lib/fallbackResponder.js';
+import { checkRateLimit } from './_lib/rateLimit.js';
+import { CALENDAR_TOOL_DECLARATIONS, executeCalendarTool } from './_lib/calendarTools.js';
 import {
   inspectUserInput,
   sanitizeHistory,
   validateAssistantOutput,
   wrapUserMessage
-} from './lib/securityGuard.js';
+} from './_lib/securityGuard.js';
 
 const DEFAULT_MODEL_CASCADE = [
   'gemini-2.5-flash-lite',

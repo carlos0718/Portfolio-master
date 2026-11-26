@@ -1,4 +1,4 @@
-import { listSignedCvs } from './lib/s3.js';
+import { listSignedCvs } from './_lib/s3.js';
 import { professionalData } from '../src/data/professionalData.js';
 
 const LOCAL_FALLBACK_CV = [

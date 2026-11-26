@@ -1,4 +1,4 @@
-import { getLiveAvailability } from './lib/calendar.js';
+import { getLiveAvailability } from './_lib/calendar.js';
 
 function getQueryParam(req, name) {
   if (req.query?.[name]) return String(req.query[name]);
