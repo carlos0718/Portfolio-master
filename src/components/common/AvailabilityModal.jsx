@@ -568,9 +568,9 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:gap-5">
                     {/* LEFT: Real Monthly Grid Calendar */}
-                    <div className="rounded-2xl border border-white/10 bg-obsidian/80 p-4 lg:col-span-6">
+                    <div className="mx-auto w-full max-w-sm rounded-2xl border border-white/15 bg-obsidian/80 p-3.5 sm:p-4 md:col-span-6 md:mx-0 md:max-w-none">
                       {/* Month Navigation Header */}
                       <div className="mb-3 flex items-center justify-between">
                         <h3 className="font-display text-sm font-bold text-white">
@@ -584,7 +584,7 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                             onClick={() => setActiveMonthIdx((i) => Math.max(0, i - 1))}
                             disabled={activeMonthIdx === 0}
                             aria-label={av.prevMonth}
-                            className="rounded-lg border border-white/10 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
+                            className="rounded-lg border border-white/15 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
                           >
                             <ChevronLeft className="h-4 w-4" />
                           </button>
@@ -595,7 +595,7 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                             }
                             disabled={activeMonthIdx >= calendarMonths.length - 1}
                             aria-label={av.nextMonth}
-                            className="rounded-lg border border-white/10 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
+                            className="rounded-lg border border-white/15 bg-surface p-1.5 text-zinc-300 transition-colors hover:border-cyan-400/40 hover:text-white disabled:opacity-30"
                           >
                             <ChevronRight className="h-4 w-4" />
                           </button>
@@ -607,7 +607,7 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                         {WEEKDAY_HEADERS[lang].map((wd) => (
                           <div
                             key={wd}
-                            className="py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-zinc-500"
+                            className="py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-zinc-400"
                           >
                             {wd}
                           </div>
@@ -628,20 +628,20 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                           const isFullyBlocked = Boolean(dayData?.isFullyBlocked);
                           const isInteractive = Boolean(dayData && (hasSlots || hasBlocked));
 
-                          let cellStyle =
-                            'border-transparent bg-transparent text-zinc-600/70 cursor-default';
+                          let cellStyle;
                           if (isSelected) {
-                            cellStyle =
-                              'border-cyan-300 bg-gradient-to-br from-cyan-400/25 to-indigo-500/25 text-white ring-1 ring-cyan-300/70 shadow-sm cursor-pointer';
-                          } else if (isFullyBlocked) {
-                            cellStyle =
-                              'border-rose-500/35 bg-rose-500/15 text-rose-300 cursor-pointer hover:border-rose-400/60';
+                            cellStyle = hasSlots
+                              ? 'border-white bg-gradient-to-br from-cyan-400/30 to-indigo-500/30 text-white ring-2 ring-cyan-300/80 shadow-sm cursor-pointer'
+                              : 'border-white bg-rose-500/40 text-white ring-2 ring-rose-400/80 shadow-sm cursor-pointer';
                           } else if (hasSlots) {
                             cellStyle =
-                              'border-white/[0.08] bg-surface/90 text-zinc-100 hover:border-cyan-400/50 hover:bg-cyan-400/10 cursor-pointer';
-                          } else if (cell.isWeekend) {
+                              'border-white/70 bg-surface/95 text-white hover:border-white hover:bg-cyan-400/15 cursor-pointer';
+                          } else if (isInteractive || isFullyBlocked) {
                             cellStyle =
-                              'border-transparent bg-white/[0.015] text-zinc-600/60 cursor-default';
+                              'border-white/60 bg-rose-500/35 text-rose-100 hover:border-white hover:bg-rose-500/45 cursor-pointer';
+                          } else {
+                            cellStyle =
+                              'border-white/45 bg-rose-500/25 text-rose-100/90 cursor-not-allowed';
                           }
 
                           return (
@@ -651,20 +651,18 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                               disabled={!isInteractive}
                               onClick={() => isInteractive && handleSelectDay(cell.dateStr)}
                               title={
-                                isFullyBlocked
-                                  ? av.blockedLabel
-                                  : hasSlots
+                                hasSlots
                                   ? `${dayData.slots.length} ${av.slotsWord}`
-                                  : ''
+                                  : isFullyBlocked
+                                  ? av.blockedLabel
+                                  : av.noSlotsDay
                               }
-                              className={`relative flex aspect-square flex-col items-center justify-center rounded-xl border font-mono text-xs font-semibold transition-all ${cellStyle}`}
+                              className={`relative flex aspect-square flex-col items-center justify-center rounded-lg border font-mono text-xs font-semibold transition-all ${cellStyle}`}
                             >
                               <span>{cell.day}</span>
-                              {(hasSlots || hasBlocked) && (
+                              {hasSlots && (
                                 <span className="mt-0.5 flex items-center gap-0.5">
-                                  {hasSlots && (
-                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                                  )}
+                                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                                   {hasBlocked && (
                                     <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
                                   )}
@@ -682,48 +680,44 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                           <span>{av.legendAvailable}</span>
                         </span>
                         <span className="inline-flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-rose-400" />
-                          <span>{av.legendBlocked}</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <span className="h-2 w-2 rounded-full bg-zinc-600" />
+                          <span className="h-2.5 w-2.5 rounded-sm border border-white/50 bg-rose-500/35" />
                           <span>{av.legendUnavailable}</span>
                         </span>
                       </div>
                     </div>
 
                     {/* RIGHT: Selected Day Schedule (Green Available + Red Blocked Slots) */}
-                    <div className="flex flex-col rounded-2xl border border-white/10 bg-obsidian/80 p-4 lg:col-span-6">
-                      <div className="mb-3 flex items-center justify-between gap-2 border-b border-white/[0.07] pb-3">
-                        <div>
-                          <span className="font-mono text-[10px] uppercase tracking-wider text-cyan-400">
-                            <Calendar className="mr-1 inline h-3 w-3" />
-                            {av.selectedDayHeading}
-                          </span>
-                          <h3 className="mt-0.5 font-display text-base font-bold text-white">
+                    <div className="flex flex-col rounded-2xl border border-white/15 bg-obsidian/80 p-3.5 sm:p-4 md:col-span-6">
+                      <div className="mb-3 border-b border-white/[0.07] pb-3">
+                        <span className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-cyan-400">
+                          <Calendar className="h-3 w-3 shrink-0" />
+                          <span>{av.selectedDayHeading}</span>
+                        </span>
+                        <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+                          <h3 className="font-display text-base font-bold text-white">
                             {selectedDay
                               ? lang === 'es'
                                 ? selectedDay.dayLabelEs
                                 : selectedDay.dayLabelEn
                               : '—'}
                           </h3>
-                        </div>
-                        {selectedDay && (
-                          <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
-                            <span className="rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-emerald-300">
-                              {selectedDay.slots?.length || 0} {av.legendAvailable.toLowerCase()}
-                            </span>
-                            {(selectedDay.blockedCount || 0) > 0 && (
-                              <span className="rounded-md border border-rose-500/35 bg-rose-500/15 px-2 py-0.5 text-rose-300">
-                                {selectedDay.blockedCount} {av.blockedLabel.toLowerCase()}
+                          {selectedDay && (
+                            <div className="flex flex-wrap items-center gap-1.5 font-mono text-[10px]">
+                              <span className="whitespace-nowrap rounded-md border border-emerald-400/30 bg-emerald-500/10 px-2 py-0.5 text-emerald-300">
+                                {selectedDay.slots?.length || 0} {av.legendAvailable.toLowerCase()}
                               </span>
-                            )}
-                          </div>
-                        )}
+                              {(selectedDay.blockedCount || 0) > 0 && (
+                                <span className="whitespace-nowrap rounded-md border border-rose-500/35 bg-rose-500/15 px-2 py-0.5 text-rose-300">
+                                  {selectedDay.blockedCount} {av.blockedLabel.toLowerCase()}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {dayAllSlots.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3">
                           {dayAllSlots.map((slot) => {
                             const isBlocked = slot.status === 'blocked';
                             const isPast = slot.status === 'past';
@@ -739,7 +733,7 @@ export function AvailabilityModal({ isOpen, mode = 'book', onSwitchToBook, onClo
                                   key={slot.start}
                                   aria-disabled="true"
                                   title={av.blockedLabel}
-                                  className="flex cursor-not-allowed flex-col items-center justify-center rounded-xl border border-rose-500/35 bg-rose-500/12 px-2.5 py-2 font-mono text-rose-300/90"
+                                  className="flex cursor-not-allowed flex-col items-center justify-center rounded-xl border border-rose-500/40 bg-rose-500/20 px-2.5 py-2 font-mono text-rose-200"
                                 >
                                   <span className="flex items-center gap-1 text-xs font-semibold line-through decoration-rose-400/70">
                                     <Ban className="h-3 w-3 text-rose-400" />
